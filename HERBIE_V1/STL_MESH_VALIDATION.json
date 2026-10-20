@@ -1,0 +1,308 @@
+[
+  {
+    "part_number": "HBR-001",
+    "name": "Head_Front_Shell",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-001.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      239.09,
+      84.68,
+      144.45
+    ],
+    "volume_cm3": 226.47,
+    "triangles": 1432,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-002",
+    "name": "Head_Rear_Shell",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-002.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      239.09,
+      84.68,
+      144.45
+    ],
+    "volume_cm3": 226.47,
+    "triangles": 1432,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-003",
+    "name": "Faceplate",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-003.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      155.0,
+      9.0,
+      77.0
+    ],
+    "volume_cm3": 106.08,
+    "triangles": 156,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-004",
+    "name": "Head_Internal_Frame",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-004.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      160.0,
+      100.0,
+      28.0
+    ],
+    "volume_cm3": 89.32,
+    "triangles": 976,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-005",
+    "name": "Fixed_Neck",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-005.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      75.0,
+      75.0,
+      35.0
+    ],
+    "volume_cm3": 94.34,
+    "triangles": 1792,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-006",
+    "name": "Upper_Frame_Plate",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-006.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      174.0,
+      132.0,
+      8.0
+    ],
+    "volume_cm3": 133.83,
+    "triangles": 912,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-007",
+    "name": "Lower_Frame_Plate",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-007.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      174.0,
+      132.0,
+      8.0
+    ],
+    "volume_cm3": 133.83,
+    "triangles": 912,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-008",
+    "name": "Left_Upright",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-008.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      19.0,
+      23.0,
+      189.0
+    ],
+    "volume_cm3": 79.33,
+    "triangles": 600,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-009",
+    "name": "Right_Upright",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-009.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      19.0,
+      23.0,
+      189.0
+    ],
+    "volume_cm3": 79.33,
+    "triangles": 600,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-010",
+    "name": "Torso_Front_Panel",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-010.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      205.0,
+      7.0,
+      169.0
+    ],
+    "volume_cm3": 240.59,
+    "triangles": 732,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-011",
+    "name": "Torso_Rear_Panel",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-011.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      205.0,
+      7.0,
+      169.0
+    ],
+    "volume_cm3": 233.03,
+    "triangles": 828,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-012",
+    "name": "Left_Shoulder_Interface",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-012.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      55.0,
+      42.0,
+      13.0
+    ],
+    "volume_cm3": 26.4,
+    "triangles": 896,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-013",
+    "name": "Right_Shoulder_Interface",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-013.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      55.0,
+      42.0,
+      13.0
+    ],
+    "volume_cm3": 26.4,
+    "triangles": 896,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-014",
+    "name": "Left_Static_Arm",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-014.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      50.0,
+      45.0,
+      109.0
+    ],
+    "volume_cm3": 165.85,
+    "triangles": 316,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-015",
+    "name": "Right_Static_Arm",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-015.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      50.0,
+      45.0,
+      109.0
+    ],
+    "volume_cm3": 165.85,
+    "triangles": 316,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-016",
+    "name": "Computer_Adapter_Tray",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-016.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      125.0,
+      100.0,
+      20.0
+    ],
+    "volume_cm3": 64.05,
+    "triangles": 4332,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-017",
+    "name": "Battery_Holder_Tray",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-017.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      100.0,
+      65.0,
+      27.0
+    ],
+    "volume_cm3": 42.11,
+    "triangles": 4332,
+    "bed_180_fit_flat": true
+  },
+  {
+    "part_number": "HBR-018",
+    "name": "Stationary_Base",
+    "design_status": "PROVISIONAL_UNTESTED",
+    "file": "HBR-018.stl",
+    "watertight": true,
+    "winding_consistent": true,
+    "positive_volume": true,
+    "bounding_mm": [
+      280.0,
+      240.0,
+      115.0
+    ],
+    "volume_cm3": 1041.38,
+    "triangles": 908,
+    "bed_180_fit_flat": false
+  }
+]
