@@ -1,0 +1,35 @@
+# 3D Vision
+
+**Public browser-based 3D viewer for H.E.R.B.I.E. and future electronics projects.**
+
+## Current status
+
+- Interactive mobile-friendly Three.js viewport and assembled/exploded switches: **implemented**.
+- Built-in parametric-style **illustrative preview** of a skeleton-first robot: **implemented**. This is deliberately NOT advertised as the original CAD geometry.
+- Original H.E.R.B.I.E. STL-derived assembled/exploded GLBs: **not hosted yet**. The viewer will load them when they are placed into the `models/` folder using the exact filenames below.
+- GitHub Pages: **requires enabling in repository Settings → Pages** unless already enabled.
+
+## Upload original meshes
+
+Add these two files to `models/` on the repository's main branch:
+
+1. `HERBIE_V1_Assembled_Interactive.glb`
+2. `HERBIE_V1_Exploded_Interactive.glb`
+
+The GLB files were generated previously for the H.E.R.B.I.E. project but are not yet stored in this repo. The ChatGPT GitHub connector can currently create UTF-8 text files, not binary GLBs. Do not convert binary GLB bytes to text by changing the extension.
+
+## Publish the free site
+
+In **Settings → Pages**, select **Deploy from a branch**, branch **main**, folder **/(root)** and save. Then wait for deployment. The expected Pages site is:
+
+https://jimedusot-beep.github.io/3D-vision/
+
+Do not treat the expected URL as verified until GitHub Pages is enabled and a browser check succeeds.
+
+## Engineering caveat
+
+The built-in preview uses approximate primitive geometry intended for general visual exploration, not actual dimension-controlled STL surfaces. The V1 source geometry is not fit-tested, load-tested or validated for assembly.
+
+## Future work
+
+Add part selection, model library, dimension annotations, cross-sections, and citations to the H.E.R.B.I.E. R01–R16 design register.
