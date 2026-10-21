@@ -14,6 +14,7 @@ try{
  await page.waitForFunction(()=>document.getElementById('files-list').textContent.includes('Recovery notes.md'));
  await page.reload();await page.waitForFunction(()=>window.visionFiles?.ready);
  const card=page.locator('.asset-card').filter({hasText:'Recovery notes.md'});assert.equal(await card.count(),1);await card.getByRole('button',{name:'Read',exact:true}).click();
+ await page.waitForFunction(()=>document.getElementById('preview-text').textContent==='# Keep these notes\nSaved with graphics disabled.');
  assert.equal(await page.locator('#preview-text').textContent(),'# Keep these notes\nSaved with graphics disabled.');
  await page.locator('#cloud').click();await page.waitForFunction(()=>document.getElementById('cloud-state').textContent.includes('static host'));
  assert.ok(await page.getByRole('link',{name:'Open private cloud workshop →'}).isVisible());
