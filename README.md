@@ -1,6 +1,6 @@
 # 3D Vision — browser 3D assembly workshop
 
-**[OPEN 3D VISION WORKSHOP](https://jimmy-3d-vision.violethill64.chatgpt.site)**
+**[OPEN PRIVATE CLOUD WORKSHOP](https://mcgruber-print-lab.jimmysoto1994.chatgpt.site/)** · [Previous static workshop](https://jimmy-3d-vision.violethill64.chatgpt.site)
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
@@ -18,7 +18,9 @@ This reproducible repo experiment includes **five-part skeleton assembled/explod
 2. Use the component tree and transform tools. **Save revision** keeps a named project; **My projects** reopens saved revisions. The last workspace is also autosaved.
 3. **Export → complete project (.3dv)** creates a portable backup containing scene geometry, component placement and original files. Import the package to move between devices or hosts.
 
-Files and projects are saved in **this browser on this device**. Clearing site data can remove them. The static application does not upload your personal models to a server or automatically write to GitHub. Authenticated cross-device/GitHub sync is pending a backend.
+On the **private cloud workshop**, imported originals are automatically backed up to your signed-in account using durable server storage. **Save revision** backs up a complete `.3dv` project, including geometry, companion files, units and placement. Open **Cloud** on another device to restore it. Upload failures are shown explicitly; local copies remain available. Maximum file/package size: 50 MB. Raw originals open with default units; restore a complete project to retain import settings.
+
+Static/GitHub Pages hosts remain **browser-local** and link to the cloud workshop. Clearing site data can remove local-only copies. Existing files on the previous static host are not transferred automatically: export a complete project once and import it into the cloud workshop. No browser-to-GitHub write access or personal tokens are used.
 
 ## Working capabilities
 
@@ -45,7 +47,7 @@ New project directories are discovered at build time; the Library's Refresh also
 
 ## Hosting status
 
-The workshop is deployed at the **Open Workshop** link above. The deployed static assets were retrieved over HTTPS and compared to the browser-tested production build. All 24 Chromium workflows and six WebKit checks also passed against the actual public website.
+The private workshop uses a Sites Worker with per-user R2 file storage. The previous public/static host is a separate deployment and is not updated automatically by this repository. See [storage deployment and verification](docs/CLOUD_STORAGE.md). Historical public-site QA results are not evidence for the new cloud deployment.
 
 The [GitHub Pages workflow](.github/workflows/pages.yml) builds and tests the full application, then publishes `dist/`. **Pages itself still requires one account setting:** [Settings → Pages](https://github.com/jimedusot-beep/3D-vision/settings/pages) → **Source: GitHub Actions**. The development connector cannot change that administration setting. The expected Pages address still returns 404 until activation. See [deployment instructions](docs/DEPLOYMENT.md).
 
@@ -66,6 +68,6 @@ The browser suite uses the production bundle and real model files; it loads, man
 
 Internal coordinates use millimeters with Z up. Standard GLTF import/export converts meters and Y up; original H.E.R.B.I.E. GLBs have a repository-specific coordinate path. See the architecture guide for import limits and storage behavior.
 
-Parametric sketches/joints, exact solid collision detection, wall-thickness analysis, hole filling, STEP/IGES and authenticated cloud syncing are **not implemented**. Print quality, joint fit, fasteners, thermal/electrical requirements and structural loads remain unverified.
+Parametric sketches/joints, exact solid collision detection, wall-thickness analysis, hole filling, STEP/IGES and automatic browser-to-GitHub syncing are **not implemented**. Print quality, joint fit, fasteners, thermal/electrical requirements and structural loads remain unverified.
 
 Open-source dependencies and distributed license texts: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Existing CAD/artifact provenance is preserved.
