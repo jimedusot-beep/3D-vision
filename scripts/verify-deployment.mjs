@@ -9,7 +9,7 @@ const html=await fetchBytes('');const src=html.toString();if(!src.includes('3D V
 const links=[...src.matchAll(/(?:src|href)="([^"#]+\.(?:js|css))"/g)].map(m=>m[1]);
 const catalog=JSON.parse(await readFile('dist/catalog.json','utf8'));
 const bundles=(await readdir('dist/assets')).map(name=>'assets/'+name);
-const files=[...new Set(['index.html','catalog.json',...links,...bundles,...catalog.items.map(i=>i.path),'licenses/three.txt','licenses/three-bvh-csg.txt','licenses/three-mesh-bvh.txt','licenses/fflate.txt'])];
+const files=[...new Set(['index.html','library.html','legacy.html','.nojekyll','catalog.json',...links,...bundles,...catalog.items.map(i=>i.path),'licenses/three.txt','licenses/three-bvh-csg.txt','licenses/three-mesh-bvh.txt','licenses/fflate.txt'].map(p=>p.replace(/^\.\//,'')))];
 const hash=b=>createHash('sha256').update(b).digest('hex');const results=[];
 for(let i=0;i<files.length;i+=4){await Promise.all(files.slice(i,i+4).map(async p=>{const remote=p==='index.html'?html:await fetchBytes(p);const local=await readFile('dist/'+p.replace(/^\.\//,''));if(hash(remote)!==hash(local))throw Error('Deployed bytes differ: '+p);results.push({path:p,bytes:remote.length,sha256:hash(remote),status:'PASS'});}));}
 await mkdir('test-results',{recursive:true});await writeFile('test-results/deployment-results.json',JSON.stringify({url:base.href,verifiedAt:new Date().toISOString(),files:results},null,2));console.log(`PASS: ${results.length} live files match the tested build; includes every bundled module/worker and catalogued repository asset. URL ${base.href}`);

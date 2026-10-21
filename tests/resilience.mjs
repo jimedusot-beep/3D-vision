@@ -2,13 +2,14 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {readFile,mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
+const base=process.env.BASE_URL||'https://recovery.test/';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:390,height:844}});
 await context.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){if(String(type).includes('webgl'))return null;return original.call(this,type,...args)}});
-await context.route('https://recovery.test/**',async route=>{let p=new URL(route.request().url()).pathname;if(p.endsWith('/'))p+='index.html';try{const file=path.resolve('dist','.'+p);if(!file.startsWith(path.resolve('dist')+'/'))return route.fulfill({status:403});const bytes=await readFile(file);const ext=path.extname(p);await route.fulfill({body:bytes,contentType:{'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json'}[ext]||'application/octet-stream'})}catch{await route.fulfill({status:404})}});
+if(!process.env.BASE_URL)await context.route('https://recovery.test/**',async route=>{let p=new URL(route.request().url()).pathname;if(p.endsWith('/'))p+='index.html';try{const file=path.resolve('dist','.'+p);if(!file.startsWith(path.resolve('dist')+'/'))return route.fulfill({status:403});const bytes=await readFile(file);const ext=path.extname(p);await route.fulfill({body:bytes,contentType:{'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json'}[ext]||'application/octet-stream'})}catch{await route.fulfill({status:404})}});
 const page=await context.newPage();
 try{
- await page.goto('https://recovery.test/');await page.waitForFunction(()=>window.visionFiles?.ready);
+ await page.goto(base);await page.waitForFunction(()=>window.visionFiles?.ready);
  assert.ok(await page.locator('#graphics-note').isVisible());
  await page.locator('#file-input').setInputFiles([{name:'Recovery notes.md',mimeType:'text/markdown',buffer:Buffer.from('# Keep these notes\nSaved with graphics disabled.')}]);
  await page.waitForFunction(()=>document.getElementById('files-list').textContent.includes('Recovery notes.md'));

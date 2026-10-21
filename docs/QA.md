@@ -12,8 +12,8 @@ Development verification, October 21, 2026.
 | Original Chromium workflows | 25/25 passed locally | Real assembled/exploded GLBs, STL input, transforms, Boolean worker, revisions, saved originals, file folders, all exports/reimports, packages, GLTF companions, 3MF units, mobile panels and original library |
 | Graphics-free recovery | Passed locally | Files can be imported, saved, read and downloaded after WebGL fails; cloud link remains accessible |
 | New assembly/analysis workflows | 13/13 passed locally in Chromium | Skeleton source units, repository coordinate defaults, hinge/slider/fixed joints, parent propagation, rollback, animation, save/reload/package reimport, attached notes, worker interference, 0.6 mm wall warning/report and idle rendering |
-| GitHub-hosted baseline before UI release | Passed | [Node/Chromium/macOS WebKit](https://github.com/jimedusot-beep/3D-vision/actions/runs/39583870603) and [Pages publication](https://github.com/jimedusot-beep/3D-vision/actions/runs/39583870558) at `611f178` |
-| Expanded WebKit and public release checks | Run automatically with this release | [Workshop tests](../.github/workflows/smoke-viewer.yml) and [public website verification](../.github/workflows/live-site.yml); consult the latest successful runs for release evidence |
+| GitHub-hosted workshop release | 30 Node tests, 39 Chromium checks and 19 WebKit checks passed | [Passing production build / browser run](https://github.com/jimedusot-beep/3D-vision/actions/runs/39585997857) at `100f7f6` |
+| Public HTTPS release checks | Automatic after successful Pages publication | [Public Chromium / WebKit runs](https://github.com/jimedusot-beep/3D-vision/actions/workflows/live-site.yml); this suite includes graphics-free recovery against the actual deployed origin |
 
 Local Chromium uses real production bundles with software WebGL. Standard Playwright browser downloads were unavailable in the execution environment, so local Chromium 141 was obtained from the MIT-licensed `@sparticuz/chromium` test runtime. It is not a website dependency. GitHub CI uses Playwright's regular Chromium and macOS WebKit.
 
