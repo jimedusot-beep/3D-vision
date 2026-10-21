@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'HERBIE_V1/CAD/**'
+      - 'HERBIE_V1/PARTS.csv'
       - 'scripts/generate_herbie.py'
       - 'scripts/build_docs.py'
       - '.github/workflows/build-herbie.yml'
