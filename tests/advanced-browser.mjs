@@ -4,13 +4,14 @@ import {readFile, mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import * as THREE from 'three';
 import {STLExporter} from 'three/addons/exporters/STLExporter.js';
-const engine=process.env.BROWSER_ENGINE||'chromium', mobile=engine==='webkit';
+import {STLLoader} from 'three/addons/loaders/STLLoader.js';
+const engine=process.env.BROWSER_ENGINE||'chromium', useWebkit=engine==='webkit', mobile=useWebkit||process.env.MOBILE==='1';
 const base=process.env.BASE_URL||'https://3dvision.test/';
 const results=[],errors=[];
 await mkdir('test-results',{recursive:true});
 const proxyUrl=process.env.BASE_URL&&(process.env.HTTPS_PROXY||process.env.HTTP_PROXY);
 const proxy=proxyUrl?(()=>{const u=new URL(proxyUrl);return{server:u.origin,...(u.username?{username:decodeURIComponent(u.username),password:decodeURIComponent(u.password)}:{})};})():undefined;
-const browser=await (mobile?webkit:chromium).launch({proxy,...(!mobile?{args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']}: {})});
+const browser=await (useWebkit?webkit:chromium).launch({proxy,...(!useWebkit?{args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']}: {})});
 const context=await browser.newContext({...mobile?devices['iPhone 13']:{viewport:{width:1440,height:1000}},acceptDownloads:true});
 if(!process.env.BASE_URL)await context.route('https://3dvision.test/**',async route=>{
  let p=decodeURIComponent(new URL(route.request().url()).pathname);if(p.endsWith('/'))p+='index.html';
@@ -36,6 +37,11 @@ try{
  const max=await page.evaluate(()=>Math.max(...vision.workshop.root.children.flatMap(m=>vision.inspect(m).size)));
  assert.ok(max>50&&max<1500,`Correct millimeter dimensions: ${max}`);
  const up=await page.evaluate(async()=>{vision.select([]);const glb=await vision.makeExport('glb');const objects=await vision.parseModel(new File([await glb.arrayBuffer()],'round.glb'));return Math.max(...objects.flatMap(m=>vision.inspect(m).size));});await close(up,max);report('Skeleton experiment imports at source mm/Z-up and standard GLB export roundtrips');
+ await page.locator('#import').click();await page.locator('#import-units').selectOption('in');await page.locator('#import-up').selectOption('y');await page.locator('#close-dialog').click();
+ await clear();await left('catalog');await page.locator('#catalog-search').fill('HBR-001.stl');await page.locator('#catalog-list button').click();await page.waitForFunction(()=>document.getElementById('component-count').textContent==='1');
+ const sourceBytes=await readFile('HERBIE_V1/STL/HBR-001.stl'),source=new STLLoader().parse(sourceBytes.buffer.slice(sourceBytes.byteOffset,sourceBytes.byteOffset+sourceBytes.byteLength));
+ source.computeBoundingBox();const expected=source.boundingBox.getSize(new THREE.Vector3()).toArray();const actual=await page.evaluate(()=>vision.inspect(vision.workshop.root.children[0]).size);for(let i=0;i<3;i++)await close(actual[i],expected[i]);report('Repository STL coordinates ignore unrelated device-import settings');await page.locator('#import').click();await page.locator('#close-dialog').click();
+
  await clear();await page.locator('#file-input').setInputFiles([{name:'Hinge-parent.stl',mimeType:'application/octet-stream',buffer:cube},{name:'Hinge-driven.stl',mimeType:'application/octet-stream',buffer:cube}]);await page.waitForFunction(()=>document.getElementById('component-count').textContent==='2');
  await select(1);await page.locator('#position-x').fill('30');await page.locator('#apply-transform').click();
  await left();await page.locator('#select-all').click();await inspector();await page.locator('#joint-create').click();await page.locator('#joint-type').selectOption('revolute');await page.getByRole('button',{name:'Create joint',exact:true}).click();assert.equal(await page.locator('#joint-list option').count(),1);
@@ -57,6 +63,6 @@ try{
  await clear();await page.locator('#file-input').setInputFiles([{name:'Collision-A.stl',mimeType:'application/octet-stream',buffer:cube},{name:'Collision-B.stl',mimeType:'application/octet-stream',buffer:cube}]);await page.waitForFunction(()=>document.getElementById('component-count').textContent==='2');await select(1);await page.locator('#position-x').fill('5');await page.locator('#apply-transform').click();await left();await page.locator('#select-all').click();await inspector();await page.locator('#collision').click();await page.waitForFunction(()=>vision.analysis?.type==='interference');assert.equal(await page.evaluate(()=>vision.analysis.results[0].kind),'surface');assert.match(await page.locator('#report').textContent(),/SURFACE/);report('Geometry worker detects triangle interference rather than only box overlap');
  const thin=bytes(new THREE.BoxGeometry(20,20,.6));await clear();await page.locator('#file-input').setInputFiles({name:'Thin-plate.stl',mimeType:'application/octet-stream',buffer:thin});await page.waitForFunction(()=>document.getElementById('component-count').textContent==='1');await inspector();await page.locator('#thickness').evaluate(el=>el.closest('details').open=true);await page.locator('#thickness').click();await page.waitForFunction(()=>vision.analysis?.type==='thickness');const thickness=await page.evaluate(()=>vision.analysis.results[0]);assert.ok(thickness.thin>0);await close(thickness.minimum,.6);assert.match(await page.locator('#report').textContent(),/Sampled minimum 0.6000/);assert.match(await page.locator('#report').textContent(),/Print readiness: UNVERIFIED/);
  const dl=page.waitForEvent('download');await page.locator('#download-report').click();const json=path.resolve('test-results/thickness-'+engine+'.json');await(await dl).saveAs(json);assert.equal(JSON.parse(await readFile(json,'utf8')).type,'thickness');report('Thin-wall sampler flags a 0.6 mm plate and exports a clearly qualified JSON report');
- await page.locator('#fit').click();await page.waitForTimeout(1200);const frames=await page.evaluate(()=>vision.frames);await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>vision.frames),frames);await page.locator('#projection').click();await page.waitForFunction(n=>vision.frames>n,frames);report('Idle rendering stops and camera changes wake the viewport');
+ if(mobile)await page.locator('#close-right').click();await page.locator('#fit').click();await page.waitForTimeout(1200);const frames=await page.evaluate(()=>vision.frames);await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>vision.frames),frames);await page.locator('#projection').click();await page.waitForFunction(n=>vision.frames>n,frames);report('Idle rendering stops and camera changes wake the viewport');
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);await page.screenshot({path:`test-results/advanced-${engine}.png`});
 }catch(e){console.error('FAIL advanced:',engine,e.stack);console.error('Status:',await page.locator('#status').textContent().catch(()=>''));console.error(errors);results.push({name:e.message,status:'FAIL'});process.exitCode=1;await page.screenshot({path:`test-results/advanced-${engine}-failure.png`,timeout:3000}).catch(()=>{});}finally{await context.close();await browser.close();await writeFile(`test-results/advanced-${engine}-results.json`,JSON.stringify({engine,base,results},null,2));}
