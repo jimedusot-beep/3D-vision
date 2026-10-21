@@ -1,0 +1,19 @@
+part_id,x_mm,y_mm,z_mm,triangles,watertight,positive_volume,fits_180x180_xy_as_exported,fits_220x220_xy_as_exported,interpretation
+HBR-001,239.09,84.68,144.45,1432,True,True,False,False,Bounding-box screening only; orientation/support/clearance unverified
+HBR-002,239.09,84.68,144.45,1432,True,True,False,False,Bounding-box screening only; orientation/support/clearance unverified
+HBR-003,155.0,9.0,77.0,156,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-004,160.0,100.0,28.0,976,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-005,75.0,75.0,35.0,1792,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-006,174.0,132.0,8.0,912,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-007,174.0,132.0,8.0,912,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-008,19.0,23.0,189.0,600,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-009,19.0,23.0,189.0,600,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-010,205.0,7.0,169.0,732,True,True,False,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-011,205.0,7.0,169.0,828,True,True,False,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-012,55.0,42.0,13.0,896,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-013,55.0,42.0,13.0,896,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-014,50.0,45.0,109.0,316,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-015,50.0,45.0,109.0,316,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-016,125.0,100.0,20.0,4332,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-017,100.0,65.0,27.0,4332,True,True,True,True,Bounding-box screening only; orientation/support/clearance unverified
+HBR-018,280.0,240.0,115.0,908,True,True,False,False,Bounding-box screening only; orientation/support/clearance unverified

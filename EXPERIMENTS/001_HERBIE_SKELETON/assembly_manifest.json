@@ -1,0 +1,54 @@
+{
+  "title": "H.E.R.B.I.E. Skeleton Experiment 001",
+  "status": "DIGITAL_CONCEPT_UNTESTED",
+  "units": "mm",
+  "coordinate_system": "Z up",
+  "source": "HERBIE_V1/CAD/HERBIE_V1_Master.scad",
+  "parts": [
+    {
+      "id": "HBR-018",
+      "translation_mm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "HBR-007",
+      "translation_mm": [
+        0,
+        0,
+        121
+      ]
+    },
+    {
+      "id": "HBR-008",
+      "translation_mm": [
+        -70,
+        0,
+        126
+      ]
+    },
+    {
+      "id": "HBR-009",
+      "translation_mm": [
+        70,
+        0,
+        126
+      ]
+    },
+    {
+      "id": "HBR-006",
+      "translation_mm": [
+        0,
+        0,
+        307
+      ]
+    }
+  ],
+  "electronics_placeholders_not_measured": true,
+  "validation": [
+    "all 18 STLs inspected for bounding box and mesh flags",
+    "assembly fit, screws and structural safety NOT tested"
+  ]
+}
