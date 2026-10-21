@@ -2,6 +2,42 @@
   "version": 1,
   "items": [
     {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Electronics_Space_Study.glb",
+      "name": "Electronics_Space_Study.glb",
+      "kind": "glb",
+      "project": "EXPERIMENTS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/README.md",
+      "name": "README.md",
+      "kind": "md",
+      "project": "EXPERIMENTS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Assembly.glb",
+      "name": "Skeleton_Assembly.glb",
+      "kind": "glb",
+      "project": "EXPERIMENTS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Experiment_001.zip",
+      "name": "Skeleton_Experiment_001.zip",
+      "kind": "zip",
+      "project": "EXPERIMENTS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Exploded.glb",
+      "name": "Skeleton_Exploded.glb",
+      "kind": "glb",
+      "project": "EXPERIMENTS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/part_print_precheck.csv",
+      "name": "part_print_precheck.csv",
+      "kind": "csv",
+      "project": "EXPERIMENTS"
+    },
+    {
       "path": "HERBIE_V1/CAD/HERBIE_V1_Exploded_Master.scad",
       "name": "HERBIE_V1_Exploded_Master.scad",
       "kind": "scad",
@@ -186,6 +222,42 @@
       "name": "HERBIE_V1_Repository_Collection_REGENERATED.zip",
       "kind": "zip",
       "project": "HERBIE_V1"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Base_150x100x4mm.stl",
+      "name": "McGruber_V2_Base_150x100x4mm.stl",
+      "kind": "stl",
+      "project": "MCGRUBER_V2"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Editable.scad",
+      "name": "McGruber_V2_Editable.scad",
+      "kind": "scad",
+      "project": "MCGRUBER_V2"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Foot_10x10x8mm_Print4.stl",
+      "name": "McGruber_V2_Foot_10x10x8mm_Print4.stl",
+      "kind": "stl",
+      "project": "MCGRUBER_V2"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Hole_Test_60x10x4mm.stl",
+      "name": "McGruber_V2_Hole_Test_60x10x4mm.stl",
+      "kind": "stl",
+      "project": "MCGRUBER_V2"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Print_Guide.md",
+      "name": "McGruber_V2_Print_Guide.md",
+      "kind": "md",
+      "project": "MCGRUBER_V2"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Visual.png",
+      "name": "McGruber_V2_Visual.png",
+      "kind": "png",
+      "project": "MCGRUBER_V2"
     },
     {
       "path": "README.md",

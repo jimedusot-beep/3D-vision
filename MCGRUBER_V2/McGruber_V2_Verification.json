@@ -1,0 +1,41 @@
+[
+  {
+    "file": "McGruber_V2_Base_150x100x4mm.stl",
+    "triangles": 29600,
+    "size_mm": [
+      150.0,
+      100.0,
+      4.0
+    ],
+    "volume_mm3": 53598.54,
+    "closed_manifold": true,
+    "consistent_winding": true,
+    "connected": true
+  },
+  {
+    "file": "McGruber_V2_Hole_Test_60x10x4mm.stl",
+    "triangles": 1376,
+    "size_mm": [
+      60.0,
+      10.0,
+      4.0
+    ],
+    "volume_mm3": 2168.56,
+    "closed_manifold": true,
+    "consistent_winding": true,
+    "connected": true
+  },
+  {
+    "file": "McGruber_V2_Foot_10x10x8mm_Print4.stl",
+    "triangles": 256,
+    "size_mm": [
+      10.0,
+      10.0,
+      8.0
+    ],
+    "volume_mm3": 719.15,
+    "closed_manifold": true,
+    "consistent_winding": true,
+    "connected": true
+  }
+]
