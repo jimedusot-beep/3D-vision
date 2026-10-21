@@ -28,4 +28,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add HERBIE_V1/STL models HERBIE_V1/documents
-          git diff --cached --quiet || (git commit -m "Refresh H.E.R.B.I.E. models, drawing PDFs and archives" && git push)
+          if git diff --cached --quiet; then
+            echo "No generated changes to publish"
+            exit 0
+          fi
+          git commit -m "Refresh H.E.R.B.I.E. models, drawing PDFs and archives"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              echo "Generated assets committed successfully"
+              exit 0
+            fi
+            echo "Branch advanced during generation; retrying in 2 seconds"
+            sleep 2
+          done
+          echo "Could not publish generated files after retries" >&2
+          exit 1
