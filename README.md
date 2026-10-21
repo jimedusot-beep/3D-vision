@@ -33,3 +33,18 @@ The built-in preview uses approximate primitive geometry intended for general vi
 ## Future work
 
 Add part selection, model library, dimension annotations, cross-sections, and citations to the H.E.R.B.I.E. R01–R16 design register.
+
+
+## H.E.R.B.I.E. V1 engineering collection (2026-10-20)
+
+Imported text files under [HERBIE_V1/](HERBIE_V1):
+- [Parametric master CAD](HERBIE_V1/CAD/HERBIE_V1_Master.scad)
+- [Original exploded CAD reference](HERBIE_V1/CAD/HERBIE_V1_Exploded_Master.scad)
+- [18-part BOM](HERBIE_V1/PARTS.csv)
+- [Mesh validation report](HERBIE_V1/STL_MESH_VALIDATION.json)
+- [R01–R16 engineering references](HERBIE_V1/REFERENCES_R01-R16.md)
+- [Terminology glossary](HERBIE_V1/TERMINOLOGY.md)
+- [Source and terminology register](HERBIE_V1/SOURCE_TERMINOLOGY_REGISTER.md)
+- [File index](HERBIE_V1/LATEST_FILES_INDEX.md)
+
+**Binary asset status:** The original PDF, ZIP, PNG, STL and GLB files from the ChatGPT session have not been directly transferred into GitHub. A [GitHub Action](.github/workflows/build-herbie.yml) generates fresh STL/GLB exports from the OpenSCAD source, then commits them if the action succeeds. Check [Actions](https://github.com/jimedusot-beep/3D-vision/actions) for progress and errors. The regenerated exports are not necessarily byte-identical to the original conversation artifacts, and are provisional/unvalidated mechanically.
