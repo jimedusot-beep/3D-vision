@@ -1,0 +1,36 @@
+name: Browser-test 3D Vision models
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'library.html'
+      - 'tests/**'
+      - '.github/workflows/smoke-viewer.yml'
+permissions:
+  contents: read
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright with Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start static website
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/3dvision.log 2>&1 &
+          sleep 2
+      - name: Test real GLB, STL and library in Chromium
+        run: node tests/smoke-viewer.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-smoke-screenshots
+          path: viewer-smoke*.png
+          if-no-files-found: ignore
