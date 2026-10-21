@@ -4,6 +4,14 @@
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
+## McGruber Lab — repository-driven experiments
+
+**[Experiment 001: H.E.R.B.I.E. Skeleton Workshop](EXPERIMENTS/001_HERBIE_SKELETON/README.md)** · [Generated models and files](EXPERIMENTS/001_HERBIE_SKELETON/) · [Automated generation](.github/workflows/experiment-001.yml)
+
+This reproducible repo experiment includes **five-part skeleton assembled/exploded GLBs**, a separate **electronics space-reservation GLB**, **18-part printer size screening CSV**, assembly transforms in JSON, and a ZIP. The experiment guide covers all eight workflows: assemble, explode, measure, printing checks, join/Boolean editing, electronics study, presentation, and library backups.
+
+**Important:** GitHub automates source-derived files; interactive edits made in a browser are still saved locally unless you export and explicitly commit them. Automatic authenticated browser-to-repository syncing is not implemented. All models remain preliminary and untested.
+
 ## Save your uploaded files and work
 
 1. **Import files** from your device, or import a public URL/GitHub file link. Original files are retained in **My files**, with searchable folders and display names. Identical bytes are stored once.
