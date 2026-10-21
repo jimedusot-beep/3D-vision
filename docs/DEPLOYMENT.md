@@ -12,6 +12,6 @@ Once enabled, rerun “Publish 3D Vision website” at https://github.com/jimedu
 
 ## Independent static hosting
 
-The same built application can be hosted on Sites, Netlify, Cloudflare Pages or another static host. A Sites publication was prepared during development so that the workshop can be used without waiting for the Pages setting. The final development report records its actual successful URL and verification.
+The same built application can be hosted on Sites, Netlify, Cloudflare Pages or another static host. The workshop is successfully published at https://jimmy-3d-vision.violethill64.chatgpt.site . Both Chromium and WebKit workflows passed against that actual public site; see QA.md. It is usable while the GitHub Pages account setting remains pending.
 
 Projects are stored per origin: if switching from one host to another, export a `.3dv` package on the old host and import it on the new one.

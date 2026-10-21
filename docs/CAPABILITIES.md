@@ -29,14 +29,14 @@ The workshop is a functional static mesh editor and assembly viewer. It is not a
 | Basic mesh repair | Tested / partial | Weld coincident vertices, remove degenerate triangles, recalculate / flip normals; no hole filling |
 | Build plate and print checks | Implemented / partial | Five bed presets, bounds/topology checks and face-normal overhang colors; no slicing or print certification |
 | Wall thickness, stress, tolerances | Pending | Not inferred from appearance or nominal dimensions |
-| Save uploaded original files | Tested | IndexedDB blobs, SHA-256 deduplication, original downloads; source/name aliases retained |
+| Save uploaded original files | Tested | IndexedDB original bytes, SHA-256 deduplication, original downloads; source/name aliases retained |
 | Project and file folders | Tested / implemented | Searchable folder metadata, display names, move saved projects |
 | Save/reopen revisions | Tested | Up to ten named scene revisions plus session autosave; no network required to reopen |
 | Portable complete project package | Tested | Download/reimport `.3dv` ZIP with scene geometry and original files |
 | STL, OBJ, GLB, PLY export | Tested | Round-trip dimensions/volume checked; OBJ geometry without MTL; GLB standard meters/Y up |
 | Exploded preview and animation | Implemented | Non-destructive radial preview of top-level unlocked components; original exploded GLB also retained |
 | Turntable, PNG screenshots, labels | Implemented | Screenshot overlays labels; labels capped at 60 visible components, 100 stored annotations |
-| Mobile layout | Tested | iPhone 13 viewport/touch emulation in Chromium; physical device performance remains unverified |
+| Mobile layout | Tested | iPhone 13 viewport/touch emulation in Chromium and macOS WebKit, including the live public site; physical device performance remains unverified |
 | Repository discovery | Tested / implemented | Build-generated catalog and manual public GitHub Refresh; future project directories are supported |
 | Authenticated GitHub write sync | Pending backend | No tokens are accepted, stored or published in the frontend; design in ARCHITECTURE.md |
 | Sketch constraints / assembly joints | Pending | No parametric/BREP engine, kinematic solver, STEP/IGES or feature history |

@@ -37,7 +37,7 @@ New project directories are discovered at build time; the Library's Refresh also
 
 ## Hosting status
 
-The workshop is deployed at the **Open Workshop** link above. The deployed static assets were retrieved over HTTPS and compared to the browser-tested production build.
+The workshop is deployed at the **Open Workshop** link above. The deployed static assets were retrieved over HTTPS and compared to the browser-tested production build. All 24 Chromium workflows and six WebKit checks also passed against the actual public website.
 
 The [GitHub Pages workflow](.github/workflows/pages.yml) builds and tests the full application, then publishes `dist/`. **Pages itself still requires one account setting:** [Settings → Pages](https://github.com/jimedusot-beep/3D-vision/settings/pages) → **Source: GitHub Actions**. The development connector cannot change that administration setting. The expected Pages address still returns 404 until activation. See [deployment instructions](docs/DEPLOYMENT.md).
 

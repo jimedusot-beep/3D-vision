@@ -23,7 +23,7 @@ npx playwright install --with-deps chromium
 npm run test:browser
 ```
 
-Browser tests intercept a synthetic HTTPS origin and fulfill requests directly from `dist/`, so they exercise the production bundles, real WebGL and browser APIs without external CDN access or a separate web server. Set `BASE_URL` to an actual deployed site to test over real HTTP instead. Set `TEST_WEBKIT=1` after installing WebKit to add an iPhone-viewport WebKit check. Chromium uses software WebGL in headless CI.
+Browser tests intercept a synthetic HTTPS origin and fulfill requests directly from `dist/`, so they exercise the production bundles, real WebGL and browser APIs without external CDN access or a separate web server. Set `BASE_URL` to an actual deployed site to test over real HTTP instead. Run `node tests/webkit.mjs` after installing WebKit for the dedicated iPhone-viewport workflow; the CI runner uses macOS. Chromium uses software WebGL in headless CI.
 
 ## Data and coordinate contracts
 
@@ -31,7 +31,7 @@ Internal mesh units are millimeters, with Z up. Unitless STL/OBJ/PLY/OFF default
 
 Imports bake static world transforms into independent components, retaining mesh materials. Native hierarchy is flattened; the workshop can create new visual groups. Animations and skinned meshes are not supported. GLTF companions must be selected together; missing/external companion URIs are rejected rather than fetched implicitly. GLBs should be self-contained. OBJ MTL sidecars are not currently loaded.
 
-Original files are SHA-256 keyed in IndexedDB; identical bytes are stored once with source and filename aliases. Reopening a saved project needs no network. Named projects retain up to ten complete scene revisions. Autosave retains the current workspace. Folder metadata exists for projects and saved originals. A `.3dv` ZIP contains `project.json` and content-hashed original files. Browser data is scoped to a device, browser profile and site origin; export/import packages to migrate between hosts.
+Original file bytes are SHA-256 keyed in IndexedDB as ArrayBuffers for WebKit compatibility, with legacy Blob records still readable; identical bytes are stored once with source and filename aliases. Reopening a saved project needs no network. Named projects retain up to ten complete scene revisions. Autosave retains the current workspace. Folder metadata exists for projects and saved originals. A `.3dv` ZIP contains `project.json` and content-hashed original files. Browser data is scoped to a device, browser profile and site origin; export/import packages to migrate between hosts.
 
 Undo keeps at most 15 snapshots within a 32 MB serialized budget. Imports are limited to 50 MB per file, 500,000 triangles and 200 components per workspace. Boolean input is limited to 80,000 combined triangles; annotations and labels are capped. Lower limits may still be appropriate on older phones. Expanded archives are capped before extraction. Storage quota failures are shown instead of claiming success.
 
