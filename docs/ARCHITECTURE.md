@@ -6,6 +6,11 @@ This is a static, client-side mesh workshop, designed for a GitHub Pages subdire
 - `src/main.js`: renderer, UI, transform gizmos, library, measurements, saved projects, presentation and orchestration.
 - `src/io.js`: model loaders/exporters, URL import, bounded archive handling and `.3dv` packages.
 - `src/storage.js`: IndexedDB originals, named revisions and autosaved session.
+- `src/joints.js` and `src/joint-panel.js`: acyclic fixed/revolute/prismatic transforms and controls; scene-owned saved definitions.
+- `src/annotations.js`: component-local anchors and live distance/angle values.
+- `src/analysis.js`, `src/analysis.worker.js` and `src/tasks.js`: bounded BVH interference and normal-ray wall sampling, progress, cancellation and worker termination.
+- `src/boot.js` and `src/file-mode.js`: graphics-independent file recovery when WebGL cannot start.
+- `src/cloud.js` and `server/cloud-files.mjs`: optional authenticated private storage adapter, separately deployed (CLOUD_STORAGE.md).
 - `src/boolean.js` and `src/boolean.worker.js`: BVH CSG; 20-second worker timeout.
 - `scripts/discover.mjs`: generates the catalog from repository files at build time. New project directories are included. Live Refresh additionally reads the public GitHub tree.
 - `scripts/copy-assets.mjs`: copies discovered model/document assets after Vite builds, preserving relative paths.
@@ -27,7 +32,7 @@ Browser tests intercept a synthetic HTTPS origin and fulfill requests directly f
 
 ## Data and coordinate contracts
 
-Internal mesh units are millimeters, with Z up. Unitless STL/OBJ/PLY/OFF defaults to mm; device/URL import offers explicit mm/cm/m/in overrides. Standard GLTF/GLB uses meters and Y up, converted on import and reversed on export. The existing generated H.E.R.B.I.E. GLBs have nonstandard CAD coordinates and use their preserved repository-specific import path. 3MF units are applied; mixed-unit model archives are rejected.
+Internal mesh units are millimeters, with Z up. Unitless STL/OBJ/PLY/OFF defaults to mm; device/URL import offers explicit mm/cm/m/in overrides. Standard GLTF/GLB uses meters and Y up, converted on import and reversed on export. The existing generated H.E.R.B.I.E. GLBs have nonstandard CAD coordinates and declare `units:mm` and `up:z` in `model-import-settings.json`. Skeleton experiment GLBs use the same explicit metadata. Device and URL imports offer independent source up-axis overrides; original import options persist in saved asset bundles. 3MF units are applied; mixed-unit model archives are rejected.
 
 Imports bake static world transforms into independent components, retaining mesh materials. Native hierarchy is flattened; the workshop can create new visual groups. Animations and skinned meshes are not supported. GLTF companions must be selected together; missing/external companion URIs are rejected rather than fetched implicitly. GLBs should be self-contained. OBJ MTL sidecars are not currently loaded.
 
@@ -46,4 +51,12 @@ Authenticated syncing needs a separate backend and is pending. Recommended desig
 3. A backend endpoint accepts project packages, writes a branch, and opens a reviewable PR. Use blob hashes and optimistic commit leases to avoid repeated transfer and overwrites.
 4. Validate package size/shape server-side; never log credentials or place client secrets in Pages assets. Make public-repository visibility explicit before uploading personal models.
 
-The browser's local file system remains usable without that backend. A cloud upload/file-storage service would similarly require authenticated user ownership and durable object storage; it is not silently substituted for local persistence.
+The browser library remains usable without that GitHub backend. The optional private cloud adapter uses authenticated ownership and durable object storage on a separate host; Pages remains local (CLOUD_STORAGE.md).
+
+## Joint and analysis contracts
+
+Joint definitions live in `scene.object.userData.joints`; base matrices record the parent-relative zero pose. Revolute pivots and slider axes are parent-local. Dependencies are applied in topological order; cycles, multiple drivers, nonuniform/sheared frames and out-of-range travel are rejected. Endpoints stay top-level; grouping them fails atomically. Deleting or replacing an endpoint removes its associated joints. Imported originals and exported meshes remain independent of joint definitions; complete project packages retain them.
+
+Analysis bakes current world-space geometry into a worker. Bounding boxes prune pairs; triangle contact and ray-parity shell containment determine the reported classification. Clearance checks measure nearest surface separation. Thickness reports sample evenly spaced triangle centroids and inward normals on closed, consistently oriented meshes. These are numerical mesh aids with explicit limits, not an exact CAD/contact or manufacturing solver. Analysis results become stale after scene edits and must be rerun.
+
+The viewport renders on demand. Orbit damping, turntable, exploded previews and joint animation request further frames; hidden tabs stop motion. Scene edits refresh component-attached measurements and labels.

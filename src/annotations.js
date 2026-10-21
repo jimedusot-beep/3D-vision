@@ -9,6 +9,7 @@ export function resolveAnchor(root, anchor) {
   if (anchor.componentId && anchor.localPoint) {
     let object; root.traverse(o => { if (o.userData.id === anchor.componentId) object = o; });
     if (!object) return null;
+    for (let p = object; p; p = p.parent) if (!p.visible) return null;
     return object.localToWorld(new THREE.Vector3().fromArray(anchor.localPoint));
   }
   return Array.isArray(anchor.point) ? new THREE.Vector3().fromArray(anchor.point) : null;

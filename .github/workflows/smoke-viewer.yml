@@ -60,7 +60,7 @@ jobs:
       - run: npm run build
       - run: npx playwright install webkit
       - name: WebKit model load, manipulation, save/reopen and export
-        run: node tests/webkit.mjs
+        run: node tests/webkit.mjs && BROWSER_ENGINE=webkit node tests/advanced-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

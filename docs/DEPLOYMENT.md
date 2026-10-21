@@ -1,17 +1,19 @@
 # Deployment
 
-`npm ci && npm run build` produces `dist/`. The asset URLs use relative paths and work under `/3D-vision/`. Deploy the directory without serving repository source or `node_modules`.
+**Primary website:** https://jimedusot-beep.github.io/3D-vision/
+
+`npm ci && npm run build` produces `dist/`. Relative asset URLs work under `/3D-vision/`. Publish that directory; raw repository source imports are not a production build.
 
 ## GitHub Pages
 
-The Pages workflow now builds, runs geometry tests and browser workflows, uploads the complete `dist/` artifact, then deploys it. It includes bundled engine modules, worker, 18 STL files, both GLBs, documents and license notices.
+Pages is enabled and the custom “Publish 3D Vision website” workflow publishes the tested `dist/` artifact. Each main-branch push runs Node and Chromium tests before uploading the site. It includes bundled engines and workers, discovered repository models/documents and license notices. New project folders also trigger publication.
 
-One account-level prerequisite remains: open repository **Settings → Pages**, set **Source → GitHub Actions**. The GitHub connector used to develop this version cannot change repository administration settings. GitHub's `configure-pages` action explicitly requires a token other than `GITHUB_TOKEN` to activate a previously disabled site. No personal token is embedded or requested by this project.
+Successful publication triggers “Verify public 3D Vision website”. It checks the deployed revision using real HTTPS in Chromium and macOS WebKit, including iPhone viewport/touch workflows and saved/reopened joints. These public tests use no local file interception or disabled TLS verification. The workflow has read-only repository permissions.
 
-Once enabled, rerun “Publish 3D Vision website” at https://github.com/jimedusot-beep/3D-vision/actions/workflows/pages.yml. Expected URL: https://jimedusot-beep.github.io/3D-vision/ . This expected address is not proof of a live deployment; consult the run and public response.
+Repository Settings → Pages should use **GitHub Actions** as its publishing source. A separate branch/Jekyll deployment can overwrite the built artifact with unbundled source. The development connector cannot change that administration setting. Consult the custom publication run and public verification results, not just the presence of a green branch Pages run.
 
-## Independent static hosting
+## Other hosts and storage
 
-The same built application can be hosted on Sites, Netlify, Cloudflare Pages or another static host. The workshop is successfully published at https://jimmy-3d-vision.violethill64.chatgpt.site . Both Chromium and WebKit workflows passed against that actual public site; see QA.md. It is usable while the GitHub Pages account setting remains pending.
+The same `dist/` can be hosted statically elsewhere. The older Sites mirror is a separate deployment and is not automatically updated from this repository. The private cloud workshop is also separate; see CLOUD_STORAGE.md. This release targets GitHub Pages.
 
-Projects are stored per origin: if switching from one host to another, export a `.3dv` package on the old host and import it on the new one.
+Projects are stored per browser profile and site origin. Export a complete `.3dv` package on the old host and import it on the new host to transfer originals, geometry, joints, materials and annotations. Static hosting does not upload personal models to GitHub.

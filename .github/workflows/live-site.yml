@@ -1,17 +1,21 @@
 name: Verify public 3D Vision website
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ['Publish 3D Vision website']
+    types: [completed]
     branches: [main]
-    paths: ['.github/workflows/live-site.yml']
 permissions:
   contents: read
 jobs:
   public-chromium:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -21,17 +25,20 @@ jobs:
       - name: Actual public website model, project and mobile workflows
         run: npm run test:browser
         env:
-          BASE_URL: https://jimmy-3d-vision.violethill64.chatgpt.site/
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: public-chromium-results
           path: test-results/
   public-webkit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: macos-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -39,9 +46,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install webkit
       - name: Actual public website in WebKit iPhone emulation
-        run: node tests/webkit.mjs
+        run: node tests/webkit.mjs && BROWSER_ENGINE=webkit node tests/advanced-browser.mjs
         env:
-          BASE_URL: https://jimmy-3d-vision.violethill64.chatgpt.site/
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - uses: actions/upload-artifact@v4
         if: always()
         with:

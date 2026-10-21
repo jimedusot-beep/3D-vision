@@ -1,6 +1,6 @@
 # 3D Vision — browser 3D assembly workshop
 
-**[OPEN PRIVATE CLOUD WORKSHOP](https://mcgruber-print-lab.jimmysoto1994.chatgpt.site/)** · [Previous static workshop](https://jimmy-3d-vision.violethill64.chatgpt.site)
+**[OPEN 3D VISION ON GITHUB PAGES](https://jimedusot-beep.github.io/3D-vision/)** · [Optional private cloud workshop](https://mcgruber-print-lab.jimmysoto1994.chatgpt.site/) · [Previous static workshop](https://jimmy-3d-vision.violethill64.chatgpt.site)
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
@@ -28,7 +28,9 @@ Static/GitHub Pages hosts remain **browser-local** and link to the cloud worksho
 - Orbit, zoom, pan, fit, camera presets, perspective/orthographic views, wireframe, materials, opacity and lighting.
 - Move, rotate, scale, duplicate, rename, hide, isolate, lock, group, align and grid-snap components. Undo and redo.
 - Separate tools for visual groups, joined triangles and a **real geometric Boolean union** in a bounded worker.
-- Bounding dimensions, surface measurements, topology/normal reports, visual section planes and preliminary print checks.
+- Fixed, revolute and prismatic assembly joints with pivots, travel limits, animation and saved poses.
+- Component-attached distance/angle measurements and annotations; bounding dimensions, topology/normal reports and visual section planes.
+- Worker-based triangle interference, closed-shell containment and clearance checks; preliminary inward-ray wall-thickness sampling.
 - Build plates, overhang colors, exploded animations, turntable, annotations and PNG screenshots.
 - IndexedDB project revisions and original files, folder metadata and portable packages.
 - STL, OBJ, GLB and PLY exports with tested reimport dimensions/volume.
@@ -43,13 +45,15 @@ Static/GitHub Pages hosts remain **browser-local** and link to the cloud worksho
 - [Engineering references](HERBIE_V1/REFERENCES_R01-R16.md) · [BOM](HERBIE_V1/PARTS.csv) · [asset provenance](docs/HERBIE_ASSET_GUIDE.md)
 - The previous viewer is preserved at [legacy.html](legacy.html); the original [18-part library](library.html) remains usable.
 
-New project directories are discovered at build time; the Library's Refresh also checks the public repository tree for future McGruber and other projects.
+New project directories are discovered and deployed at build time; nonstandard source coordinates are declared in `model-import-settings.json`. The Library's Refresh also checks the public repository tree for future McGruber and other projects.
 
 ## Hosting status
 
 The private workshop uses a Sites Worker with per-user R2 file storage. The previous public/static host is a separate deployment and is not updated automatically by this repository. See [storage deployment and verification](docs/CLOUD_STORAGE.md). Historical public-site QA results are not evidence for the new cloud deployment.
 
-The [GitHub Pages workflow](.github/workflows/pages.yml) builds and tests the full application, then publishes `dist/`. **Pages itself still requires one account setting:** [Settings → Pages](https://github.com/jimedusot-beep/3D-vision/settings/pages) → **Source: GitHub Actions**. The development connector cannot change that administration setting. The expected Pages address still returns 404 until activation. See [deployment instructions](docs/DEPLOYMENT.md).
+The **[GitHub Pages website](https://jimedusot-beep.github.io/3D-vision/)** is live. The [publication workflow](.github/workflows/pages.yml) tests and publishes the bundled `dist/` artifact. Successful releases automatically trigger [public Chromium and WebKit verification](.github/workflows/live-site.yml). See [deployment instructions](docs/DEPLOYMENT.md).
+
+Pages retains uploads in your browser's IndexedDB. It does not publish your imported files to this public repository. Export a `.3dv` backup to move work between devices or origins; the separately hosted cloud adapter is documented in [CLOUD_STORAGE.md](docs/CLOUD_STORAGE.md).
 
 ## Development
 

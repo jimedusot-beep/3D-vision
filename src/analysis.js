@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import {MeshBVH} from 'three-mesh-bvh';
 import {inspect, validateGeometry} from './core.js';
 
-export const ANALYSIS_LIMITS = {meshes: 40, triangles: 300000, samples: 512, witnesses: 32};
+import {ANALYSIS_LIMITS} from './analysis-limits.js';
+export {ANALYSIS_LIMITS} from './analysis-limits.js';
 const parser = new THREE.BufferGeometryLoader();
 const vec = () => new THREE.Vector3();
 

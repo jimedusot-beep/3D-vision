@@ -2,19 +2,6 @@ name: Publish 3D Vision website
 on:
   push:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'index.html'
-      - 'library.html'
-      - 'legacy.html'
-      - 'package*.json'
-      - 'vite.config.js'
-      - 'scripts/**'
-      - 'tests/**'
-      - 'models/**'
-      - 'HERBIE_V1/**'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -53,7 +40,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # One-time prerequisite: Settings > Pages > Source = GitHub Actions.
+      # The tested dist artifact is the website source. Pages is enabled.
       # GITHUB_TOKEN cannot activate Pages; never put a personal token in source.
       - name: Configure enabled GitHub Pages site
         uses: actions/configure-pages@v5

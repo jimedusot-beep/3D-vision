@@ -2,6 +2,10 @@
   "version": 1,
   "items": [
     {
+      "importOptions": {
+        "units": "mm",
+        "up": "z"
+      },
       "path": "EXPERIMENTS/001_HERBIE_SKELETON/Electronics_Space_Study.glb",
       "name": "Electronics_Space_Study.glb",
       "kind": "glb",
@@ -14,6 +18,10 @@
       "project": "EXPERIMENTS"
     },
     {
+      "importOptions": {
+        "units": "mm",
+        "up": "z"
+      },
       "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Assembly.glb",
       "name": "Skeleton_Assembly.glb",
       "kind": "glb",
@@ -26,6 +34,10 @@
       "project": "EXPERIMENTS"
     },
     {
+      "importOptions": {
+        "units": "mm",
+        "up": "z"
+      },
       "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Exploded.glb",
       "name": "Skeleton_Exploded.glb",
       "kind": "glb",
@@ -278,12 +290,20 @@
       "project": "THIRD_PARTY_NOTICES.md"
     },
     {
+      "importOptions": {
+        "units": "mm",
+        "up": "z"
+      },
       "path": "models/HERBIE_V1_Assembled_Interactive.glb",
       "name": "HERBIE_V1_Assembled_Interactive.glb",
       "kind": "glb",
       "project": "HERBIE_V1"
     },
     {
+      "importOptions": {
+        "units": "mm",
+        "up": "z"
+      },
       "path": "models/HERBIE_V1_Exploded_Interactive.glb",
       "name": "HERBIE_V1_Exploded_Interactive.glb",
       "kind": "glb",

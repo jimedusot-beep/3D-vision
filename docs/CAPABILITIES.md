@@ -18,17 +18,18 @@ The workshop is a functional static mesh editor and assembly viewer. It is not a
 | Align and drop to bed | Implemented | Bounding-box centers aligned on a selected axis; lower selection to Z=0 |
 | Visual grouping / ungrouping | Tested | Preserves child world placement; this does not merge geometry |
 | Join meshes / separate shells | Tested | Triangle concatenation and connectivity-based shell separation; join is not union |
-| Real geometric Boolean union | Tested / partial | Exactly two closed mesh operands, 80,000 combined triangle limit, worker timeout; numerical/manifold edge cases remain |
+| Real geometric Boolean union | Tested / partial | Exactly two closed mesh operands, 80,000 combined triangle limit, cancellable 20-second worker timeout; numerical/manifold edge cases remain |
 | Undo / redo | Tested | Up to 15 geometry/transform snapshots, within 32 MB serialized budget |
 | Dimensions and mesh statistics | Tested | World-space bounding dimensions, triangles, welded vertices, area and signed-volume magnitude |
-| Distance and angle measurements | Implemented | Clicked surface points; optional nearest-face-vertex snapping; no CAD feature/tolerance inference |
+| Distance/angle measurements and notes | Tested / partial | Surface anchors follow component transforms and joint motion; optional nearest-face-vertex snapping; missing/hidden endpoints suppress the mark; no CAD tolerance inference |
 | Visual section cuts | Tested / partial | One movable X/Y/Z clipping plane, with no end-cap generation or solid cutting |
 | Bounding boxes and face normals | Implemented | Selection bounds; normal-line rendering capped at 12,000 faces |
 | Mesh topology checks | Tested / partial | Quantized edge counts, winding conflicts and degenerate faces; not a self-intersection proof |
-| Interference detection | Partial | AABB overlap candidates only, clearly labeled; no exact solid contact solver |
+| Interference detection | Tested / partial | BVH triangle intersection/contact; closed-shell ray-parity containment, including cavities and disconnected shells; surface clearance warnings. Floating point, no exact overlap volume, no self-intersection certification |
 | Basic mesh repair | Tested / partial | Weld coincident vertices, remove degenerate triangles, recalculate / flip normals; no hole filling |
 | Build plate and print checks | Implemented / partial | Five bed presets, bounds/topology checks and face-normal overhang colors; no slicing or print certification |
-| Wall thickness, stress, tolerances | Pending | Not inferred from appearance or nominal dimensions |
+| Wall-thickness sampling | Tested / partial | Up to 512 inward normal rays per closed, consistently oriented mesh; sampled minimum, median, thin-ray witnesses and downloadable JSON. Can miss thin regions and small features; not the true minimum |
+| Stress, mechanical fits and tolerances | Pending | No force/material simulation or fit certification |
 | Save uploaded original files | Tested | IndexedDB original bytes, SHA-256 deduplication, original downloads; source/name aliases retained |
 | Project and file folders | Tested / implemented | Searchable folder metadata, display names, move saved projects |
 | Save/reopen revisions | Tested | Up to ten named scene revisions plus session autosave; no network required to reopen |
@@ -37,10 +38,15 @@ The workshop is a functional static mesh editor and assembly viewer. It is not a
 | Exploded preview and animation | Implemented | Non-destructive radial preview of top-level unlocked components; original exploded GLB also retained |
 | Turntable, PNG screenshots, labels | Implemented | Screenshot overlays labels; labels capped at 60 visible components, 100 stored annotations |
 | Mobile layout | Tested | iPhone 13 viewport/touch emulation in Chromium and macOS WebKit, including the live public site; physical device performance remains unverified |
-| Repository discovery | Tested / implemented | Build-generated catalog and manual public GitHub Refresh; future project directories are supported |
+| Repository discovery | Tested / implemented | 48 current assets, including H.E.R.B.I.E., McGruber V2 and skeleton experiments; manual GitHub Refresh; explicit mm/Z-up metadata for source-derived GLBs |
+| Idle performance | Tested / partial | Render on scene/camera changes, damping and animation; pause in hidden tabs. Dense-mesh and physical low-memory device performance still need profiling |
+| Analysis limits | Tested | 40 meshes / 300,000 combined triangles; 20-second cancellable workers; report invalidated after edits |
 | Authenticated GitHub write sync | Pending backend | No tokens are accepted, stored or published in the frontend; design in ARCHITECTURE.md |
-| Sketch constraints / assembly joints | Pending | No parametric/BREP engine, kinematic solver, STEP/IGES or feature history |
+| Fixed, revolute and prismatic joints | Tested / partial | Top-level components/groups, parent-local axis/pivot, travel limits, chain propagation, animation and saved poses. One driver per component; no cycles or closed-loop mates; positive uniform scale required. Direct transforms of driven parts disabled |
+| Parametric sketches / BREP CAD | Pending | No STEP/IGES, sketch solver or feature history |
 | Manufacturing readiness | Unverified | No model is labeled print-ready; use a slicer and physical fit/strength validation |
+
+See [joint and analysis instructions](JOINTS_AND_ANALYSIS.md) for the new tools.
 
 ## Practical use
 

@@ -42,6 +42,7 @@ test('surface labels and distance measurements follow transformed components',()
   const label={text:'Anchor',...surfaceAnchor(a,new THREE.Vector3(1,2,3))};a.position.x=5;near(resolveAnnotation(w.root,label).point.x,6);
   const measure={kind:'distance',anchors:[surfaceAnchor(a,new THREE.Vector3(5,0,0)),surfaceAnchor(b,new THREE.Vector3(10,0,0))]};
   near(resolveAnnotation(w.root,measure).value,5);b.position.x=25;near(resolveAnnotation(w.root,measure).value,20);
+  b.visible=false;assert.equal(resolveAnnotation(w.root,measure),null);b.visible=true;near(resolveAnnotation(w.root,measure).value,20);
   b.removeFromParent();assert.equal(resolveAnnotation(w.root,measure),null);
 });
 test('mirrored transforms retain outward winding and do not modify source indices',()=>{

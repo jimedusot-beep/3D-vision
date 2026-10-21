@@ -1,9 +1,8 @@
 # Next development priorities
 
-1. Activate GitHub Pages in repository settings and rerun the tested publication workflow; verify that specific origin independently. Keep using the deployed alternate host in the meantime.
-2. Add a backend GitHub App sign-in/sync adapter with private token handling, repository-scoped permissions, hash-based transfers and conflict-safe branch/PR writes.
-3. Add a BREP/constraint engine for proper joints, mate constraints, parametric sketches, STEP and a revision-aware feature tree. Keep this separate from the working mesh editor.
-4. Strengthen topology and Boolean robustness, add cancellable worker mesh analysis, exact solid-interference checks and validated wall-thickness sampling.
-5. Expand import fixtures (3MF extensions, multi-file GLTF materials), texture/MTL export, annotations attached to component-local coordinates, per-component explosion vectors and operation history.
-6. Test on physical older iPhones and low-memory Android devices. Add memory telemetry and adaptive render-on-demand; evaluate accessibility with assistive technology.
-7. Validate H.E.R.B.I.E. source dimensions, joint clearances, print orientation, fasteners, thermal/electrical design and physical load cases before any build-readiness claim.
+1. Test the deployed workshop on physical older iPhones and low-memory Android devices. Profile imports, worker memory, textures, accessibility and long sessions.
+2. Add authenticated GitHub App sign-in/sync with private server-side tokens, repository-scoped access, hash-based transfers and conflict-safe branch/PR writes. Preserve the separate optional private cloud adapter.
+3. Strengthen Boolean/topology robustness with self-intersection checks, capped-section geometry and validated local wall-distance methods. Existing thickness sampling and triangle/containment checks remain preliminary.
+4. Extend kinematic joints with editable reference frames and interactive pivot placement. A closed-loop mate solver, parametric sketches, STEP/BREP and feature history require a separate CAD engine.
+5. Expand format fixtures (3MF extensions, GLTF textures/MTL), textured exports, per-component explosion paths and richer annotations.
+6. Validate H.E.R.B.I.E. source dimensions, joints, fasteners, print orientation, electrical/thermal design and physical load cases before a build-readiness claim.
