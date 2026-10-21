@@ -1,14 +1,15 @@
 import {allRecords,readRecord,patchAsset,subscribeAssetSaves,loadAssetBundle,saveAsset} from './storage.js';
 import {safeName,download,unpackProject} from './io.js';
 import {createCloudAPI,CLOUD_WORKSHOP,stableJSON,contentHash} from './cloud-api.js';
+import {cloudUsage,createAccountBackup,formatBytes} from './cloud-backup.js';
 export {CLOUD_WORKSHOP} from './cloud-api.js';
 export function createCloudLibrary({notify=()=>{},onOpen,makeProject,onProject=onOpen,saveCurrentProject}){
  const api=createCloudAPI(),origin=location.origin;
- let state='checking',entries=[],chain=Promise.resolve(),message='',render=()=>{},lastOwner=null,projectError=false;
+ let state='checking',files=[],entries=[],chain=Promise.resolve(),message='',render=()=>{},lastOwner=null,projectError=false;
  const pending=new Set(),dirty=new Set(),failed=new Set();
  const cloudButton=document.createElement('button');cloudButton.id='cloud';cloudButton.textContent='Cloud';document.querySelector('.header-actions')?.prepend(cloudButton);
  function update(){cloudButton.textContent=state==='ready'?(pending.size?'Cloud · saving…':failed.size||projectError?'Cloud · retry':'Cloud ✓'):'Cloud';render()}
- async function refresh(){try{const data=await api.list();entries=data.entries;lastOwner=data.accountKey;state='ready';return true}catch(e){state=e.status===401?'signin':e.status===404?'local':'offline';message=e.message;return false}finally{update()}}
+ async function refresh(){try{const data=await api.list();entries=data.entries;files=data.files;lastOwner=data.accountKey;state='ready';return true}catch(e){state=e.status===401?'signin':e.status===404?'local':'offline';message=e.message;return false}finally{update()}}
  const ready=refresh();
  async function syncOriginal(id,force=false){
   const asset=await readRecord('assets',id);if(!asset)return;
@@ -47,18 +48,20 @@ export function createCloudLibrary({notify=()=>{},onOpen,makeProject,onProject=o
   const dialog=document.getElementById('dialog'),body=document.getElementById('dialog-body');document.getElementById('dialog-title').textContent='Private cloud library';body.replaceChildren();
   const paragraph=document.createElement('p');paragraph.textContent='Sign in with the same ChatGPT account on each device. Imported files, names, folders and import settings are backed up here. Save revision stores a complete editable assembly, including joints and originals. Concurrent project revisions are kept separately; scenes are not automatically merged.';body.append(paragraph);
   const stateLine=document.createElement('p');stateLine.id='cloud-state';body.append(stateLine);
+  const usageLine=document.createElement('p');usageLine.id='cloud-usage';body.append(usageLine);
   const controls=document.createElement('div');controls.className='cloud-actions';body.append(controls);
   const tab=document.createElement('select');tab.id='cloud-view';tab.setAttribute('aria-label','Cloud library view');tab.add(new Option('Projects & revisions','projects'));tab.add(new Option('Saved files','assets'));body.append(tab);
   const search=document.createElement('input');search.id='cloud-search';search.type='search';search.placeholder='Search names and folders';search.setAttribute('aria-label','Search cloud library');body.append(search);
   const list=document.createElement('div');list.id='cloud-files';body.append(list);
   const action=(label,fn,parent=controls)=>{const b=document.createElement('button');b.textContent=label;b.onclick=async()=>{b.disabled=true;try{await fn()}catch(e){message=e.message;notify(e.message,true)}finally{b.disabled=false;update()}};parent.append(b);return b};
-  action('Refresh',refresh);action('Retry file backups',async()=>{if(!await refresh())return;for(const asset of await allRecords('assets'))queueOriginal(asset.id,true);await chain;await refresh()});
+  action('Refresh',refresh);action('Download account backup',async()=>{if(!await refresh())throw Error('Connect to cloud storage before downloading a backup.');message='Preparing checksum-verified account backup…';update();const blob=await createAccountBackup(api,{onProgress:(done,total)=>{message='Backing up '+done+' / '+total+' files…';update()}});download(blob,'3d-vision-account-backup.zip');message='Recovery ZIP downloaded. It includes originals, project packages and a filename/settings manifest.';});action('Retry file backups',async()=>{if(!await refresh())return;for(const asset of await allRecords('assets'))queueOriginal(asset.id,true);await chain;await refresh()});
   if(makeProject)action('Back up current project',async()=>{if(saveCurrentProject)await saveCurrentProject();else await saveProject(await makeProject(),document.getElementById('title')?.value)});
   render=()=>{
    if(!dialog.open)return;
    stateLine.replaceChildren();stateLine.textContent=state==='ready'?`Private account storage · ${pending.size?pending.size+' file backups pending. ':''}${message}`:state==='checking'?'Checking account storage…':state==='signin'?'Sign in to enable cloud saving.':state==='local'?'This static host saves locally. Open the private cloud workshop to sync across devices.':'Cloud unavailable. Local copies are retained. '+message;
    if(state!=='ready'&&state!=='checking'){const a=document.createElement('a');a.href=state==='local'?CLOUD_WORKSHOP:'/signin-with-chatgpt?return_to=%2F';a.target='_top';a.textContent=state==='local'?' Open private cloud workshop →':' Sign in with ChatGPT →';stateLine.append(a)}
-   list.replaceChildren();if(state!=='ready')return;
+   usageLine.textContent='';list.replaceChildren();if(state!=='ready')return;
+   const usage=cloudUsage(files,entries);usageLine.textContent=formatBytes(usage.bytes)+' of stored file data · '+usage.blobs+' unique blobs · '+usage.files+' saved files · '+usage.projects+' projects · '+usage.revisions+' revisions. Metadata and provider overhead excluded; this is usage, not a quota. Account recovery ZIP: up to 32 MiB; larger accounts can download each original or revision.';
    const query=search.value.toLowerCase(),filtered=entries.filter(e=>([e.title,e.name,e.displayName,e.folder].filter(Boolean).join(' ')).toLowerCase().includes(query));
    if(tab.value==='assets'){
     for(const entry of filtered.filter(e=>e.kind==='asset').sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt))){const row=document.createElement('article');row.className='asset-card';const title=document.createElement('h3');title.textContent=entry.displayName;const meta=document.createElement('p');meta.textContent=entry.folder+' · '+entry.name;row.append(title,meta);action('Open',()=>openAsset(entry),row);action('Download original',async()=>{const data=await api.getAsset(entry.id);download(await api.download(data.blobId,data.name),data.name)},row);list.append(row)}

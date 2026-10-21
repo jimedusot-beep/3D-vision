@@ -57,3 +57,5 @@ See [joint and analysis instructions](JOINTS_AND_ANALYSIS.md) for the new tools.
 4. Inspect geometry, prepare orientation and export visible meshes. Run an appropriate slicer before printing.
 
 Static features are free of account requirements and paid runtime APIs. Hosting, storage retention, CORS and optional future backend services follow their providers' limits.
+
+Cloud library management: unique-blob usage totals and a checksum-verified account recovery ZIP (32 MiB source-data cap) are implemented. Metadata and original names/settings are included. Automatic whole-account restore and permanent deletion are not implemented.

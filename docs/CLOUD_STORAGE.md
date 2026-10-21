@@ -40,3 +40,11 @@ Private deployment version 2: source commit `cba90e73d01e8196d8bc32298aca3753b7c
 ## Limits
 
 50 MB per file/package; metadata capped at 64 KB; browser and provider storage limits still apply. Cloud backups are snapshots: original-file backups are automatic, while scene edits need Save revision. Concurrent scenes are retained separately and are not merged. No deletion/retention UI, virus scanning, billing/quota dashboard or offline multi-device merge is provided. Complete revision packages include original bytes and can use more storage than incremental scene-only sync. Preserve independent exports. H.E.R.B.I.E. remains physically untested.
+
+## Usage and recovery backups
+
+Cloud now shows the total bytes of unique stored file blobs, saved-file records, projects and revisions. Metadata and provider overhead are excluded; these totals do not describe an account quota. Refresh updates the listing.
+
+Use **Cloud → Download account backup** for a checksum-verified recovery ZIP containing every stored blob and a JSON manifest with original filenames, folders, import settings, companion bindings and project revision records. The archive uses hash-only paths. Rename a blob to the filename in the manifest before opening it; import restored `.3dv` packages to recover editable assemblies. Automatic whole-account restore is not yet implemented.
+
+Recovery ZIP export is limited to 32 MiB of source bytes to reduce browser memory pressure. Larger accounts can download originals and individual complete revisions. Listings and metadata are read sequentially, not as a transactional snapshot; avoid changing files from another device during export. A failed download or checksum verification prevents exporting a partial archive. Permanent cloud deletion and retention controls remain pending reference-safe cleanup.
