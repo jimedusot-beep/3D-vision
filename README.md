@@ -1,51 +1,63 @@
-# 3D Vision — browser-based 3D model library
+# 3D Vision — browser 3D assembly workshop
 
-H.E.R.B.I.E. V1 is a **provisional, untested** skeleton-first robot design. The public repository contains 18 STL parts, 2 GLB assemblies, editable CAD sources, PDF guides, technical references, and a ZIP archive.
+**[OPEN 3D VISION WORKSHOP](https://jimmy-3d-vision.violethill64.chatgpt.site)**
 
-## View the real 3D models — no download or upload
+A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
-**[OPEN THE COMPLETE VIEWING LINK LIBRARY (all 18 STLs + both robot assemblies)](STL_VIEWING_LINKS.md)**
+## Save your uploaded files and work
 
-Quick links that do not depend on GitHub Pages:
+1. **Import files** from your device, or import a public URL/GitHub file link. Original files are retained in **My files**, with searchable folders and display names. Identical bytes are stored once.
+2. Use the component tree and transform tools. **Save revision** keeps a named project; **My projects** reopens saved revisions. The last workspace is also autosaved.
+3. **Export → complete project (.3dv)** creates a portable backup containing scene geometry, component placement and original files. Import the package to move between devices or hosts.
 
-- [Assembled H.E.R.B.I.E. · Online 3D Viewer](https://3dviewer.net/index.html#https://raw.githubusercontent.com/jimedusot-beep/3D-vision/main/models/HERBIE_V1_Assembled_Interactive.glb)
-- [Exploded H.E.R.B.I.E. · Online 3D Viewer](https://3dviewer.net/index.html#https://raw.githubusercontent.com/jimedusot-beep/3D-vision/main/models/HERBIE_V1_Exploded_Interactive.glb)
-- [Head front shell HBR-001 · GitHub's STL viewer](HERBIE_V1/STL/HBR-001.stl)
-- [Head front shell HBR-001 · Online 3D Viewer](https://3dviewer.net/index.html#https://raw.githubusercontent.com/jimedusot-beep/3D-vision/main/HERBIE_V1/STL/HBR-001.stl)
+Files and projects are saved in **this browser on this device**. Clearing site data can remove them. The static application does not upload your personal models to a server or automatically write to GitHub. Authenticated cross-device/GitHub sync is pending a backend.
 
-GitHub natively previews valid STL meshes. Online 3D Viewer accepts a public remote file URL via the URL fragment. Both options bypass the incomplete GitHub Pages setup.
+## Working capabilities
 
-## Files you can open in this repository
+- Import STL, OBJ, GLB, self-contained/companion GLTF, 3MF, PLY and OFF meshes; load multiple components together.
+- Orbit, zoom, pan, fit, camera presets, perspective/orthographic views, wireframe, materials, opacity and lighting.
+- Move, rotate, scale, duplicate, rename, hide, isolate, lock, group, align and grid-snap components. Undo and redo.
+- Separate tools for visual groups, joined triangles and a **real geometric Boolean union** in a bounded worker.
+- Bounding dimensions, surface measurements, topology/normal reports, visual section planes and preliminary print checks.
+- Build plates, overhang colors, exploded animations, turntable, annotations and PNG screenshots.
+- IndexedDB project revisions and original files, folder metadata and portable packages.
+- STL, OBJ, GLB and PLY exports with tested reimport dimensions/volume.
 
-| Category | Location |
-|---|---|
-| **18 separate STL parts** | [HERBIE_V1/STL](HERBIE_V1/STL) |
-| **Assembled and exploded GLBs** | [models](models) |
-| **Editable OpenSCAD master** | [HERBIE_V1/CAD](HERBIE_V1/CAD) |
-| **Bills of materials and dimensional notes** | [HERBIE_V1/PARTS.csv](HERBIE_V1/PARTS.csv) |
-| **Assembly instructions PDF** | [Regenerated assembly instructions](HERBIE_V1/documents/HERBIE_V1_Assembly_Instructions_REGENERATED.pdf) |
-| **Engineering summary PDF** | [Regenerated engineering summary](HERBIE_V1/documents/HERBIE_V1_Engineering_Summary_REGENERATED.pdf) |
-| **Assembled model image** | [Regenerated render](HERBIE_V1/documents/HERBIE_V1_Assembled_REGENERATED.png) |
-| **Exploded model image** | [Regenerated render](HERBIE_V1/documents/HERBIE_V1_Exploded_REGENERATED.png) |
-| **All files in one archive** | [Regenerated collection ZIP](HERBIE_V1/documents/HERBIE_V1_Repository_Collection_REGENERATED.zip) |
-| **Engineering research** | [R01–R16 references](HERBIE_V1/REFERENCES_R01-R16.md) |
-| **Technical terminology** | [Glossary](HERBIE_V1/TERMINOLOGY.md) |
-| **STL mesh validation records** | [Report](HERBIE_V1/STL_MESH_VALIDATION.json) |
+**[Full capability checklist](docs/CAPABILITIES.md)** distinguishes tested, implemented, partial and pending work. See **[QA evidence](docs/QA.md)**, **[architecture and auth design](docs/ARCHITECTURE.md)** and **[next priorities](docs/NEXT_PRIORITIES.md)**.
 
-### Our custom 3D Vision website
+## Models and original documentation
 
-Source: [index.html](index.html) and [18-part library](library.html).
-Expected hosting URL after GitHub Pages is enabled: https://jimedusot-beep.github.io/3D-vision/
+- [18 STL parts](HERBIE_V1/STL) · [assembled/exploded GLBs](models) · [OpenSCAD sources](HERBIE_V1/CAD)
+- [PDFs, PNGs and complete regenerated archive](HERBIE_V1/documents)
+- [Complete direct viewing links](STL_VIEWING_LINKS.md), which work independently of either website host
+- [Engineering references](HERBIE_V1/REFERENCES_R01-R16.md) · [BOM](HERBIE_V1/PARTS.csv) · [asset provenance](docs/HERBIE_ASSET_GUIDE.md)
+- The previous viewer is preserved at [legacy.html](legacy.html); the original [18-part library](library.html) remains usable.
 
-**Current website publishing blocker:** The [Pages workflow](.github/workflows/pages.yml) runs its asset checks successfully but GitHub fails the **Configure Pages** step because Pages has not been enabled. To activate, use [GitHub Settings → Pages](https://github.com/jimedusot-beep/3D-vision/settings/pages) and set **Source → GitHub Actions** once. The GitHub connection available in this conversation cannot change that setting.
+New project directories are discovered at build time; the Library's Refresh also checks the public repository tree for future McGruber and other projects.
 
-### Tested versus unverified
+## Hosting status
 
-- **Confirmed on GitHub:** all 18 STL meshes, both GLBs, both PDF summaries, two PNG renders, ZIP, BOM, references, CAD masters.
-- **Browser tested (GitHub Actions Chromium):** local static site loaded assembled GLB, exploded GLB, HBR-001 STL and part search. [Passing test](https://github.com/jimedusot-beep/3D-vision/actions/workflows/smoke-viewer.yml).
-- **Not independently verified:** remote GitHub Pages hosting; physical print quality; fit of joints; fastener strength; structural loading; thermal and electrical requirements.
-- **Provenance:** New STLs, GLBs, PDFs, previews and ZIP were regenerated from project sources by [this workflow](.github/workflows/build-herbie.yml); they aren't necessarily byte-identical to the original artifacts created in ChatGPT. Original historical PDF/image assets were **not** directly imported.
+The workshop is deployed at the **Open Workshop** link above. The deployed static assets were retrieved over HTTPS and compared to the browser-tested production build.
 
-### Future projects
+The [GitHub Pages workflow](.github/workflows/pages.yml) builds and tests the full application, then publishes `dist/`. **Pages itself still requires one account setting:** [Settings → Pages](https://github.com/jimedusot-beep/3D-vision/settings/pages) → **Source: GitHub Actions**. The development connector cannot change that administration setting. The expected Pages address still returns 404 until activation. See [deployment instructions](docs/DEPLOYMENT.md).
 
-3D Vision is intended to hold a model library for H.E.R.B.I.E., McGruber experiments and later original inventions. Add new projects in separate directories with their own source, references and revision history.
+## Development
+
+Node 22.12+:
+
+```sh
+npm ci
+npm test
+npm run build
+npm run dev
+npx playwright install --with-deps chromium
+npm run test:browser
+```
+
+The browser suite uses the production bundle and real model files; it loads, manipulates, saves, reopens, packages, exports and reimports geometry. A separate macOS WebKit job checks the iPhone-size workflow. This is emulation, not a physical iPhone certification.
+
+Internal coordinates use millimeters with Z up. Standard GLTF import/export converts meters and Y up; original H.E.R.B.I.E. GLBs have a repository-specific coordinate path. See the architecture guide for import limits and storage behavior.
+
+Parametric sketches/joints, exact solid collision detection, wall-thickness analysis, hole filling, STEP/IGES and authenticated cloud syncing are **not implemented**. Print quality, joint fit, fasteners, thermal/electrical requirements and structural loads remain unverified.
+
+Open-source dependencies and distributed license texts: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Existing CAD/artifact provenance is preserved.

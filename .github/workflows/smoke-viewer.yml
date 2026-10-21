@@ -15,6 +15,9 @@ on:
       - 'tests/**'
       - '.github/workflows/smoke-viewer.yml'
   pull_request:
+concurrency:
+  group: workshop-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -33,11 +36,10 @@ jobs:
       - name: Build portable static site and discover repository assets
         run: npm run build
       - name: Install browser engines
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium
       - name: Model manipulation, persistence, exports and mobile browser tests
         run: npm run test:browser
         env:
-          TEST_WEBKIT: '1'
           LIBGL_ALWAYS_SOFTWARE: '1'
       - uses: actions/upload-artifact@v4
         if: always()
@@ -45,3 +47,22 @@ jobs:
           name: workshop-test-results
           path: test-results/
           if-no-files-found: ignore
+  webkit-mobile:
+    runs-on: macos-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install webkit
+      - name: WebKit model load, manipulation, save/reopen and export
+        run: node tests/webkit.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: webkit-mobile-results
+          path: test-results/
