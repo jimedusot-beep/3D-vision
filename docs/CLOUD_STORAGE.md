@@ -28,7 +28,7 @@ A file manifest binds the exact original and each GLTF companion hash, together 
 
 The private Sites source uses the supplied Vinext Worker integration, API route adapters and `.openai/hosting.json` with `r2: "BUCKET"`; it remains owner-private. Its `/workshop/index.html` and related static assets are the production Vite build of this repository. Update the client build and backend handlers together, build/test the Worker, then publish via the Sites source workflow. Do not expose a public raw Worker origin that bypasses platform identity enforcement.
 
-Private deployment version 1: source commit `d9ab208134eb7658a617245166ea7044310ccabf`; deployment `appgdep_6ad90b25a9b481919f82b97284e4d915` succeeded October 21, 2026. The Sites source is separately versioned; updating GitHub alone does not deploy the private Worker.
+Private deployment version 2: source commit `cba90e73d01e8196d8bc32298aca3753b7c26bfe`; deployment `appgdep_6ad90ceca7d8819198dcefde9b334f61` succeeded October 21, 2026. The update preserves the existing R2 bucket and adds a clear retry indicator plus stable project IDs in graphics-free recovery. The Sites source is separately versioned; updating GitHub alone does not deploy the private Worker.
 
 ## Verification
 

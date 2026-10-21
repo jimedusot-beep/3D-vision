@@ -24,7 +24,7 @@ async function device(user,mobile=false){
   let name=decodeURIComponent(url.pathname.replace(/^\/workshop\//,''));if(!name||name.endsWith('/'))name+='index.html';const file=path.resolve('dist',name);if(!file.startsWith(path.resolve('dist')+'/'))return route.fulfill({status:403});
   try{await route.fulfill({body:await readFile(file),contentType:{'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.glb':'model/gltf-binary'}[path.extname(name)]||'application/octet-stream'});}catch{await route.fulfill({status:404});}
  });
- const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(base);await page.waitForFunction(()=>vision?.ready);await page.evaluate(()=>vision.cloud.flush());return{page,context,setOffline:value=>offline=value};
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(base);await page.waitForFunction(()=>window.vision?.ready,null,{timeout:45000});await page.evaluate(()=>vision.cloud.flush());return{page,context,setOffline:value=>offline=value};
 }
 const report=name=>{results.push({name,status:'PASS'});console.log('PASS:',name)};
 const clear=async p=>{await p.locator('#new').click();await p.getByRole('button',{name:'Create empty workspace',exact:true}).click()};
