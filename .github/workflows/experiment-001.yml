@@ -1,0 +1,35 @@
+name: Generate H.E.R.B.I.E. Experiment 001
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_experiment_001.py'
+      - 'HERBIE_V1/STL/**'
+      - '.github/workflows/experiment-001.yml'
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install numpy trimesh pygltflib
+      - run: python scripts/build_experiment_001.py
+      - name: Commit generated experiments
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add EXPERIMENTS/001_HERBIE_SKELETON
+          git diff --cached --quiet && exit 0
+          git commit -m "Publish H.E.R.B.I.E. skeleton experiment 001 outputs"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 2
+          done
+          exit 1
