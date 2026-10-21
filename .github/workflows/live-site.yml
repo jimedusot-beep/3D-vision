@@ -1,0 +1,49 @@
+name: Verify public 3D Vision website
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/live-site.yml']
+permissions:
+  contents: read
+jobs:
+  public-chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Actual public website model, project and mobile workflows
+        run: npm run test:browser
+        env:
+          BASE_URL: https://jimmy-3d-vision.violethill64.chatgpt.site/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-chromium-results
+          path: test-results/
+  public-webkit:
+    runs-on: macos-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install webkit
+      - name: Actual public website in WebKit iPhone emulation
+        run: node tests/webkit.mjs
+        env:
+          BASE_URL: https://jimmy-3d-vision.violethill64.chatgpt.site/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-webkit-results
+          path: test-results/
