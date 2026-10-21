@@ -17,7 +17,9 @@ def pdf(path,title,lines):
         if y<60:c.showPage();y=height-50;c.setFont('Helvetica',9)
         c.drawString(40,y,line[:105]);y-=15
     c.save()
-with (DOC/'PARTS.csv').open() as f: parts=list(csv.DictReader(f))
+with (DOC/'PARTS.csv').open(newline='', encoding='utf-8') as f:
+    parts=list(csv.DictReader(f))
+assert len(parts)==18 and all('part_number' in p and 'name' in p for p in parts), 'Parts CSV must contain 18 named rows'
 parts_lines=['H.E.R.B.I.E. V1: PROVISIONAL / NOT PHYSICALLY TESTED','', 'Units: millimeters. Approximate: height 500; head 240 x 170 x 145;',
 'torso 220 x 190 x 205; base 280 x 240 x 115. These are not validated.',
 '','Suggested build order (subject to fit testing):',
