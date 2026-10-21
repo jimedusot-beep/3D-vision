@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "library.html"
       - "models/**"
       - "HERBIE_V1/STL/**"
       - "HERBIE_V1/documents/**"
@@ -45,6 +46,7 @@ jobs:
         run: |
           mkdir -p _site/models _site/HERBIE_V1/STL _site/HERBIE_V1/documents
           cp index.html _site/index.html
+          cp library.html _site/library.html
           cp models/*.glb _site/models/
           cp HERBIE_V1/STL/*.stl _site/HERBIE_V1/STL/
           cp HERBIE_V1/PARTS.csv _site/HERBIE_V1/
