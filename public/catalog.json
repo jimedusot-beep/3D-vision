@@ -1,0 +1,221 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "path": "HERBIE_V1/CAD/HERBIE_V1_Exploded_Master.scad",
+      "name": "HERBIE_V1_Exploded_Master.scad",
+      "kind": "scad",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/CAD/HERBIE_V1_Master.scad",
+      "name": "HERBIE_V1_Master.scad",
+      "kind": "scad",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/LATEST_FILES_INDEX.md",
+      "name": "LATEST_FILES_INDEX.md",
+      "kind": "md",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/PARTS.csv",
+      "name": "PARTS.csv",
+      "kind": "csv",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/README.md",
+      "name": "README.md",
+      "kind": "md",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/REFERENCES_R01-R16.md",
+      "name": "REFERENCES_R01-R16.md",
+      "kind": "md",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/SOURCE_TERMINOLOGY_REGISTER.md",
+      "name": "SOURCE_TERMINOLOGY_REGISTER.md",
+      "kind": "md",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-001.stl",
+      "name": "Head Front Shell",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-002.stl",
+      "name": "Head Rear Shell",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-003.stl",
+      "name": "Faceplate",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-004.stl",
+      "name": "Head Internal Frame",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-005.stl",
+      "name": "Fixed Neck",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-006.stl",
+      "name": "Upper Frame Plate",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-007.stl",
+      "name": "Lower Frame Plate",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-008.stl",
+      "name": "Left Upright",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-009.stl",
+      "name": "Right Upright",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-010.stl",
+      "name": "Torso Front Panel",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-011.stl",
+      "name": "Torso Rear Panel",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-012.stl",
+      "name": "Left Shoulder Interface",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-013.stl",
+      "name": "Right Shoulder Interface",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-014.stl",
+      "name": "Left Static Arm",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-015.stl",
+      "name": "Right Static Arm",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-016.stl",
+      "name": "Computer Adapter Tray",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-017.stl",
+      "name": "Battery Holder Tray",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-018.stl",
+      "name": "Stationary Base",
+      "kind": "stl",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/TERMINOLOGY.md",
+      "name": "TERMINOLOGY.md",
+      "kind": "md",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Assembled_REGENERATED.png",
+      "name": "HERBIE_V1_Assembled_REGENERATED.png",
+      "kind": "png",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Assembly_Instructions_REGENERATED.pdf",
+      "name": "HERBIE_V1_Assembly_Instructions_REGENERATED.pdf",
+      "kind": "pdf",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Engineering_Summary_REGENERATED.pdf",
+      "name": "HERBIE_V1_Engineering_Summary_REGENERATED.pdf",
+      "kind": "pdf",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Exploded_REGENERATED.png",
+      "name": "HERBIE_V1_Exploded_REGENERATED.png",
+      "kind": "png",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Repository_Collection_REGENERATED.zip",
+      "name": "HERBIE_V1_Repository_Collection_REGENERATED.zip",
+      "kind": "zip",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "README.md",
+      "name": "README.md",
+      "kind": "md",
+      "project": "README.md"
+    },
+    {
+      "path": "STL_VIEWING_LINKS.md",
+      "name": "STL_VIEWING_LINKS.md",
+      "kind": "md",
+      "project": "STL_VIEWING_LINKS.md"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "name": "THIRD_PARTY_NOTICES.md",
+      "kind": "md",
+      "project": "THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "path": "models/HERBIE_V1_Assembled_Interactive.glb",
+      "name": "HERBIE_V1_Assembled_Interactive.glb",
+      "kind": "glb",
+      "project": "HERBIE_V1"
+    },
+    {
+      "path": "models/HERBIE_V1_Exploded_Interactive.glb",
+      "name": "HERBIE_V1_Exploded_Interactive.glb",
+      "kind": "glb",
+      "project": "HERBIE_V1"
+    }
+  ]
+}

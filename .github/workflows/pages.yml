@@ -3,13 +3,18 @@ on:
   push:
     branches: [main]
     paths:
-      - "index.html"
-      - "library.html"
-      - "models/**"
-      - "HERBIE_V1/STL/**"
-      - "HERBIE_V1/documents/**"
-      - "HERBIE_V1/PARTS.csv"
-      - ".github/workflows/pages.yml"
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'library.html'
+      - 'legacy.html'
+      - 'package*.json'
+      - 'vite.config.js'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'models/**'
+      - 'HERBIE_V1/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,45 +24,39 @@ concurrency:
   group: github-pages
   cancel-in-progress: true
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pages-validation-results
+          path: test-results/
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Validate static assets
-        run: |
-          test -s index.html
-          test -s models/HERBIE_V1_Assembled_Interactive.glb
-          test -s models/HERBIE_V1_Exploded_Interactive.glb
-          test -s HERBIE_V1/STL/HBR-001.stl
-          test -s HERBIE_V1/STL/HBR-018.stl
-          python - <<'PY'
-          from pathlib import Path
-          for name in ['Assembled','Exploded']:
-              f=Path(f'models/HERBIE_V1_{name}_Interactive.glb')
-              assert f.read_bytes()[:4] == b'glTF',f'{name} is not a valid GLB header'
-          models=sorted(Path('HERBIE_V1/STL').glob('HBR-???.stl'))
-          assert len(models)==18,f'Expected 18 STL parts, got {len(models)}'
-          print('Static site contains both GLBs and 18 STL parts.')
-          PY
-      - name: Assemble published site
-        run: |
-          mkdir -p _site/models _site/HERBIE_V1/STL _site/HERBIE_V1/documents
-          cp index.html _site/index.html
-          cp library.html _site/library.html
-          cp models/*.glb _site/models/
-          cp HERBIE_V1/STL/*.stl _site/HERBIE_V1/STL/
-          cp HERBIE_V1/PARTS.csv _site/HERBIE_V1/
-          if test -d HERBIE_V1/documents; then cp HERBIE_V1/documents/* _site/HERBIE_V1/documents/ 2>/dev/null || true; fi
-          touch _site/.nojekyll
-      - name: Configure Pages
+      # One-time prerequisite: Settings > Pages > Source = GitHub Actions.
+      # GITHUB_TOKEN cannot activate Pages; never put a personal token in source.
+      - name: Configure enabled GitHub Pages site
         uses: actions/configure-pages@v5
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: _site
-      - name: Deploy Pages
+      - name: Deploy tested static build
         id: deployment
         uses: actions/deploy-pages@v4

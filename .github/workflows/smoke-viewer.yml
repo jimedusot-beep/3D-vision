@@ -1,36 +1,47 @@
-name: Browser-test 3D Vision models
+name: Test 3D Vision workshop
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
+      - 'src/**'
+      - 'public/**'
       - 'index.html'
       - 'library.html'
+      - 'legacy.html'
+      - 'package*.json'
+      - 'vite.config.js'
+      - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/smoke-viewer.yml'
+  pull_request:
 permissions:
   contents: read
 jobs:
-  browser-smoke:
+  workshop:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install Playwright with Chromium
-        run: |
-          npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
-      - name: Start static website
-        run: |
-          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/3dvision.log 2>&1 &
-          sleep 2
-      - name: Test real GLB, STL and library in Chromium
-        run: node tests/smoke-viewer.mjs
+          cache: npm
+      - run: npm ci
+      - name: Geometry, topology and all 18 STL tests
+        run: npm test
+      - name: Build portable static site and discover repository assets
+        run: npm run build
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium webkit
+      - name: Model manipulation, persistence, exports and mobile browser tests
+        run: npm run test:browser
+        env:
+          TEST_WEBKIT: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: browser-smoke-screenshots
-          path: viewer-smoke*.png
+          name: workshop-test-results
+          path: test-results/
           if-no-files-found: ignore
