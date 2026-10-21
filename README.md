@@ -1,5 +1,14 @@
 # 3D Vision — browser 3D assembly workshop
 
+## Connected H.E.R.B.I.E. engineering workshops
+
+- **Body (this repo):** CAD, printable parts, GLB assemblies and interactive 3D viewing, including projects beyond H.E.R.B.I.E.
+- **Brain:** [Herbie](https://github.com/jimedusot-beep/Herbie) — software and simulated behaviors.
+- **Electronics:** [Herbie-cyborg-hardware](https://github.com/jimedusot-beep/Herbie-cyborg-hardware) — preliminary circuitry and physical integration plans.
+- [Mechanical handoff guide](docs/HERBIE_CROSS_REPO_INTEGRATION.md) · [Mechanical part IDs](HERBIE_V1/PARTS.csv)
+
+All 18 H.E.R.B.I.E. CAD parts remain provisional; no physical fit is certified.
+
 **[OPEN 3D VISION ON GITHUB PAGES](https://jimedusot-beep.github.io/3D-vision/)** · [Optional private cloud workshop](https://mcgruber-print-lab.jimmysoto1994.chatgpt.site/) · [Previous static workshop](https://jimmy-3d-vision.violethill64.chatgpt.site)
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
