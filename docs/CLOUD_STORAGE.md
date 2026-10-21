@@ -1,21 +1,42 @@
-# Persistent workshop storage
+# Private cross-device saving
 
-The private cloud workshop is https://mcgruber-print-lab.jimmysoto1994.chatgpt.site/ . GitHub Pages remains static and does not provide server persistence.
+**Use https://jimmy-3d-vision-cloud.violethill64.chatgpt.site/ for account-backed saving.** It is an owner-private deployment: sign in with the same ChatGPT account on each device. GitHub Pages remains the public browser-local workshop and links to this private service through Cloud.
 
-## Save and restore
+## Use it
 
-Imported originals are saved locally first, then queued for account-scoped cloud backup. Save revision creates an immutable complete project backup. Cloud provides Open, Download and Retry. Local edits are not continuously synchronized; concurrent devices do not merge scenes. Raw originals alone do not retain import units: use a complete .3dv backup. Local folders and display names are not cloud-synced.
+1. Open the private workshop and sign in. Import a file; original bytes, display names, file folders, source units/up-axis and GLTF companions are backed up automatically.
+2. Choose **Save revision** to back up the complete assembly, including geometry, placement, joints, annotations and originals. The save indicator confirms account backup or reports a failure while retaining the local revision.
+3. On another device, open the same private URL and sign in with the same account. Choose **Cloud → Projects & revisions → Open revision**, or **Cloud → Saved files → Open**. Search file/project names and folders.
+4. Keep a complete `.3dv` export as an independent backup. Cloud download verifies the SHA-256 checksum before opening any bytes.
 
-Previous-host storage cannot be read from another origin. Export one complete project on the old host and import it into the private workshop. Verify the backup before clearing old browser data.
+To migrate existing work from GitHub Pages or an older host: export a complete project there once, import it into this private workshop, then Save revision and verify the cloud entry. Browser storage cannot be read across origins. The older `mcgruber-print-lab.jimmysoto1994.chatgpt.site` deployment is outside the Sites available in this connection; it was not modified or migrated automatically.
 
-## Backend contract
+## Security and persistence
 
-server/cloud-files.mjs exports handleFilesRequest(request,bucket). Sites Vinext routes import env from cloudflare:workers and invoke the handler with env.BUCKET. Map /api/files and /api/files/[id]; declare r2: "BUCKET" in .openai/hosting.json. Serve the built Vite client at the same origin. Preserve owner-private access.
+The platform owns sign-in and injects `oai-authenticated-user-id`. Every API operation rejects missing identity and derives an account namespace from its hash. API callers with platform service access still cannot read/write user files without a visitor identity. Never deploy these handlers on an arbitrary server where clients can spoof this header.
 
-The backend trusts only the platform-injected oai-authenticated-user-id. It hashes identity into an R2 namespace, hashes bytes for immutable deduplication, requires same-origin POSTs, bounds uploads at 50 MB, validates names/extensions, paginates listings and serves attachments. Missing identity/storage is an error. Do not mount this handler on an arbitrary public server where users can spoof that header. No browser tokens or GitHub/R2 secrets are embedded.
+Files live in durable R2 storage, independently of browser cache. The private Site's access policy permits only its owner. There are no browser-stored GitHub tokens, shared API keys or embedded R2 credentials. Every write requires matching Origin; metadata also requires JSON. Responses use private/no-store caching, nosniff, bounded filenames/metadata and attachment downloads. File contents are SHA-256 addressed; repeated original bytes are reused.
 
-No deletion UI, retention cleanup, scene conflict resolution or antivirus scanning is provided. Designs remain provisional and physically untested.
+A file manifest binds the exact original and each GLTF companion hash, together with import settings and labels. Project IDs survive package restore. Each cloud project revision has a separate immutable UUID key and references its complete package; concurrent device revisions cannot overwrite one another. Reusing a revision ID with different contents is rejected. File labels/settings use last-write-wins semantics.
+
+## Backend and deployment contract
+
+- `server/cloud-files.mjs`: `/api/files` and `/api/files/:sha256` list, upload and download account-owned immutable bytes.
+- `server/cloud-library.mjs`: `/api/library`, `/api/library/assets/:id`, and `/api/library/projects/:projectId/revisions/:revisionId` maintain file metadata and immutable project revision records.
+- `src/cloud-api.js`: account-aware pagination, original-byte deduplication, checksum-verified download and metadata/revision requests.
+- `src/cloud.js`: file backup queue, retries, searchable cloud files/projects and revision restore.
+
+The private Sites source uses the supplied Vinext Worker integration, API route adapters and `.openai/hosting.json` with `r2: "BUCKET"`; it remains owner-private. Its `/workshop/index.html` and related static assets are the production Vite build of this repository. Update the client build and backend handlers together, build/test the Worker, then publish via the Sites source workflow. Do not expose a public raw Worker origin that bypasses platform identity enforcement.
+
+Private deployment version 1: source commit `d9ab208134eb7658a617245166ea7044310ccabf`; deployment `appgdep_6ad90b25a9b481919f82b97284e4d915` succeeded October 21, 2026. The Sites source is separately versioned; updating GitHub alone does not deploy the private Worker.
 
 ## Verification
 
-npm test covers byte-exact cloud uploads, deduplication, user isolation, rejected writes, legacy GLTF recovery, dependency aliases, exact names, units, atomic metadata patches and fresh/offline caches. npm run build validates bundling. Browser CI covers GLTF reopening, forced-WebGL-failure file recovery, Chromium workshop workflows and WebKit mobile. Backend unit tests use a fake bucket; the deployment checkout additionally tests actual Miniflare persistence across worker restart. Unit checks alone do not certify live account access or physical-device graphics.
+- 35 Node tests: existing geometry/storage behavior plus independent cloud clients, exact metadata/companion references, isolation, immutable concurrent revisions, invalid requests and checksum rejection.
+- Seven cross-device browser flows use independent contexts (desktop A, iPhone-emulated B, another account C), real workshop bundles and actual server handlers with a deterministic bucket. They cover upload/labels/units, jointed assembly restore, stable project identity, account isolation, failed backup and recovery.
+- The private deployment source additionally tests the real R2 emulator across Worker disposal/restart, and the compiled production Worker’s identity enforcement and APIs.
+- Hosted deployment is confirmed by Sites. Live access checks distinguish private static access from user-owned APIs; a service credential is not a visitor identity. Real-device hardware and a human sign-in/upload session remain separate verification steps.
+
+## Limits
+
+50 MB per file/package; metadata capped at 64 KB; browser and provider storage limits still apply. Cloud backups are snapshots: original-file backups are automatic, while scene edits need Save revision. Concurrent scenes are retained separately and are not merged. No deletion/retention UI, virus scanning, billing/quota dashboard or offline multi-device merge is provided. Complete revision packages include original bytes and can use more storage than incremental scene-only sync. Preserve independent exports. H.E.R.B.I.E. remains physically untested.

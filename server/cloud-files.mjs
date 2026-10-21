@@ -14,7 +14,7 @@ export async function handleFilesRequest(request,bucket){
   if(request.method==='GET'&&!id){
    const cursor=url.searchParams.get('cursor');if(cursor&&cursor.length>4096)return json({error:'Invalid page.'},400);
    const result=await bucket.list({prefix,limit:1000,include:['customMetadata'],...(cursor?{cursor}:{})});
-   return json({files:result.objects.map(describe),nextCursor:result.truncated?result.cursor:null,storage:'cloud'});
+   return json({accountKey:await digest(new TextEncoder().encode(userId)),files:result.objects.map(describe),nextCursor:result.truncated?result.cursor:null,storage:'cloud'});
   }
   if(request.method==='GET'&&id){
    if(!/^[a-f0-9]{64}$/.test(id))return json({error:'File not found.'},404);
@@ -38,3 +38,5 @@ export async function handleFilesRequest(request,bucket){
   return json({error:'Method not allowed.'},405);
  }catch{return json({error:'Storage could not complete the request. Please try again.'},503)}
 }
+
+export {digest as cloudDigest, json as cloudJSON, TYPES as CLOUD_TYPES};

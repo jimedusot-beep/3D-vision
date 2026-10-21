@@ -8,7 +8,7 @@ Development verification, October 21, 2026.
 
 | Verification | Result | Evidence |
 |---|---|---|
-| Geometry, storage, cloud contracts and worker lifecycle | 30/30 Node tests passed locally | All 18 STL meshes; CSG volume, transforms/history, joints/chains/cycle rejection, attached measurements, cavities, clearance, known wall sizes, exact original-byte storage, package metadata and cancellation |
+| Geometry, storage, cloud contracts and worker lifecycle | 35/35 Node tests passed locally | All 18 STL meshes; CSG volume, transforms/history, joints/chains/cycle rejection, attached measurements, cavities, clearance, known wall sizes, exact original-byte storage, package metadata and cancellation |
 | Original Chromium workflows | 25/25 passed locally | Real assembled/exploded GLBs, STL input, transforms, Boolean worker, revisions, saved originals, file folders, all exports/reimports, packages, GLTF companions, 3MF units, mobile panels and original library |
 | Graphics-free recovery | Passed locally | Files can be imported, saved, read and downloaded after WebGL fails; cloud link remains accessible |
 | New assembly/analysis workflows | 13/13 passed locally in Chromium | Skeleton source units, repository coordinate defaults, hinge/slider/fixed joints, parent propagation, rollback, animation, save/reload/package reimport, attached notes, worker interference, 0.6 mm wall warning/report and idle rendering |
@@ -18,6 +18,12 @@ Development verification, October 21, 2026.
 | GitHub Pages publication | Passed | [Tested build deployment](https://github.com/jimedusot-beep/3D-vision/actions/runs/39586260323); branch publishing can still compete until Source is set to GitHub Actions |
 
 The public checks use certificate-verified HTTPS with no local request interception. Local Chromium uses real production bundles with software WebGL. Standard Playwright browser downloads were unavailable in the execution environment, so local Chromium 141 was obtained from the MIT-licensed `@sparticuz/chromium` test runtime. It is not a website dependency. GitHub CI uses Playwright's regular Chromium and macOS WebKit.
+
+## Private cloud release
+
+The owner-private [cloud workshop](https://jimmy-3d-vision-cloud.violethill64.chatgpt.site/) adds account-backed files and immutable project revisions. Seven independent-browser-context workflows pass, including an iPhone-emulated receiving device: exact originals/settings/folders, complete jointed assembly recovery, stable project IDs, other-account isolation, an interrupted backup, and successful retry retaining both revisions.
+
+Five new Node tests cover the storage protocol and checksum failures. The separately versioned Sites source also passes real R2-emulator persistence across Worker restart and compiled production Worker authorization/API checks. Hosted anonymous access returns 403; service access can read protected workshop assets but cannot access user-owned APIs without a visitor identity (401). These are deployment-boundary checks, not a human sign-in session on physical devices. See [storage details](CLOUD_STORAGE.md).
 
 ## Numerical fixtures
 
@@ -32,7 +38,7 @@ WebKit uses iPhone 13 viewport/touch emulation on macOS; physical iPhones, older
 
 Interference is floating-point mesh surface/contact and closed-shell parity analysis, without exact overlap volume or self-intersection certification. Thickness is bounded normal-ray sampling and can miss small or tangential features. No slicer, structural, thermal, electrical or physical manufacturing validation is claimed. H.E.R.B.I.E. remains provisional.
 
-The optional cloud adapter has contract tests in this repository; its separate deployed host is not updated or independently certified by this Pages release. Authenticated browser-to-GitHub write syncing remains pending. Static uploads stay in browser storage unless explicitly exported or sent to that separate cloud service.
+The private cloud host is deployed and tested separately, with the scope described above; GitHub Pages itself remains browser-local. Authenticated browser-to-GitHub write syncing remains pending. Static uploads stay in browser storage unless explicitly exported or sent to that separate cloud service.
 
 ## Reproduce
 

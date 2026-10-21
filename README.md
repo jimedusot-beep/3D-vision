@@ -1,6 +1,6 @@
 # 3D Vision — browser 3D assembly workshop
 
-**[OPEN 3D VISION ON GITHUB PAGES](https://jimedusot-beep.github.io/3D-vision/)** · [Optional private cloud workshop](https://mcgruber-print-lab.jimmysoto1994.chatgpt.site/) · [Previous static workshop](https://jimmy-3d-vision.violethill64.chatgpt.site)
+**[OPEN 3D VISION ON GITHUB PAGES](https://jimedusot-beep.github.io/3D-vision/)** · [Optional private cloud workshop](https://jimmy-3d-vision-cloud.violethill64.chatgpt.site/) · [Previous static workshop](https://jimmy-3d-vision.violethill64.chatgpt.site)
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
@@ -18,9 +18,9 @@ This reproducible repo experiment includes **five-part skeleton assembled/explod
 2. Use the component tree and transform tools. **Save revision** keeps a named project; **My projects** reopens saved revisions. The last workspace is also autosaved.
 3. **Export → complete project (.3dv)** creates a portable backup containing scene geometry, component placement and original files. Import the package to move between devices or hosts.
 
-On the **private cloud workshop**, imported originals are automatically backed up to your signed-in account using durable server storage. **Save revision** backs up a complete `.3dv` project, including geometry, companion files, units and placement. Open **Cloud** on another device to restore it. Upload failures are shown explicitly; local copies remain available. Maximum file/package size: 50 MB. Raw originals open with default units; restore a complete project to retain import settings.
+On the **private cloud workshop**, imported originals are automatically backed up to your signed-in account using durable server storage. **Save revision** backs up a complete `.3dv` project, including geometry, companion files, units and placement. Open **Cloud** on another device to restore it. Upload failures are shown explicitly; local copies remain available. Maximum file/package size: 50 MB. Cloud file records retain source units, up-axis, folders, display names and exact GLTF companions. Project revisions retain complete assemblies and joints; concurrent device saves remain separate.
 
-Static/GitHub Pages hosts remain **browser-local** and link to the cloud workshop. Clearing site data can remove local-only copies. Existing files on the previous static host are not transferred automatically: export a complete project once and import it into the cloud workshop. No browser-to-GitHub write access or personal tokens are used.
+Static/GitHub Pages hosts remain **browser-local** and link to the cloud workshop. Clearing site data can remove local-only copies. Existing files on the previous static host are not transferred automatically: export a complete project once and import it into the cloud workshop. No browser-to-GitHub write access or personal tokens are used. The private cloud service is owner-only and requires ChatGPT sign-in.
 
 ## Working capabilities
 
