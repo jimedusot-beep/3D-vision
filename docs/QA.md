@@ -12,10 +12,12 @@ Development verification, October 21, 2026.
 | Original Chromium workflows | 25/25 passed locally | Real assembled/exploded GLBs, STL input, transforms, Boolean worker, revisions, saved originals, file folders, all exports/reimports, packages, GLTF companions, 3MF units, mobile panels and original library |
 | Graphics-free recovery | Passed locally | Files can be imported, saved, read and downloaded after WebGL fails; cloud link remains accessible |
 | New assembly/analysis workflows | 13/13 passed locally in Chromium | Skeleton source units, repository coordinate defaults, hinge/slider/fixed joints, parent propagation, rollback, animation, save/reload/package reimport, attached notes, worker interference, 0.6 mm wall warning/report and idle rendering |
-| GitHub-hosted workshop release | 30 Node tests, 39 Chromium checks and 19 WebKit checks passed | [Passing production build / browser run](https://github.com/jimedusot-beep/3D-vision/actions/runs/39585997857) at `100f7f6` |
-| Public HTTPS release checks | Automatic after successful Pages publication | [Public Chromium / WebKit runs](https://github.com/jimedusot-beep/3D-vision/actions/workflows/live-site.yml); this suite includes graphics-free recovery against the actual deployed origin |
+| GitHub-hosted workshop release | 30 Node tests, 39 Chromium checks and 19 WebKit checks passed | [Passing production build / browser run](https://github.com/jimedusot-beep/3D-vision/actions/runs/39586260244) at `3a71700` |
+| Public HTTPS release checks | 39 Chromium and 19 WebKit checks passed | [Passing public run](https://github.com/jimedusot-beep/3D-vision/actions/runs/39586453151), including actual file recovery and joint workflows |
+| Published files | 67/67 SHA-256 comparisons passed | [Full verification record](verification/PUBLISHED_ASSETS_2026-10-21.json); all runtime modules/workers, 48 catalog assets, three HTML pages, catalog and license notices |
+| GitHub Pages publication | Passed | [Tested build deployment](https://github.com/jimedusot-beep/3D-vision/actions/runs/39586260323); branch publishing can still compete until Source is set to GitHub Actions |
 
-Local Chromium uses real production bundles with software WebGL. Standard Playwright browser downloads were unavailable in the execution environment, so local Chromium 141 was obtained from the MIT-licensed `@sparticuz/chromium` test runtime. It is not a website dependency. GitHub CI uses Playwright's regular Chromium and macOS WebKit.
+The public checks use certificate-verified HTTPS with no local request interception. Local Chromium uses real production bundles with software WebGL. Standard Playwright browser downloads were unavailable in the execution environment, so local Chromium 141 was obtained from the MIT-licensed `@sparticuz/chromium` test runtime. It is not a website dependency. GitHub CI uses Playwright's regular Chromium and macOS WebKit.
 
 ## Numerical fixtures
 

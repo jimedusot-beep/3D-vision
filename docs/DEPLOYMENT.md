@@ -10,7 +10,7 @@ Pages is enabled and the custom “Publish 3D Vision website” workflow publish
 
 Successful publication triggers “Verify public 3D Vision website”. It checks the deployed revision using real HTTPS in Chromium and macOS WebKit, including iPhone viewport/touch workflows and saved/reopened joints. These public tests use no local file interception or disabled TLS verification. The workflow has read-only repository permissions.
 
-Repository Settings → Pages should use **GitHub Actions** as its publishing source. A separate branch/Jekyll deployment can overwrite the built artifact with unbundled source. The development connector cannot change that administration setting. Consult the custom publication run and public verification results, not just the presence of a green branch Pages run.
+Repository Settings → Pages should use **GitHub Actions** as its publishing source. A separate branch/Jekyll deployment can overwrite the built artifact with unbundled source. The development connector cannot change that administration setting. The publication workflow logs the configured publishing mode and warns when branch publishing is still active. GitHub’s [Pages settings API](https://docs.github.com/en/rest/pages/pages#update-information-about-a-github-pages-site) requires Pages and Administration write access. Consult the custom publication run and public verification results, not just the presence of a green branch Pages run.
 
 ## Other hosts and storage
 

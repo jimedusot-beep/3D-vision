@@ -1,0 +1,410 @@
+{
+  "url": "https://jimedusot-beep.github.io/3D-vision/",
+  "verifiedAt": "2026-10-21T10:45:33.521Z",
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 11926,
+      "sha256": "a7eb9ab279fc72ab077ccc125c30f4a3b55738cf71fe9d36f519a4e96eebd400",
+      "status": "PASS"
+    },
+    {
+      "path": "library.html",
+      "bytes": 9580,
+      "sha256": "2638cadbbd473a0071cea884866eae5920253e7d53608466c2508f9142bc97cb",
+      "status": "PASS"
+    },
+    {
+      "path": "catalog.json",
+      "bytes": 7990,
+      "sha256": "df77d6bbe3fd9c75080f1103a9a51ab4ca28e08800a556cfbea3d9653b4370cc",
+      "status": "PASS"
+    },
+    {
+      "path": "legacy.html",
+      "bytes": 4366,
+      "sha256": "d5635314dc48fd420e4e48df8cdf7f28af81b4109c6ff097c5d69d022e77bb60",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "bytes": 711,
+      "sha256": "d2a32840421496e872ade591618d2fa5c33797605d1aec04301717e5a90757d0",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/main-B5CqmJTy.js",
+      "bytes": 1771,
+      "sha256": "d340fd4503da81d6460dced89882f1edeb097036cbb75911380816791f6608e9",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/OrbitControls-XgSmFIne.js",
+      "bytes": 19103,
+      "sha256": "65c0c77e3ba91697f5895ded8c4ab8f1b5ac566947c82dc6fd04086d8b78ba6e",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/STLLoader-BEiDXOYX.js",
+      "bytes": 688249,
+      "sha256": "5e892dc5148edb0593cbcaa8a163a1e183431d1a82ad431f0fa9a874711f9e78",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/cloud-Co5LxTYz.css",
+      "bytes": 12143,
+      "sha256": "b79db6023925a33843e15cc35a2af8da13c053cd6152a44a5757655c413805b4",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/boolean.worker-CNABQolV.js",
+      "bytes": 192077,
+      "sha256": "10c539f320be9d37099989d6fbfe72a953358e8afb626e6a79be87ecce9e71a5",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/analysis.worker-DJeAHeVn.js",
+      "bytes": 175593,
+      "sha256": "7368f48f3045aa1abd03a8cda7165a516a732e65a137fbd3be22fc68b9c1ba03",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/cloud-Cq4OUyok.js",
+      "bytes": 123598,
+      "sha256": "ee9a869d99d99caa50bd4a5a32762b7724534c599283a5bc9194fff8b1307489",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/legacy-ChQvc7tl.js",
+      "bytes": 6369,
+      "sha256": "3ba02547788128a345202e94a457e8b89318c47d26b746ec63e9719cc80242cd",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/main-BKtX6l5a.js",
+      "bytes": 74292,
+      "sha256": "e06258b0681f7c94788499c1f058e79bef902c11eb7089932eac9e6738e6932a",
+      "status": "PASS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Electronics_Space_Study.glb",
+      "bytes": 81540,
+      "sha256": "3b3311415282b238fd12bb8ffbf0225995a6ff47a997219e9b2f9d1df55a53c6",
+      "status": "PASS"
+    },
+    {
+      "path": "assets/file-mode-DcH0_jvG.js",
+      "bytes": 4177,
+      "sha256": "2ae0799b6689ab5354cd0134e0463f9ae44634f788369cc8205f48e6d580fb88",
+      "status": "PASS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/README.md",
+      "bytes": 3619,
+      "sha256": "09b2633c3ead84aea2e23b0f1b2b37b6575d74f504a64f38be9e0ab80e6c059f",
+      "status": "PASS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Assembly.glb",
+      "bytes": 78896,
+      "sha256": "eb41a54a436acd6697fc6725a52e0b5a5c3739ad4122ba4d05b7772638911360",
+      "status": "PASS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Experiment_001.zip",
+      "bytes": 68410,
+      "sha256": "058f14e0ee829a327b4ee74b1d5bf76ea624a1ef1d59d41e51e4c1c156b775f0",
+      "status": "PASS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Exploded.glb",
+      "bytes": 78976,
+      "sha256": "0f5ca14d5484b17078888f914bbb415e85923f306617103c9a64f7a53502c37c",
+      "status": "PASS"
+    },
+    {
+      "path": "EXPERIMENTS/001_HERBIE_SKELETON/part_print_precheck.csv",
+      "bytes": 2295,
+      "sha256": "d4acd0af653494e9b7b9ed18c9caa49468aaa642b46499795222489f4d0d1369",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/CAD/HERBIE_V1_Master.scad",
+      "bytes": 4989,
+      "sha256": "0f5e63c0ba3bfc3b7852e2794949d5f5d7743a19e6c2e6f61e710527fb380b76",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/CAD/HERBIE_V1_Exploded_Master.scad",
+      "bytes": 6407,
+      "sha256": "5508ea3a6f7e67c90f4bfa624b9a96f2d0926912ce16542c62e8edecaffcd3f0",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/LATEST_FILES_INDEX.md",
+      "bytes": 2822,
+      "sha256": "f2d71d95d9ec512ebe27dfb5bd3247aef81e4651d4b5b309f3695fc144f161db",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/README.md",
+      "bytes": 890,
+      "sha256": "6cb55557ade4690b42705d4516a8d106931d8315c6908063103201e826e73927",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/PARTS.csv",
+      "bytes": 914,
+      "sha256": "8790c0fb39a762ba880780315fc48d3f2ff6086dbf1572dfe5b5569f52355a77",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/SOURCE_TERMINOLOGY_REGISTER.md",
+      "bytes": 10110,
+      "sha256": "c7aa2405c569e6372f6b67082b8fa38eb780960a5a40e97b7eaa34b916cc8fa6",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/REFERENCES_R01-R16.md",
+      "bytes": 1871,
+      "sha256": "da4f11709f0e3e2e5de43466e6c03e17c24cd1cff358bef85d505af0717698ec",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-003.stl",
+      "bytes": 24962,
+      "sha256": "3d39d24f6d17f0d0c3826e561cf18f1e8f4f5be3e5951681d1d59a2935ae1821",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-004.stl",
+      "bytes": 149597,
+      "sha256": "fdc7d4a16e52de82ffdde22bcc098c988100e6a067a10e4d385584b4f8c6aedc",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-001.stl",
+      "bytes": 273141,
+      "sha256": "d7a18c393e8cf656b4af2440fdb78b1d0cd8f2a8e9b76b3ce9ed3877e7b5f7f5",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-002.stl",
+      "bytes": 269072,
+      "sha256": "32d8ffea3170ce71f5b2fd7c82a6bd62fcf07936e5efbf5d5d34b524b90842b9",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-008.stl",
+      "bytes": 98559,
+      "sha256": "4604a575eef98014fbc624e9e8ebea77733f74cca8848cf4c6d9e88e3e2a3cf4",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-005.stl",
+      "bytes": 282412,
+      "sha256": "02418f2057514e88523390ece5c0ab103f146ec83b26c46de26460ba0f13ed53",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-006.stl",
+      "bytes": 141670,
+      "sha256": "ea679b6ddd5558f2cb2ac2c53caced28cf62f1c31f0185478176f2c3018cb0b5",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-007.stl",
+      "bytes": 141670,
+      "sha256": "bfb13ca884094f5b03ef7860278238d6b362dc43da57e50c481c3b8fa9962958",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-011.stl",
+      "bytes": 130666,
+      "sha256": "4339e516231e03785214590f78565193947aff8070d9f5a825122e874e055d43",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-009.stl",
+      "bytes": 98559,
+      "sha256": "def67721c44462329109201f33ad2629a5453272464a423bcead4c8e04d532eb",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-012.stl",
+      "bytes": 140703,
+      "sha256": "7f5d438d9103ba3039fa443028a64de2c4ad2dc703adc35a239080487f6998dd",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-010.stl",
+      "bytes": 118357,
+      "sha256": "33b2201bc3e35d8555a9dc06fc35b060969638dd3354052adc4c7352305d51af",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-014.stl",
+      "bytes": 48883,
+      "sha256": "23bdc9b0bb8fb5b3285e10f27b4b9cc1d865e4b98ab71cc5e7758d7241b7f506",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-013.stl",
+      "bytes": 140703,
+      "sha256": "941900e53d1acd857579ac7796ca41ecaa9cd441fbd3f50186e3c3152630bd4d",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-015.stl",
+      "bytes": 48883,
+      "sha256": "cfae87dc78fd703361e2bdaea3f311166929417b612d68c47c5555dafa2884de",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-016.stl",
+      "bytes": 682180,
+      "sha256": "e5f0ce2101dc6f837a77878ffdca8a3b9a83710d37063e6ebb304d5fda0cd6d4",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/TERMINOLOGY.md",
+      "bytes": 1099,
+      "sha256": "426830c3d9699f0e2eca936c1bfaa25618fa3beab424d4fff1f8bc77af4bd1ef",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-018.stl",
+      "bytes": 142395,
+      "sha256": "eab0ab443734f32c6822480ae287d20f6f463843c27f7a44b4db9152a08245a7",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Assembled_REGENERATED.png",
+      "bytes": 103135,
+      "sha256": "0d3f9f014f2de5aed37f1218d71dce932294fb70165364f631108e75c5f32f1a",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/STL/HBR-017.stl",
+      "bytes": 682012,
+      "sha256": "dfa88ea864c729a4098d02061508f5f245e20f14cef310f7e62efbc014e3c7fa",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Engineering_Summary_REGENERATED.pdf",
+      "bytes": 2041,
+      "sha256": "c9a8a2a04f3d0cf0d71a1c101dfb8737dce5c4fd7ea09dfe01cff4efad757922",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Assembly_Instructions_REGENERATED.pdf",
+      "bytes": 2650,
+      "sha256": "9daa056065fc565d32a494732229126713e2fc236148c2c52de031ec73207ced",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Exploded_REGENERATED.png",
+      "bytes": 90747,
+      "sha256": "134a6a4ce3f9a6b4d06ecb68a8dff59553928ea22290bcfd0b4439416595ee3a",
+      "status": "PASS"
+    },
+    {
+      "path": "HERBIE_V1/documents/HERBIE_V1_Repository_Collection_REGENERATED.zip",
+      "bytes": 721291,
+      "sha256": "ca5858129bb24137f885b502986b06b4eb8bcd094db920c44ffc5c7dec8192fd",
+      "status": "PASS"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Editable.scad",
+      "bytes": 873,
+      "sha256": "89ad6e7fc453b974aa11e41bfba37560fac602740430812934e739db2ed0fd4a",
+      "status": "PASS"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Hole_Test_60x10x4mm.stl",
+      "bytes": 68884,
+      "sha256": "a3b026402a3c8f88cca0c0c0ca7b8e27b0991150b20e6d9160c9412f480d41fd",
+      "status": "PASS"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Foot_10x10x8mm_Print4.stl",
+      "bytes": 12884,
+      "sha256": "96d3f0cbae6da0da0663a3fc3ff2e86d99493a01543461de235e11b58a0701f8",
+      "status": "PASS"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Base_150x100x4mm.stl",
+      "bytes": 1480084,
+      "sha256": "76685198ae4db55acd7a41643b2a8f29156895711bd51141a044da1e946ec2e0",
+      "status": "PASS"
+    },
+    {
+      "path": "README.md",
+      "bytes": 7265,
+      "sha256": "68a7b2780c2cc535049fef815bbeaa0288b0dd758b96e62930123fc8779a3d3e",
+      "status": "PASS"
+    },
+    {
+      "path": "STL_VIEWING_LINKS.md",
+      "bytes": 6477,
+      "sha256": "8da34353189e50fac79a521dcefb6b104ef7a017c7766b31e8b05c9e1f85a534",
+      "status": "PASS"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Print_Guide.md",
+      "bytes": 3630,
+      "sha256": "61fc30da646204ff58633feea7dead0f26d956457a8028bd1d6167a7b856b09d",
+      "status": "PASS"
+    },
+    {
+      "path": "MCGRUBER_V2/McGruber_V2_Visual.png",
+      "bytes": 659965,
+      "sha256": "474c65225d990d4dc4e1cfb0b720a4d6ad2136cda7609b1d6844fc9f83a03aab",
+      "status": "PASS"
+    },
+    {
+      "path": "licenses/three.txt",
+      "bytes": 1081,
+      "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601",
+      "status": "PASS"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "bytes": 1293,
+      "sha256": "163cac7c168e5c037b445ab7fd2fb9722b06587ff169ba14fa734d013c80872f",
+      "status": "PASS"
+    },
+    {
+      "path": "models/HERBIE_V1_Exploded_Interactive.glb",
+      "bytes": 453488,
+      "sha256": "5473f4e86957662f5bec1f180b07083af21e8553dd4c660e772e6800667b8158",
+      "status": "PASS"
+    },
+    {
+      "path": "models/HERBIE_V1_Assembled_Interactive.glb",
+      "bytes": 453484,
+      "sha256": "496c4977f0db6f323ef6ef36749ad80807be317f933d83037827c2447a322d3c",
+      "status": "PASS"
+    },
+    {
+      "path": "licenses/three-mesh-bvh.txt",
+      "bytes": 1072,
+      "sha256": "b106ef6198a9862ed2b5b873e944ecf3583c631a84a7462d400ecc1910ce7fee",
+      "status": "PASS"
+    },
+    {
+      "path": "licenses/three-bvh-csg.txt",
+      "bytes": 1072,
+      "sha256": "6304348bc85aa6c2c2f1338f3d33f0c26dd300f3a0776d0c8f2a02c0c2fea52b",
+      "status": "PASS"
+    },
+    {
+      "path": "licenses/fflate.txt",
+      "bytes": 1069,
+      "sha256": "0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551",
+      "status": "PASS"
+    }
+  ],
+  "releaseCommit": "3a71700c14c2b639fc53285d929b4739042697a0",
+  "method": "Certificate-verified HTTPS; SHA-256 comparison with a fresh production build"
+}

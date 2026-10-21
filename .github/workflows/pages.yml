@@ -44,6 +44,15 @@ jobs:
       # GITHUB_TOKEN cannot activate Pages; never put a personal token in source.
       - name: Configure enabled GitHub Pages site
         uses: actions/configure-pages@v5
+      - name: Check for competing branch publishing
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          publishing_mode=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.build_type')
+          echo "Pages publishing mode: ${publishing_mode}"
+          if [ "${publishing_mode}" != "workflow" ]; then
+            echo "::warning::Pages still uses branch publishing. Set Settings > Pages > Source to GitHub Actions to prevent raw source overwriting the tested build."
+          fi
       - name: Deploy tested static build
         id: deployment
         uses: actions/deploy-pages@v4
