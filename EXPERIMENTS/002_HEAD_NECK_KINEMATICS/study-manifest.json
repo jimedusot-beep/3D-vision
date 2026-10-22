@@ -1,0 +1,33 @@
+{
+  "study_id": "HERBIE-EXPERIMENT-002",
+  "title": "Head/neck two-axis motion envelope — visual study only",
+  "design_status": "DIGITAL_KINEMATICS_STUDY_UNVERIFIED",
+  "repository_owner": "3D-vision",
+  "units": "mm",
+  "coordinate_frame": {"up": "+Z", "front": "-Y", "lateral": "X"},
+  "existing_part_affected": {"id": "HBR-005", "name": "Fixed_Neck", "replacement_approved": false},
+  "existing_reference": "HERBIE_V1/CAD/HERBIE_V1_Master.scad",
+  "source_envelope_mm": {
+    "head": {"width": 240, "depth": 170, "height": 145, "nominal_center_z": 427.5},
+    "torso": {"width": 220, "depth": 190, "nominal_top_z": 320}
+  },
+  "conceptual_kinematic_axes": [
+    {"name": "pan", "axis": "+Z", "pivot_location_mm": [0, 0, 354], "hardware_limit_verified": false},
+    {"name": "tilt", "axis": "+X", "pivot_location_mm": [0, 0, 385], "hardware_limit_verified": false}
+  ],
+  "illustrative_preview_angles_deg": {"pan": 20, "tilt": 15},
+  "actuator_selected": false,
+  "mounting_fit_verified": false,
+  "collision_free_verified": false,
+  "real_head_mass_measured": false,
+  "center_of_gravity_measured": false,
+  "bearing_strength_verified": false,
+  "print_ready": false,
+  "physical_actuation_enabled": false,
+  "new_production_part_numbers_allocated": false,
+  "handoff": {
+    "body": "3D Vision owns mechanical CAD, mounts and measured fit.",
+    "electronics": "Herbie-cyborg-hardware owns actuator/power evaluation and safety evidence.",
+    "brain": "Herbie owns expression, motion intent and software simulation."
+  }
+}
