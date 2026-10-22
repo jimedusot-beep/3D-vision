@@ -36,6 +36,6 @@ The model illustrates separate rotations: pan about world **Z**, tilt about the 
 
 ## Regression/consistency checks
 
-The [metadata](study-manifest.json) marks every physical verification field `false` and references the existing body dimensions. The focused [Node test](../../tests/head-neck-concept.test.mjs) verifies those metadata gates, that HBR-005 still means Fixed_Neck, and that core preview parameters exist in OpenSCAD. This test does **not** evaluate physical clearances or certify a mechanical design. A local OpenSCAD CSG compilation is separate additional syntax evidence.
+The [metadata](study-manifest.json) marks every physical verification field `false` and references the existing body dimensions. The focused [Node test](../../tests/head-neck-concept.test.mjs) verifies those metadata gates, that HBR-005 still means Fixed_Neck, and that core preview parameters exist in OpenSCAD. This test does **not** evaluate physical clearances or certify a mechanical design. The [focused pull-request workflow](../../.github/workflows/head-neck-study.yml) also compiles two non-printable CSG preview poses in OpenSCAD. These parser checks do **not** establish collision-free travel, physical fit or joint strength.
 
 The authoritative [H.E.R.B.I.E. hardware compatibility mapping draft](https://github.com/jimedusot-beep/Herbie-cyborg-hardware/pull/7) should be reviewed independently. The software/brain repository is unchanged by this experiment.

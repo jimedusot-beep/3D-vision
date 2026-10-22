@@ -30,7 +30,7 @@ test('HBR-005 remains fixed and production inventory unchanged by this study', (
 });
 
 function scadValue(name) {
-  const match = original.match(new RegExp('(?:^|\\n)' + name + '\\s*=\\s*([0-9.]+)\\s*;'));
+  const match = original.match(new RegExp('\\b' + name + '\\s*=\\s*([0-9.]+)\\s*;'));
   assert.ok(match, 'master CAD property missing: ' + name);
   return Number(match[1]);
 }
