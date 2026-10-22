@@ -41,6 +41,7 @@ The workshop is a functional static mesh editor and assembly viewer. It is not a
 | Repository discovery | Tested / implemented | 48 current assets, including H.E.R.B.I.E., McGruber V2 and skeleton experiments; manual GitHub Refresh; explicit mm/Z-up metadata for source-derived GLBs |
 | Idle performance | Tested / partial | Render on scene/camera changes, damping and animation; pause in hidden tabs. Dense-mesh and physical low-memory device performance still need profiling |
 | Analysis limits | Tested | 40 meshes / 300,000 combined triangles; 20-second cancellable workers; report invalidated after edits |
+| Private cross-device cloud saving | Tested / partial | Separate owner-private Sites host with R2; exact originals, source settings/folders, checksum verification and immutable project revisions. Two-session browser and R2-restart tests; no live scene merging or automatic scene autosync |
 | Authenticated GitHub write sync | Pending backend | No tokens are accepted, stored or published in the frontend; design in ARCHITECTURE.md |
 | Fixed, revolute and prismatic joints | Tested / partial | Top-level components/groups, parent-local axis/pivot, travel limits, chain propagation, animation and saved poses. One driver per component; no cycles or closed-loop mates; positive uniform scale required. Direct transforms of driven parts disabled |
 | Parametric sketches / BREP CAD | Pending | No STEP/IGES, sketch solver or feature history |
@@ -56,3 +57,5 @@ See [joint and analysis instructions](JOINTS_AND_ANALYSIS.md) for the new tools.
 4. Inspect geometry, prepare orientation and export visible meshes. Run an appropriate slicer before printing.
 
 Static features are free of account requirements and paid runtime APIs. Hosting, storage retention, CORS and optional future backend services follow their providers' limits.
+
+Cloud library management: unique-blob usage totals and a checksum-verified account recovery ZIP (32 MiB source-data cap) are implemented. Metadata and original names/settings are included. Automatic whole-account restore and permanent deletion are not implemented.
