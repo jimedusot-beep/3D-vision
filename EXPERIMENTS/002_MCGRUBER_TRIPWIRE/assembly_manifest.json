@@ -1,0 +1,327 @@
+{
+  "schema_version": "0.1.0",
+  "case_study": "McGruber Light-Beam Tripwire",
+  "case_study_id": "MCG-TW-P01-CONCEPT-001",
+  "status": "DIGITAL_CONCEPT_UNTESTED",
+  "application": "Standalone educational example, not part of H.E.R.B.I.E. V1 robot BOM or CAD",
+  "provenance": {
+    "canonical_repo": "https://github.com/jimedusot-beep/project-mcgruber",
+    "canonical_assembly_manifest": "https://github.com/jimedusot-beep/project-mcgruber/blob/main/projects/01-light-beam-tripwire/assembly_manifest.json",
+    "canonical_parts_source": "https://github.com/jimedusot-beep/project-mcgruber/blob/main/web/src/tripwire-kit.js",
+    "original_source_blob_sha": "ebc8f215e509be77185aa2754b776912182df41e",
+    "diagram_source_blob_sha": "7dffd87404405c37137581faad3424408ccf51b1",
+    "signal_flow_source_blob_sha": "c9eee9d0f018710ad94c0fc5e89152438306e993",
+    "mirror_snapshot_date": "2026-10-23",
+    "sync_mode": "manual-reviewed-copy"
+  },
+  "model": {
+    "units": "illustrative-mm",
+    "up_axis": "Y",
+    "geometry": "approximate teaching placeholders",
+    "physical_dimensions_verified": false,
+    "electrical_schematic_verified": false,
+    "hardware_tested": false,
+    "fit_verified": false,
+    "no_hardware_control": true
+  },
+  "open_measurements": [
+    "actual emitter and receiver housing diameters",
+    "actual LED and optical detector model and spectral response",
+    "actual component dimensions and mounting interface",
+    "physical beam height and alignment distance",
+    "battery polarity and LED current limiter",
+    "ESP32-C3 board revision and ADC-capable pinout",
+    "light sensor divider minimum and maximum input voltage",
+    "USB power and charger behavior",
+    "wire strain relief, enclosure wall thickness and print fit",
+    "repeated beam-block/ambient-light false alarm results"
+  ],
+  "parts": [
+    {
+      "id": "TW-E-MOUNT",
+      "name": "Emitter stand",
+      "side": "emitter",
+      "kind": "mount",
+      "required": true,
+      "position_illustrative_mm": [
+        -166,
+        3,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        -22,
+        -12,
+        -26
+      ],
+      "function": "Holds the emitter steady and below eye level.",
+      "salvage_candidate": "Cardboard support, clamp or stable recycled base.",
+      "verification_needed": "Measure beam height, stability and alignment.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-E-HOUSING",
+      "name": "Emitter housing",
+      "side": "emitter",
+      "kind": "housing",
+      "required": false,
+      "position_illustrative_mm": [
+        -166,
+        43,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        -28,
+        30,
+        -10
+      ],
+      "function": "Protects and aims the light. An intact flashlight can replace this whole set of DIY emitter parts.",
+      "salvage_candidate": "Low-brightness battery flashlight or toy enclosure.",
+      "verification_needed": "Measure actual housing size and safe beam spread.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-E-BATTERY",
+      "name": "Emitter batteries / holder",
+      "side": "emitter",
+      "kind": "battery",
+      "required": true,
+      "position_illustrative_mm": [
+        -176,
+        43,
+        2
+      ],
+      "explode_offset_illustrative_mm": [
+        -60,
+        -8,
+        15
+      ],
+      "function": "Supplies the light emitter independently of the receiver.",
+      "salvage_candidate": "Intact low-voltage battery compartment from a toy.",
+      "verification_needed": "Confirm supply polarity, voltage and cell condition.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-E-SWITCH",
+      "name": "Emitter switch",
+      "side": "emitter",
+      "kind": "switch",
+      "required": false,
+      "position_illustrative_mm": [
+        -158,
+        52,
+        15
+      ],
+      "explode_offset_illustrative_mm": [
+        -8,
+        44,
+        24
+      ],
+      "function": "Convenient on/off switch; often already part of a flashlight.",
+      "salvage_candidate": "Battery toy or holiday light switch.",
+      "verification_needed": "Measure continuity with power disconnected.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-E-RESISTOR",
+      "name": "LED current limiter",
+      "side": "emitter",
+      "kind": "resistor",
+      "required": "conditional",
+      "position_illustrative_mm": [
+        -130,
+        43,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        -6,
+        -38,
+        -14
+      ],
+      "function": "A bare LED requires correctly designed current limiting. A complete rated flashlight may already include this.",
+      "salvage_candidate": "Identified resistor; verify its value.",
+      "verification_needed": "Calculate and measure LED current before sustained operation.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-E-LED",
+      "name": "Diffused visible LED",
+      "side": "emitter",
+      "kind": "led",
+      "required": true,
+      "position_illustrative_mm": [
+        -110,
+        43,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        8,
+        50,
+        0
+      ],
+      "function": "Emits a low-brightness visible beam toward the sensor. No laser required.",
+      "salvage_candidate": "Diffused low-power toy LED or complete dim flashlight.",
+      "verification_needed": "Avoid looking into the source; mount below eye height.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-R-MOUNT",
+      "name": "Receiver stand",
+      "side": "receiver",
+      "kind": "mount",
+      "required": true,
+      "position_illustrative_mm": [
+        161,
+        3,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        24,
+        -12,
+        -23
+      ],
+      "function": "Keeps the receiving sensor aligned with the emitter.",
+      "salvage_candidate": "Reused cardboard, clip or adjustable stand.",
+      "verification_needed": "Check stability and beam height.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-R-SHIELD",
+      "name": "Black sensor tube",
+      "side": "receiver",
+      "kind": "tube",
+      "required": false,
+      "position_illustrative_mm": [
+        104,
+        43,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        -12,
+        39,
+        -10
+      ],
+      "function": "Shades the sensor from room light and improves directionality.",
+      "salvage_candidate": "Short black straw or light-proof small tube.",
+      "verification_needed": "Compare sensor response with/without room lighting.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-R-LDR",
+      "name": "Light detector",
+      "side": "receiver",
+      "kind": "ldr",
+      "required": true,
+      "position_illustrative_mm": [
+        117,
+        43,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        0,
+        64,
+        10
+      ],
+      "function": "A photoresistor or phototransistor senses the light. This model depicts an LDR.",
+      "salvage_candidate": "Identified low-voltage light-reactive toy or purchased LDR.",
+      "verification_needed": "Measure beam-present versus beam-blocked resistance/signal.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-R-DIVIDER",
+      "name": "Sensor bias / resistor",
+      "side": "receiver",
+      "kind": "divider",
+      "required": "conditional",
+      "position_illustrative_mm": [
+        143,
+        39,
+        23
+      ],
+      "explode_offset_illustrative_mm": [
+        37,
+        38,
+        30
+      ],
+      "function": "For a bare LDR, a resistor divider creates a safe analog voltage. Sensor modules may include it.",
+      "salvage_candidate": "Identified resistors and small perfboard.",
+      "verification_needed": "Check voltage is always within chosen ESP32 ADC limits.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-R-HOUSING",
+      "name": "Receiver housing",
+      "side": "receiver",
+      "kind": "receiver",
+      "required": false,
+      "position_illustrative_mm": [
+        157,
+        43,
+        0
+      ],
+      "explode_offset_illustrative_mm": [
+        40,
+        23,
+        -15
+      ],
+      "function": "Holds and protects the sensor wiring. Dimensions are unknown until parts are measured.",
+      "salvage_candidate": "Small plastic project box.",
+      "verification_needed": "Check fit and cable exit clearance.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-C-ESP32",
+      "name": "ESP32-C3 controller",
+      "side": "control",
+      "kind": "controller",
+      "required": true,
+      "position_illustrative_mm": [
+        150,
+        17,
+        74
+      ],
+      "explode_offset_illustrative_mm": [
+        50,
+        35,
+        38
+      ],
+      "function": "Reads the sensor voltage through an appropriate GPIO/ADC pin and can host a Wi-Fi alarm page.",
+      "salvage_candidate": "Usually easier to buy a known, inexpensive development board.",
+      "verification_needed": "Confirm exact pinout and 3.3 V GPIO requirements.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    },
+    {
+      "id": "TW-C-USB",
+      "name": "USB power supply",
+      "side": "control",
+      "kind": "power",
+      "required": true,
+      "position_illustrative_mm": [
+        205,
+        16,
+        74
+      ],
+      "explode_offset_illustrative_mm": [
+        70,
+        -12,
+        32
+      ],
+      "function": "A correctly rated USB power bank powers the ESP32. The emitter uses separate batteries.",
+      "salvage_candidate": "Existing USB power bank and matching cable.",
+      "verification_needed": "Check board input requirements, cable and power-bank auto-off.",
+      "dimensions_measured_mm": null,
+      "fit_verified": false
+    }
+  ]
+}

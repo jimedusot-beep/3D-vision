@@ -21,6 +21,16 @@ This reproducible repo experiment includes **five-part skeleton assembled/explod
 
 **Important:** GitHub automates source-derived files; interactive edits made in a browser are still saved locally unless you export and explicitly commit them. Automatic authenticated browser-to-repository syncing is not implemented. All models remain preliminary and untested.
 
+## McGruber light-beam tripwire — one-click 3D inspection
+
+A separate, **illustrative 13-part assembly**, sourced from Cyborg Hardware's McGruber case study, is now included in the catalog. No physical fit or electrical function is claimed.
+
+- [**Open exploded tripwire directly in 3D Vision**](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-tripwire-exploded)
+- [**Open assembled tripwire directly in 3D Vision**](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-tripwire-assembled)
+- [Experiment 002: part descriptions and provenance](EXPERIMENTS/002_MCGRUBER_TRIPWIRE/README.md) · [Cyborg Hardware source case](https://github.com/jimedusot-beep/Herbie-cyborg-hardware/tree/main/examples/mcgruber-light-beam-tripwire)
+
+These links require the updated Pages release. The original H.E.R.B.I.E. robot CAD and mechanical test status are unchanged.
+
 ## Save your uploaded files and work
 
 1. **Import files** from your device, or import a public URL/GitHub file link. Original files are retained in **My files**, with searchable folders and display names. Identical bytes are stored once.

@@ -1,4 +1,5 @@
 import './style.css';
+import {exampleModel} from './example-models.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
@@ -205,7 +206,8 @@ jointUI=jointPanel({root:()=>workshop.root,selected:()=>selected,mutate,checkpoi
 // Small documented integration surface for deterministic browser QA and future adapters.
 cloud=createCloudLibrary({notify:status,onOpen:(file,companions,options={})=>loading('Opening cloud file…',()=>addFile(file,{companions,units:'auto',up:'auto',...options})),makeProject:createProjectPackage,saveCurrentProject:saveProject});
 window.vision={workshop,get selected(){return selected},select,mutate,parseModel,makeExport,projectData,saveProject,exportProjectPackage,addFile,analyze,get cloud(){return cloud},get frames(){return frameCount},get analysis(){return lastAnalysis},get assets(){return [...assetIds]},inspect,get ready(){return $('status').dataset.ready==='true'}};
-async function start(){updateBed();resize();await database();await getCatalog();const query=new URLSearchParams(location.search),part=query.get('part'),view=query.get('view');if(part&&/^HBR-0(0[1-9]|1[0-8])$/i.test(part)){await repositoryFile('HERBIE_V1/STL/'+part.toUpperCase()+'.stl');}
+async function start(){updateBed();resize();await database();await getCatalog();const query=new URLSearchParams(location.search),part=query.get('part'),view=query.get('view'),example=query.get('example');const exampleSpec=exampleModel(example);if(example&&!exampleSpec)throw Error('Unknown example model. Select a model from the repository library.');if(exampleSpec){await repositoryFile(exampleSpec.path,exampleSpec.path.split('/').pop(),exampleSpec.options);$('title').value=exampleSpec.name;status('Loaded '+exampleSpec.name+' · 13 illustrative parts; physical fit unverified.');}
+ else if(part&&/^HBR-0(0[1-9]|1[0-8])$/i.test(part)){await repositoryFile('HERBIE_V1/STL/'+part.toUpperCase()+'.stl');}
  else if(view){await loadHerbie(view==='exploded');}
  else {const last=await readRecord('session','last');if(last?.data){validateProject(last.data);workshop.restore(last.data.scene);$('title').value=last.data.title;folder=last.data.folder||'My projects';assetIds=new Set(last.data.assetIds||[]);projectId=last.projectId;normalizeState();renderTree();renderProperties();updateSummary();fit();status('Recovered your last workspace from this browser.');}else await loadHerbie();}
  $('status').dataset.ready='true';updateSummary();}
