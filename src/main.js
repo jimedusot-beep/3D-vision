@@ -55,7 +55,7 @@ function changed(){sceneVersion++;lastAnalysis=null;$('download-report').disable
 function updateStageContext(){
  const ids=components(workshop.root).map(o=>o.name);
  const tripwire=ids.some(n=>/^TW-(E|R|C)-/.test(n));
- const herbie=ids.some(n=>/^HBR-\\d{3}/.test(n));
+ const herbie=ids.some(n=>/^HBR-[0-9]{3}/.test(n));
  const stage=$('stage-badge');
  const label=tripwire?'MCGRUBER · LIGHT-BEAM TRIPWIRE':herbie?'H.E.R.B.I.E. V1':'3D ASSEMBLY WORKSPACE';
  const status=tripwire?'ILLUSTRATIVE · NOT MEASURED':herbie?'PROVISIONAL · NOT TESTED':'FIT NOT VERIFIED';
