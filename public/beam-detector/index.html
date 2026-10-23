@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a1021">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>McGruber • Silent Beam Lab</title>
+<title>McGruber • Silent Beam Lab V3 (Auto Detect)</title>
 <style>
 :root{color-scheme:dark;--bg:#080f1f;--panel:#101d33;--outline:#304762;--txt:#f4f8ff;--mut:#9eb4d0;--red:#ff6671;--green:#3ce9ac;--blue:#64b8ff;--gold:#ffdc76}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#203a64 0%,var(--bg) 54%);font:15px/1.42 system-ui,-apple-system,sans-serif;color:var(--txt);min-height:100dvh;-webkit-tap-highlight-color:transparent}
@@ -45,13 +45,15 @@ ol{padding-left:23px;color:#c9d7ec;font-size:13px;margin:9px 0}li{margin:8px 0}d
  <div class="rowtitle"><strong>1. Find your light</strong><span class="mini" id="score">Light score —</span></div>
  <div class="mode" role="group" aria-label="Light sensing mode"><button id="red-mode" aria-pressed="true">🔴 Red LED</button><button id="white-mode" aria-pressed="false">⚪ White flashlight</button></div>
  <div class="signalbar"><i id="bar"></i></div><div class="measure"><span>Weak</span><span id="live">Waiting for camera</span><span>Strong</span></div>
- <p class="help">Keep the phone still. Aim your red light at the yellow circle, then tap <b>Light ON</b>.</p>
+ <p class="help">Keep the phone still. Tap directly on the glowing spot in the picture to place the target. Then press Arm once. No tapping when it is blocked.</p>
+ <button id="arm" class="green large" disabled style="font-size:18px;min-height:62px;margin-top:12px">ARM AUTOMATIC DETECTION</button>
+ <p id="auto-info" class="cal-result" aria-live="polite">Hold your light steady and tap ARM. The app will detect interruptions automatically.</p>
 </section>
-<section class="panel">
- <div class="rowtitle"><strong>2. Teach both states</strong><span class="mini" id="confidence">Not calibrated</span></div>
+<details class="panel"><summary>Advanced: manual two-point calibration (optional)</summary>
+ <div class="rowtitle" style="margin-top:12px"><strong>Manual light settings</strong><span class="mini" id="confidence">Not calibrated</span></div>
  <div class="row2"><button class="green cal-btn" id="on" disabled>1 · LIGHT ON<small id="on-reading">Show the beam</small></button><button class="red cal-btn" id="off" disabled>2 · BLOCKED<small id="off-reading">Cover the beam</small></button></div>
- <p class="cal-result" id="cal-info">Measure the same target with the light ON and then BLOCKED. Each tap takes about a second of real camera readings.</p>
-</section>
+ <p class="cal-result" id="cal-info">Only use this advanced method if one-tap automatic detection doesn't distinguish light from darkness reliably.</p>
+</details>
 <section class="panel">
  <div class="rowtitle"><strong>Silent detection</strong><button id="reset" class="ghost" style="padding:6px 11px;min-height:35px;font-size:12px">Reset count</button></div>
  <div class="stats"><div class="stat"><b id="trip-count">0</b><small>BEAM BREAKS</small></div><div class="stat"><b id="gap">—</b><small>ON/OFF GAP</small></div><div class="stat"><b id="fps">—</b><small>READINGS/SEC</small></div></div>
@@ -59,7 +61,7 @@ ol{padding-left:23px;color:#c9d7ec;font-size:13px;margin:9px 0}li{margin:8px 0}d
 </section>
 <section class="panel">
  <div class="rowtitle"><strong>Quick setup</strong><span class="mini">No laptop needed</span></div>
- <ol><li>Use your existing <b>red LED + correct resistor + verified battery holder</b> as the light source. Or choose <b>White flashlight</b> mode with your HyperGear.</li><li>Open this page <b>directly in Safari using HTTPS</b> and tap Start camera. Place your phone on a stand.</li><li>Start 6–12 inches away. Tap directly on the LED's image to place the yellow target.</li><li>Tap <b>Light ON</b>; then cover the beam and tap <b>BLOCKED</b>. Keep the phone still during both measurements.</li><li>Uncover and re-cover the beam. Look for <b>DETECTED</b> → <b>BROKEN</b>; increase distance gradually.</li></ol>
+ <ol><li>Use your HyperGear in <b>White flashlight</b> mode first, or use a properly powered red LED in Red mode.</li><li>Open directly in Safari, tap <b>Start camera</b>, and hold the phone stationary.</li><li>Start 6–12 inches away. Tap the bright spot in the preview to position the target circle.</li><li>With the light shining, tap <b>ARM AUTOMATIC DETECTION</b> just once and keep it on while the app measures it.</li><li>Without pressing another button, cover and uncover the light. The detector and counter should respond automatically. Then increase the distance gradually.</li></ol>
  <div class="note">A red LED is not a laser: you may see only a bright red point rather than a visible line in air. One salvaged LED may not work at 6–15 feet. Avoid direct eye exposure to bright sources or using lasers.</div>
  <details><summary>Camera troubleshooting &amp; advanced options</summary>
   <p class="help"><b>Wrong camera?</b> Use front-camera button or select a specific camera below. <b>Black video?</b> Close other camera apps, tap Stop, reload the page in Safari and try again. <b>Jumping readings?</b> Keep the phone still, tap the LED precisely, block other red lights and recalibrate. iOS adjusts exposure automatically.</p>
@@ -76,12 +78,12 @@ ol{padding-left:23px;color:#c9d7ec;font-size:13px;margin:9px 0}li{margin:8px 0}d
 'use strict';
 const el=id=>document.getElementById(id);
 const v=el('video'),box=el('viewport'),canvas=el('hidden-canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
-let stream=null, camera='environment',deviceId='',running=false,raf=0,scoreHistory=[],smooth=null,calOn=null,calOff=null,calJob=null,calibrated=false,confirmed='unknown',candidate='unknown',streak=0,count=0,mode='red',aim={x:.5,y:.5},lastFrame=0,frames=0,lastRate=0,rateCount=0,rateStart=0,connectionId=0,wakeLock=null;
+let stream=null, camera='environment',deviceId='',running=false,raf=0,scoreHistory=[],smooth=null,calOn=null,calOff=null,calJob=null,calibrated=false,confirmed='unknown',candidate='unknown',streak=0,count=0,mode='red',aim={x:.5,y:.5},lastFrame=0,frames=0,lastRate=0,rateCount=0,rateStart=0,connectionId=0,wakeLock=null,autoArmed=false,autoReference=null,armJob=null;
 function status(kind,title,subtitle){const s=el('status');s.className='status'+(kind?' '+kind:'');el('state').textContent=title;el('state-note').textContent=subtitle;}
 function error(msg){const e=el('error');e.textContent=msg;e.style.display='block';}function clearError(){el('error').style.display='none';}
 function clamp(n,a,b){return Math.max(a,Math.min(b,n));}
 function med(a){const b=[...a].sort((x,y)=>x-y);return b[Math.floor(b.length/2)]||0;}
-function resetCalibration(message='Aim the LED, then calibrate LIGHT ON and BLOCKED.') {calOn=calOff=null;calibrated=false;calJob=null;confirmed=candidate='unknown';streak=0;smooth=null;scoreHistory=[];el('on-reading').textContent='Show the beam';el('off-reading').textContent='Cover the beam';el('confidence').textContent='Not calibrated';el('gap').textContent='—';el('cal-info').textContent=message;if(running)status('wait','NEEDS CALIBRATION','Measure light ON, then the same target BLOCKED.');el('on').disabled=!running;el('off').disabled=!running;}
+function resetCalibration(message='Aim at your light and press ARM AUTOMATIC DETECTION once.') {calOn=calOff=null;calibrated=false;calJob=null;autoArmed=false;autoReference=null;armJob=null;confirmed=candidate='unknown';streak=0;smooth=null;scoreHistory=[];el('on-reading').textContent='Show the beam';el('off-reading').textContent='Cover the beam';el('confidence').textContent='Not calibrated';el('gap').textContent='—';el('cal-info').textContent=message;if(running)status('wait','NEEDS CALIBRATION','Measure light ON, then the same target BLOCKED.');el('on').disabled=!running;el('off').disabled=!running;el('arm').disabled=!running;el('arm').textContent='ARM AUTOMATIC DETECTION';el('auto-info').textContent='Aim the target circle at the illuminated light, then press ARM once. Blocking it needs no button.';}
 function releaseCamera(){if(raf){cancelAnimationFrame(raf);raf=0;}if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}v.pause();v.srcObject=null;running=false;el('reticle').style.display='none';el('placeholder').classList.remove('hidden');el('camera-select').disabled=true;el('restart').disabled=true;el('reverse').disabled=true;el('start').textContent='Start camera';if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}}
 function stopCamera(){connectionId++;releaseCamera();resetCalibration();status('','CAMERA OFF','Tap Start camera to begin.');el('live').textContent='Camera stopped';}
 function cameraError(e){if(e?.name==='NotAllowedError'||e?.name==='PermissionDeniedError')return 'Camera permission was denied. Open this HTTPS page in Safari (not inside ChatGPT or Files), allow Camera in the address-bar website settings, and tap Start again.';if(e?.name==='NotReadableError')return 'Camera is already in use or temporarily unavailable. Close Camera/FaceTime, reload Safari and retry.';if(e?.name==='OverconstrainedError')return 'This camera configuration is unsupported. Choose another lens or reload.';if(e?.name==='NotFoundError')return 'No camera was found.';return `Camera failed: ${e?.message||String(e)}`;}
@@ -112,12 +114,43 @@ function readBeam(){if(v.readyState<2||!v.videoWidth)return null;const w=320,h=M
   const background=med(pt),corrected=clamp(top-(mode==='red'?background*.45:background*.7),0,255);
   return corrected;
 }
-function applyCandidate(next){if(next===candidate)streak++;else{candidate=next;streak=1;}if(streak<4||next===confirmed)return;const prev=confirmed;confirmed=next;if(next==='present')status('present','BEAM DETECTED','Your red light is reaching the camera.');else{status('blocked','BEAM BROKEN','Light was interrupted at the target.');if(prev==='present'){count++;el('trip-count').textContent=String(count);}}}
+function applyCandidate(next){if(next===candidate)streak++;else{candidate=next;streak=1;}if(streak<4||next===confirmed)return;const prev=confirmed;confirmed=next;if(next==='present')status('present','BEAM DETECTED','Light is reaching the camera.');else{status('blocked','BEAM BROKEN','Light was interrupted at the target.');if(prev==='present'){count++;el('trip-count').textContent=String(count);}}}
 function tick(time){if(!running)return;raf=requestAnimationFrame(tick);if(time-lastFrame<85)return;lastFrame=time;let score;try{score=readBeam();}catch(e){error('Camera frame processing failed. Tap Restart camera.');return;}if(score===null)return;const quality=score;smooth=smooth===null?score:smooth*.7+score*.3;scoreHistory.push(quality);if(scoreHistory.length>24)scoreHistory.shift();rateCount++;if(time-rateStart>1200){el('fps').textContent=String(Math.round(rateCount*1000/(time-rateStart)));rateCount=0;rateStart=time;}
   el('score').textContent=`Light score ${smooth.toFixed(1)}`;el('live').textContent=smooth.toFixed(0)+' / 255';el('bar').style.width=clamp(smooth/255*100,0,100).toFixed(1)+'%';
   if(calJob){calJob.samples.push(quality);if(calJob.samples.length>=12)finishCal();return;}
+  if(armJob){armJob.samples.push(quality);if(armJob.samples.length>=16)finishAutoArm();return;}
+  if(autoArmed){
+    const low=Math.max(5,autoReference*.45),high=Math.max(low+3,autoReference*.67);
+    if(smooth<=low)applyCandidate('blocked');else if(smooth>=high)applyCandidate('present');else{candidate=confirmed;streak=0;}
+    if(confirmed==='present'&&smooth>=high)autoReference=Math.max(smooth,autoReference*.9995);
+    return;
+  }
   if(!calibrated)return;const gap=calOn.value-calOff.value;const lower=calOff.value+gap*.36,upper=calOff.value+gap*.60;
   if(smooth>=upper)applyCandidate('present');else if(smooth<=lower)applyCandidate('blocked');else{streak=0;candidate=confirmed;}
+}
+function finishAutoArm(){
+  const job=armJob;if(!job)return;armJob=null;el('arm').disabled=false;
+  const a=job.samples.slice(2).sort((x,y)=>x-y),core=a.slice(2,-2);
+  const average=core.reduce((sum,v)=>sum+v,0)/core.length,noise=(a.at(-1)-a[0])/2;
+  const minimum=Math.max(mode==='red'?15:19,noise*3);
+  if(average<minimum){
+    autoArmed=false;autoReference=null;status('wait','LIGHT TOO WEAK','Aim the circle more precisely, move closer, or switch light mode.');
+    el('auto-info').textContent='Measured '+average.toFixed(1)+'; needs '+minimum.toFixed(1)+' or more. Keep light ON while arming. If a red LED looks washed out, try White flashlight mode.';
+    el('arm').textContent='RETRY AUTOMATIC ARM';
+    return;
+  }
+  autoReference=average;autoArmed=true;calibrated=false;calOn=calOff=null;confirmed='present';candidate='present';streak=0;
+  el('confidence').textContent='Auto mode active';el('gap').textContent='AUTO';
+  status('present','BEAM DETECTED','Now block and unblock the light—no more tapping.');
+  el('auto-info').textContent='ARMED • Measured light '+average.toFixed(1)+'/255. Cover the light to trigger the trip counter automatically.';
+  el('arm').textContent='DISARM DETECTOR';
+}
+function beginAutoArm(){
+  if(!running||armJob)return;
+  if(autoArmed){autoArmed=false;autoReference=null;confirmed=candidate='unknown';streak=0;calibrated=false;el('arm').textContent='ARM AUTOMATIC DETECTION';el('auto-info').textContent='Detector disarmed. Keep the light on and tap ARM when ready.';status('wait','DISARMED','Tap ARM once when the light is visible.');return;}
+  if(scoreHistory.length<5){error('Camera is still settling. Hold the phone steady and try ARM again.');return;}
+  clearError();resetCalibration();armJob={samples:[]};el('arm').disabled=true;status('wait','ARMING…','Keep the light ON and hold it steady for about two seconds.');
+  el('auto-info').textContent='Learning illuminated beam automatically. No need to cover it or tap BLOCKED.';
 }
 function finishCal(){const job=calJob;if(!job)return;calJob=null;el('on').disabled=false;el('off').disabled=false;const a=job.samples.slice(2).sort((x,y)=>x-y);const kept=a.slice(1,-1);const average=kept.reduce((s,x)=>s+x,0)/kept.length;const min=a[0],max=a.at(-1);const reading={value:average,noise:Math.max(0,(max-min)/2)};if(job.which==='on'){calOn=reading;el('on-reading').textContent=average.toFixed(1)+' units';}else{calOff=reading;el('off-reading').textContent=average.toFixed(1)+' units';}
   smooth=null;scoreHistory=[];confirmed=candidate='unknown';streak=0;calibrated=false;
@@ -127,9 +160,9 @@ function finishCal(){const job=calJob;if(!job)return;calJob=null;el('on').disabl
   if(gap<minGap){status('wait','SIGNAL TOO WEAK',`Gap ${gap.toFixed(1)}; need roughly ${minGap.toFixed(1)} or more.`);el('confidence').textContent='Signal too weak';el('cal-info').textContent='Move the LED closer, shade nearby lighting, and redo both readings before testing.';return;}
   calibrated=true;el('confidence').textContent=gap>minGap*2?'Strong contrast':'Usable contrast';el('cal-info').textContent='Ready! Unblock the LED until DETECTED appears, then cover it to count one beam break.';status('wait','CALIBRATION READY','Unblock the light first; then block it.');
 }
-function beginCal(which){if(!running||calJob)return;if(scoreHistory.length<5){error('Camera is still settling; aim the LED and try again in a moment.');return;}clearError();calJob={which,samples:[]};el('on').disabled=true;el('off').disabled=true;status('wait','MEASURING…',which==='on'?'Hold the light ON and keep the phone still.':'Keep the beam BLOCKED and hold still.');}
+function beginCal(which){if(!running||calJob)return;autoArmed=false;autoReference=null;armJob=null;el('arm').textContent='ARM AUTOMATIC DETECTION';if(scoreHistory.length<5){error('Camera is still settling; aim the LED and try again in a moment.');return;}clearError();calJob={which,samples:[]};el('on').disabled=true;el('off').disabled=true;status('wait','MEASURING…',which==='on'?'Hold the light ON and keep the phone still.':'Keep the beam BLOCKED and hold still.');}
 function changeMode(m){if(mode===m)return;mode=m;el('red-mode').setAttribute('aria-pressed',String(m==='red'));el('white-mode').setAttribute('aria-pressed',String(m==='white'));resetCalibration('Mode changed. Calibrate again because the light score changed.');}
-el('start').addEventListener('click',()=>running?stopCamera():startCamera());el('reverse').addEventListener('click',()=>{camera=camera==='environment'?'user':'environment';deviceId='';startCamera();});el('restart').addEventListener('click',startCamera);el('camera-select').addEventListener('change',e=>{deviceId=e.target.value;startCamera();});el('red-mode').addEventListener('click',()=>changeMode('red'));el('white-mode').addEventListener('click',()=>changeMode('white'));el('on').addEventListener('click',()=>beginCal('on'));el('off').addEventListener('click',()=>beginCal('off'));el('reset').addEventListener('click',()=>{count=0;el('trip-count').textContent='0';});
+el('arm').addEventListener('click',beginAutoArm);el('start').addEventListener('click',()=>running?stopCamera():startCamera());el('reverse').addEventListener('click',()=>{camera=camera==='environment'?'user':'environment';deviceId='';startCamera();});el('restart').addEventListener('click',startCamera);el('camera-select').addEventListener('change',e=>{deviceId=e.target.value;startCamera();});el('red-mode').addEventListener('click',()=>changeMode('red'));el('white-mode').addEventListener('click',()=>changeMode('white'));el('on').addEventListener('click',()=>beginCal('on'));el('off').addEventListener('click',()=>beginCal('off'));el('reset').addEventListener('click',()=>{count=0;el('trip-count').textContent='0';});
 box.addEventListener('click',e=>{if(!running)return;const p=coordsForTap(e.clientX,e.clientY);if(!p){error('Tap inside the live camera picture rather than the black margin.');return;}clearError();aim=p;moveReticle();resetCalibration('Target moved. Calibrate again with the circle centered on the LED.');});
 window.addEventListener('resize',()=>{if(running)moveReticle();});v.addEventListener('loadedmetadata',()=>{if(running)moveReticle();});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&running){stopCamera();status('wait','CAMERA PAUSED','Return to Safari and tap Start camera again.');}});window.addEventListener('pagehide',()=>{if(running)stopCamera();});
