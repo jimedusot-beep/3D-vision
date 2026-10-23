@@ -47,6 +47,8 @@ try{
  await ready(tripwirePage);
  await tripwirePage.waitForFunction(()=>document.getElementById('component-count').textContent==='13');
  assert.match(await tripwirePage.locator('#title').inputValue(),/tripwire.*exploded/i);
+ assert.equal(await tripwirePage.locator('#stage-badge').getAttribute('data-context'),'tripwire');
+ assert.match(await tripwirePage.locator('#stage-badge').textContent(),/ILLUSTRATIVE.*NOT MEASURED/);
  report('Direct tripwire exploded URL loads 13 components');
  await tripwirePage.goto(new URL('?example=mcgruber-tripwire-assembled',base).href);
  await ready(tripwirePage);

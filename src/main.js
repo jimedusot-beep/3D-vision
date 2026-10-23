@@ -52,7 +52,19 @@ function canonicalScene(){// Save the assembled coordinates while an exploded pr
 function projectData(){return{format:'3dvision-project',version:1,title:$('title').value.trim()||'Untitled assembly',projectId,folder,units:'mm',scene:canonicalScene(),assetIds:[...assetIds],created:new Date().toISOString()};}
 function scheduleSession(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const data=projectData(),id=projectId;sessionQueue=sessionQueue.then(()=>storeRecord('session',{id:'last',data,projectId:id})).then(()=>{$('save-state').textContent=dirty?'Autosaved on this device · revision not saved':'Saved on this device';}).catch(e=>{status(e.message,true);$('save-state').textContent='Autosave failed — export a backup';});},650);}
 function changed(){sceneVersion++;lastAnalysis=null;$('download-report').disabled=true;invalidate();dirty=true;selected=selected.filter(o=>components(workshop.root).includes(o));renderTree();renderProperties();refreshHelpers();refreshAnnotations();updateSummary();updateTransform();jointUI?.render();scheduleSession();}
-function updateSummary(){const list=meshes(workshop.root),triangles=list.reduce((n,o)=>n+(o.geometry.index?.count??o.geometry.attributes.position.count)/3,0);$('component-count').textContent=String(components(workshop.root).length);$('scene-stats').textContent=`${list.length} meshes · ${triangles.toLocaleString()} triangles`;$('empty').hidden=!!list.length;$('undo').disabled=!workshop.past.length;$('redo').disabled=!workshop.future.length;}
+function updateStageContext(){
+ const ids=components(workshop.root).map(o=>o.name);
+ const tripwire=ids.some(n=>/^TW-(E|R|C)-/.test(n));
+ const herbie=ids.some(n=>/^HBR-[0-9]{3}/.test(n));
+ const stage=$('stage-badge');
+ const label=tripwire?'MCGRUBER · LIGHT-BEAM TRIPWIRE':herbie?'H.E.R.B.I.E. V1':'3D ASSEMBLY WORKSPACE';
+ const status=tripwire?'ILLUSTRATIVE · NOT MEASURED':herbie?'PROVISIONAL · NOT TESTED':'FIT NOT VERIFIED';
+ stage.replaceChildren(document.createTextNode(label+' '));
+ const chip=document.createElement('span');chip.textContent=status;stage.append(chip);
+ stage.dataset.context=tripwire?'tripwire':herbie?'herbie':'general';
+ stage.title=tripwire?'13 conceptual tripwire components. No verified wiring or printable dimensions.':'Physical fit is not certified.';
+}
+function updateSummary(){const list=meshes(workshop.root),triangles=list.reduce((n,o)=>n+(o.geometry.index?.count??o.geometry.attributes.position.count)/3,0);updateStageContext();$('component-count').textContent=String(components(workshop.root).length);$('scene-stats').textContent=`${list.length} meshes · ${triangles.toLocaleString()} triangles`;$('empty').hidden=!!list.length;$('undo').disabled=!workshop.past.length;$('redo').disabled=!workshop.future.length;}
 function select(list){invalidate();selected=list;renderTree();renderProperties();refreshHelpers();updateTransform();}
 function updateTransform(){transform.detach();if(selected.length===1&&!locked(selected[0])&&mode!=='select'&&!jointFor(workshop.root,selected[0])&&!explosion&&!busy){transform.attach(selected[0]);transform.setMode(mode);}transform.enabled=!measurementMode&&!busy;}
 function switchLeft(tab){document.querySelectorAll('[data-left]').forEach(b=>b.classList.toggle('active',b.dataset.left===tab));for(const name of ['assembly','catalog','files'])$(name+'-panel').hidden=name!==tab;if(tab==='files')run(renderFiles);}
