@@ -17,6 +17,8 @@ try{
  await tripwire.waitForFunction(()=>window.vision?.ready,null,{timeout:30000});
  await tripwire.waitForFunction(()=>document.getElementById('component-count').textContent==='13',null,{timeout:15000});
  assert.match(await tripwire.locator('#title').inputValue(),/tripwire.*exploded/i);
+ assert.equal(await tripwire.locator('#stage-badge').getAttribute('data-context'),'tripwire');
+ assert.match(await tripwire.locator('#stage-badge').textContent(),/NOT MEASURED/);
  await tripwire.close();results.push('Direct 13-part tripwire deep link on iPhone WebKit');
 
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);await page.screenshot({path:'test-results/webkit-mobile.png',timeout:10000});console.log('PASS: WebKit iPhone emulation: '+results.join('; '));
