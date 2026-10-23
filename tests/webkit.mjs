@@ -13,5 +13,11 @@ try{
  await page.locator('#save').click();await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Revision saved'));await page.reload();await page.waitForFunction(()=>vision?.ready,null,{timeout:30000});assert.equal(await page.locator('#component-count').textContent(),'18');assert.equal(await page.evaluate(()=>vision.workshop.root.children[0].position.x),23);results.push('IndexedDB save/reload retains positions');
  await page.locator('#file-input').setInputFiles('HERBIE_V1/STL/HBR-001.stl');await page.waitForFunction(()=>document.getElementById('component-count').textContent==='19');results.push('Device STL import into assembly');
  const size=await page.evaluate(async()=>{vision.select([]);const blob=await vision.makeExport('glb');return blob.size;});assert.ok(size>1000);results.push('GLB export');
+ const tripwire=await context.newPage();await tripwire.goto(new URL('?example=mcgruber-tripwire-exploded',base).href);
+ await tripwire.waitForFunction(()=>window.vision?.ready,null,{timeout:30000});
+ await tripwire.waitForFunction(()=>document.getElementById('component-count').textContent==='13',null,{timeout:15000});
+ assert.match(await tripwire.locator('#title').inputValue(),/tripwire.*exploded/i);
+ await tripwire.close();results.push('Direct 13-part tripwire deep link on iPhone WebKit');
+
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);await page.screenshot({path:'test-results/webkit-mobile.png',timeout:10000});console.log('PASS: WebKit iPhone emulation: '+results.join('; '));
 }catch(e){console.error('FAIL: WebKit:',e.stack);results.push('FAIL: '+e.message);process.exitCode=1;}finally{await browser?.close();await writeFile('test-results/webkit-results.json',JSON.stringify({engine:'Playwright WebKit',platform:process.platform,results},null,2));}
