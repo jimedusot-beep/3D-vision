@@ -1,7 +1,30 @@
 {
-  "models/HERBIE_V1_Assembled_Interactive.glb": {"units":"mm", "up":"z"},
-  "models/HERBIE_V1_Exploded_Interactive.glb": {"units":"mm", "up":"z"},
-  "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Assembly.glb": {"units":"mm", "up":"z"},
-  "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Exploded.glb": {"units":"mm", "up":"z"},
-  "EXPERIMENTS/001_HERBIE_SKELETON/Electronics_Space_Study.glb": {"units":"mm", "up":"z"}
+  "models/HERBIE_V1_Assembled_Interactive.glb": {
+    "units": "mm",
+    "up": "z"
+  },
+  "models/HERBIE_V1_Exploded_Interactive.glb": {
+    "units": "mm",
+    "up": "z"
+  },
+  "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Assembly.glb": {
+    "units": "mm",
+    "up": "z"
+  },
+  "EXPERIMENTS/001_HERBIE_SKELETON/Skeleton_Exploded.glb": {
+    "units": "mm",
+    "up": "z"
+  },
+  "EXPERIMENTS/001_HERBIE_SKELETON/Electronics_Space_Study.glb": {
+    "units": "mm",
+    "up": "z"
+  },
+  "EXPERIMENTS/002_MCGRUBER_TRIPWIRE/assembled.obj": {
+    "units": "mm",
+    "up": "y"
+  },
+  "EXPERIMENTS/002_MCGRUBER_TRIPWIRE/exploded.obj": {
+    "units": "mm",
+    "up": "y"
+  }
 }
