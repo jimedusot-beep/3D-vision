@@ -21,13 +21,17 @@ function meshParts(object) {
 }
 
 test("one-click example routes are allowlisted, Y-up, in millimetres and nonfabrication", () => {
-  assert.equal(Object.keys(EXAMPLE_MODELS).length, 2);
+  assert.equal(Object.keys(EXAMPLE_MODELS).length, 6);
+  const importedModels=Object.values(EXAMPLE_MODELS).filter(item=>!item.kind);
+  const generatedModels=Object.values(EXAMPLE_MODELS).filter(item=>item.kind==='procedural');
+  assert.equal(importedModels.length,2);
+  assert.equal(generatedModels.length,4);
   assert.equal(exampleModel("mcgruber-tripwire-exploded")?.expectedParts, 13);
   assert.equal(exampleModel("mcgruber-tripwire-assembled")?.expectedParts, 13);
   assert.equal(exampleModel("../../.env"), null);
   assert.equal(exampleModel("https://evil.example/model.obj"), null);
   assert.equal(exampleModel(null), null);
-  for (const item of Object.values(EXAMPLE_MODELS)) {
+  for (const item of importedModels) {
     assert.match(item.path, /^EXPERIMENTS\/002_MCGRUBER_TRIPWIRE\/(assembled|exploded)\.obj$/);
     assert.deepEqual(item.options, { units: "mm", up: "y" });
     assert.equal(item.verifiedFit, false);
