@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102b49"><title>McGruber · Silent Tripwire 3D Assembly Gallery</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e5f1ff;background:#0d1827;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#111e32,#102b49 45%,#121b32);min-height:100vh}
+main{max-width:1020px;padding:clamp(16px,4vw,36px);margin:auto}
+a{color:#85d4ff}a:focus-visible{outline:3px solid #fff29b;outline-offset:4px;border-radius:6px}
+.small{font-size:13px;color:#b4cada}.tag{font-size:11px;letter-spacing:.14em;font-weight:800;color:#79d3fa}.hero h1{font-size:clamp(28px,5.5vw,46px);line-height:1.08;margin:13px 0 10px}.hero p{max-width:750px;color:#c5d7e9;line-height:1.65}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,325px),1fr));gap:17px;margin:24px 0}
+.card{background:#162c43;border:1px solid #345a76;border-radius:19px;overflow:hidden;box-shadow:0 14px 32px #0912227a}
+.card h2{font-size:22px;margin:0 0 9px}.card .body{padding:21px}.card p{color:#c2d8e9;line-height:1.55;margin:8px 0}
+.art{height:160px;display:flex;align-items:center;justify-content:center;position:relative;border-bottom:1px solid #406583;overflow:hidden}
+.art.visible{background:radial-gradient(circle at 35% 60%,#255a9d,#102842 65%)}.art.ir{background:radial-gradient(circle at 62% 65%,#165d62,#102842 65%)}
+.unit{background:linear-gradient(130deg,#56768e,#182639);width:65px;height:52px;border-radius:8px;box-shadow:8px 9px 1px #08121c88, inset 0 0 0 2px #6a8fab55;transform:skewY(-7deg);display:grid;place-items:center;font-weight:900;font-size:13px;color:#e8f4fb}
+.light{width:38px;height:13px;border-radius:50%;box-shadow:0 0 23px #479cf7;background:#55adff;position:absolute;left:calc(25% - 14px)}
+.art.ir .light{background:#233c46;box-shadow:none}
+.ray{width:22%;height:2px;border-top:3px dashed #7dbef4;opacity:.75}
+.art.ir .ray{border-color:#59d2e1}
+.warn{width:20px;height:20px;background:#f56470;border-radius:50%;box-shadow:0 0 19px #f56470}
+.art.visible .warn{background:#453448;box-shadow:none}
+.symbols{display:flex;align-items:center;justify-content:center;gap:7%;width:100%}
+.status{display:inline-block;font-size:11px;padding:5px 9px;border-radius:8px;background:#4b3434;color:#ffc9b7;font-weight:800;margin:8px 0}
+.status.c{background:#26424a;color:#a6eef9}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:17px 0 6px}
+.links a{background:#1e638f;border:1px solid #77bee5;border-radius:10px;color:#fff;font-size:14px;font-weight:760;padding:12px 13px;text-decoration:none;min-height:43px}
+.links a.secondary{background:#26384d;border-color:#58738f;color:#d2e9fa}
+.note{border:1px solid #425d73;border-radius:13px;padding:17px 21px;background:#17293c;margin:16px 0}
+.note h3{margin:0 0 10px}ul{margin:6px 0 12px;padding-left:22px;line-height:1.7;color:#d2dfec}
+footer{color:#afc2d4;font-size:12px;line-height:1.6;margin-top:30px}
+</style></head><body><main>
+<div class="tag">◉ MCGRUBER LAB · 3D VISION WORKSHOP</div>
+<header class="hero"><h1>Two silent tripwires, built in 3D</h1>
+<p>Tap a model to rotate, zoom and select its individual parts. <strong>No sound, no programming, no phone required for the eventual hardware.</strong> These are teaching models, not measured printable enclosures or physically working alarms.</p></header>
+<section class="cards" aria-label="Tripwire experiment models">
+<article class="card"><div class="art visible" aria-hidden="true"><div class="symbols"><span class="unit">9 V</span><span class="ray"></span><span class="unit">LED</span><span class="warn"></span></div></div>
+<div class="body"><span class="status">AMPLIFIER NOT SOLVED</span><h2>B · Blue LED → red sensor</h2>
+<p>Use your salvaged blue LED as a light source. An <strong>unpowered red LED</strong> senses it. The amplifier/threshold is highlighted as missing; the 2N4401 and red alarm LED are shown but <strong>not connected as a proven trigger</strong>.</p>
+<p class="small">16 selectable 3D groups · 9 V emitter concept · blue guide line is not a visible light shaft.</p>
+<nav class="links"><a href="../?example=mcgruber-visible-b-assembled">Open 3D assembly</a><a class="secondary" href="../?example=mcgruber-visible-b-exploded">See exploded 3D</a></nav>
+</div></article>
+<article class="card"><div class="art ir" aria-hidden="true"><div class="symbols"><span class="unit">IR TX</span><span class="ray"></span><span class="unit">IR RX</span><span class="warn"></span></div></div>
+<div class="body"><span class="status c">SPECIFIED MODULE EXAMPLE · NOT TESTED</span><h2>C · Invisible infrared</h2>
+<p>A specific Adafruit-style matched 5 V IR transmitter and receiver, a <strong>10 kΩ pull-up</strong>, <strong>1 kΩ red LED limiter</strong>, and the visible warning. No ESP32, buzzer or 2N4401 is necessary for this short-range module.</p>
+<p class="small">15 selectable 3D groups · short range (about 10–20 inches by vendor specs) · blue-green guide line is symbolic.</p>
+<nav class="links"><a href="../?example=mcgruber-infrared-c-assembled">Open 3D assembly</a><a class="secondary" href="../?example=mcgruber-infrared-c-exploded">See exploded 3D</a><a class="secondary" href="../?example=mcgruber-infrared-c-assembled&amp;beam=blocked">Simulate blocked beam</a></nav>
+</div></article></section>
+<section class="note"><h3>What to do inside 3D Vision</h3>
+<ul><li>Drag or swipe to rotate, pinch or scroll to zoom.</li><li>Open <strong>Assembly</strong> to select a battery, LED, resistor, sensor or wire group by name.</li><li>Use <strong>Hide / Isolate</strong> to inspect how each group fits the concept.</li><li>Use <strong>Export</strong> to save a GLB or a complete editable <code>.3dv</code> project. GitHub Pages retains browser changes locally until exported.</li></ul>
+<p class="small">Experiment B has deliberately missing electronics. Experiment C's glowing warning LED is a <strong>visual state only</strong>; the app cannot operate a real sensor. Neither scene uses precise mechanical dimensions, verified PCB pinouts or measured beam range.</p></section>
+<section class="note"><h3>Real electronics build guides</h3>
+<p><a href="https://github.com/jimedusot-beep/project-mcgruber/blob/main/projects/01-light-beam-tripwire/EXPERIMENT_B_LED_AS_SENSOR.md">B · Blue-to-red LED optical measurements</a> and <a href="https://github.com/jimedusot-beep/project-mcgruber/blob/main/projects/08-infrared-tripwire/EXPERIMENT_C_SILENT_IR.md">C · Matched infrared wiring and silent warning</a>.</p>
+<p><a href="https://github.com/jimedusot-beep/3D-vision/tree/main/EXPERIMENTS/003_MCGRUBER_SILENT_TRIPWIRES">3D source and independent verification notes</a></p>
+</section>
+<footer>All model dimensions are schematic/illustrative. Use low-voltage rated supplies and limit LED current. Not a laser or a certified intrusion alarm. No sound.</footer>
+</main></body></html>
