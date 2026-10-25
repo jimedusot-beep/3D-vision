@@ -90,7 +90,7 @@ function resistor(p,{x=0,y=0,z=0,axis='x',bands=true}={}){
  }
  const a=axis==='x'?[x-19,y,z]:[x,y-19,z],b=axis==='x'?[x+19,y,z]:[x,y+19,z];
  lead(p,a,axis==='x'?[x-9,y,z]:[x,y-9,z]);
- lead(p,axis==='x'?[x+9,y,z]:[x,y+9,z], 'pin');
+ lead(p,axis==='x'?[x+9,y,z]:[x,y+9,z],b,'pin');
  // Second endpoints are represented by the adjacent circuit wires.
  return [a,b];
 }
