@@ -31,7 +31,8 @@ test('all four 3D gallery links are allowlisted and lead to individually generat
  assert.match(html,/mcgruber-infrared-c-assembled&amp;beam=blocked/);
 });
 test('B missing amplifier and C simulated IR output cannot be mistaken for real hardware qualification',()=>{
- assert.match(doc,/B.*amplifier.*unresolved/i);
+ assert.match(doc,/\*\*Unresolved:\*\*/);
+ assert.match(doc,/amplifier\/threshold/i);
  assert.match(doc,/illustrative/i);
  assert.match(doc,/NOT.*(?:hardware|physically|electrical)|not.*(?:hardware|physically|electrical)/i);
  assert.match(html,/simulat/i);
