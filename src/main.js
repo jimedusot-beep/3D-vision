@@ -1,5 +1,6 @@
 import './style.css';
 import {exampleModel} from './example-models.js';
+import {opticalExample} from './optical-tripwire-models.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
@@ -53,16 +54,27 @@ function projectData(){return{format:'3dvision-project',version:1,title:$('title
 function scheduleSession(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const data=projectData(),id=projectId;sessionQueue=sessionQueue.then(()=>storeRecord('session',{id:'last',data,projectId:id})).then(()=>{$('save-state').textContent=dirty?'Autosaved on this device · revision not saved':'Saved on this device';}).catch(e=>{status(e.message,true);$('save-state').textContent='Autosave failed — export a backup';});},650);}
 function changed(){sceneVersion++;lastAnalysis=null;$('download-report').disabled=true;invalidate();dirty=true;selected=selected.filter(o=>components(workshop.root).includes(o));renderTree();renderProperties();refreshHelpers();refreshAnnotations();updateSummary();updateTransform();jointUI?.render();scheduleSession();}
 function updateStageContext(){
- const ids=components(workshop.root).map(o=>o.name);
- const tripwire=ids.some(n=>/^TW-(E|R|C)-/.test(n));
+ const parts=components(workshop.root);
+ const ids=parts.map(o=>o.name);
+ // Legacy 13-part tripwire also uses "TW-C-" for its controller components.
+ // Only explicit source metadata can distinguish newly generated Experiment C.
+ const visibleB=parts.some(o=>o.userData.experiment==='B' && /^TW-B-/.test(o.name));
+ const infraredC=parts.some(o=>o.userData.experiment==='C' && /^TW-C-/.test(o.name));
+ const legacyTripwire=ids.some(n=>/^TW-(E|R|C)-/.test(n));
  const herbie=ids.some(n=>/^HBR-[0-9]{3}/.test(n));
  const stage=$('stage-badge');
- const label=tripwire?'MCGRUBER · LIGHT-BEAM TRIPWIRE':herbie?'H.E.R.B.I.E. V1':'3D ASSEMBLY WORKSPACE';
- const status=tripwire?'ILLUSTRATIVE · NOT MEASURED':herbie?'PROVISIONAL · NOT TESTED':'FIT NOT VERIFIED';
+ const label=visibleB?'MCGRUBER · EXPERIMENT B BLUE/RED LED':
+  infraredC?'MCGRUBER · EXPERIMENT C INFRARED':
+  legacyTripwire?'MCGRUBER · LIGHT-BEAM TRIPWIRE':herbie?'H.E.R.B.I.E. V1':'3D ASSEMBLY WORKSPACE';
+ const modelStatus=visibleB?'AMPLIFIER MISSING · UNMEASURED':
+  infraredC?'ILLUSTRATIVE · IR HARDWARE UNTESTED':
+  legacyTripwire?'ILLUSTRATIVE · NOT MEASURED':
+  herbie?'PROVISIONAL · NOT TESTED':'FIT NOT VERIFIED';
  stage.replaceChildren(document.createTextNode(label+' '));
- const chip=document.createElement('span');chip.textContent=status;stage.append(chip);
- stage.dataset.context=tripwire?'tripwire':herbie?'herbie':'general';
- stage.title=tripwire?'13 conceptual tripwire components. No verified wiring or printable dimensions.':'Physical fit is not certified.';
+ const chip=document.createElement('span');chip.textContent=modelStatus;stage.append(chip);
+ stage.dataset.context=visibleB?'tripwire-b':infraredC?'tripwire-c':legacyTripwire?'tripwire':herbie?'herbie':'general';
+ stage.title=(visibleB||infraredC)?'3D educational arrangement only. Beam and alarm are schematic, not physically verified; no sound.':
+  legacyTripwire?'13 conceptual tripwire components. No verified wiring or printable dimensions.':'Physical fit is not certified.';
 }
 function updateSummary(){const list=meshes(workshop.root),triangles=list.reduce((n,o)=>n+(o.geometry.index?.count??o.geometry.attributes.position.count)/3,0);updateStageContext();$('component-count').textContent=String(components(workshop.root).length);$('scene-stats').textContent=`${list.length} meshes · ${triangles.toLocaleString()} triangles`;$('empty').hidden=!!list.length;$('undo').disabled=!workshop.past.length;$('redo').disabled=!workshop.future.length;}
 function select(list){invalidate();selected=list;renderTree();renderProperties();refreshHelpers();updateTransform();}
@@ -218,7 +230,35 @@ jointUI=jointPanel({root:()=>workshop.root,selected:()=>selected,mutate,checkpoi
 // Small documented integration surface for deterministic browser QA and future adapters.
 cloud=createCloudLibrary({notify:status,onOpen:(file,companions,options={})=>loading('Opening cloud file…',()=>addFile(file,{companions,units:'auto',up:'auto',...options})),makeProject:createProjectPackage,saveCurrentProject:saveProject});
 window.vision={workshop,get selected(){return selected},select,mutate,parseModel,makeExport,projectData,saveProject,exportProjectPackage,addFile,analyze,get cloud(){return cloud},get frames(){return frameCount},get analysis(){return lastAnalysis},get assets(){return [...assetIds]},inspect,get ready(){return $('status').dataset.ready==='true'}};
-async function start(){updateBed();resize();await database();await getCatalog();const query=new URLSearchParams(location.search),part=query.get('part'),view=query.get('view'),example=query.get('example');const exampleSpec=exampleModel(example);if(example&&!exampleSpec)throw Error('Unknown example model. Select a model from the repository library.');if(exampleSpec){await repositoryFile(exampleSpec.path,exampleSpec.path.split('/').pop(),exampleSpec.options);$('title').value=exampleSpec.name;status('Loaded '+exampleSpec.name+' · 13 illustrative parts; physical fit unverified.');}
+function setupOpticalSwitcher(exampleId,experiment,exploded,blocked){
+ const nav=$('optical-switcher');
+ const base=experiment==='B'?'mcgruber-visible-b':'mcgruber-infrared-c';
+ const other=experiment==='B'?'mcgruber-infrared-c':'mcgruber-visible-b';
+ const view=exploded?'exploded':'assembled';
+ const link=(name,mode,breakBeam)=>'?example='+name+'-'+mode+(breakBeam?'&beam=blocked':'');
+ nav.hidden=false;
+ nav.dataset.beam=blocked?'blocked':'clear';
+ nav.dataset.experiment=experiment;
+ $('optical-state').textContent='SIMULATED: beam '+(blocked?'BLOCKED':'CLEAR')+' · no sound';
+ $('optical-view').href=link(base,exploded?'assembled':'exploded',blocked);
+ $('optical-view').textContent=exploded?'Show assembled':'Show exploded';
+ $('optical-beam').href=link(base,view,!blocked);
+ $('optical-beam').textContent=blocked?'Restore beam':'Block beam';
+ $('optical-other').href=link(other,view,false);
+ $('optical-other').textContent=experiment==='B'?'Switch to C: infrared':'Switch to B: visible LED';
+ $('optical-build').href=experiment==='B'?
+  'https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/01-light-beam-tripwire':
+  'https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/08-infrared-tripwire';
+ $('optical-warning').textContent=experiment==='B'?
+  'B: amplifier and threshold are MISSING. Alarm LED is NOT automatic.':
+  'C: Adafruit-style 5 V module illustrated. LED state is simulated, not measured.';
+}
+async function start(){updateBed();resize();await database();await getCatalog();const query=new URLSearchParams(location.search),part=query.get('part'),view=query.get('view'),example=query.get('example');const exampleSpec=exampleModel(example);if(example&&!exampleSpec)throw Error('Unknown example model. Select a model from the repository library.');if(exampleSpec){if(exampleSpec.kind==='procedural'){
+ const {objects,blocked}=opticalExample(example,{blocked:query.get('beam')==='blocked'});
+ workshop.add(objects);$('title').value=exampleSpec.name;changed();fit();
+ setupOpticalSwitcher(example,exampleSpec.experiment,exampleSpec.exploded,blocked);
+ status('Loaded '+exampleSpec.name+' · '+objects.length+' selectable concept parts. '+(exampleSpec.experiment==='B'?'Missing receiver amplifier is NOT solved.':'Beam and warning state are visual examples, not hardware.')+(blocked?' Shown: SIMULATED blocked beam.':''));
+ }else{await repositoryFile(exampleSpec.path,exampleSpec.path.split('/').pop(),exampleSpec.options);$('title').value=exampleSpec.name;status('Loaded '+exampleSpec.name+' · 13 illustrative parts; physical fit unverified.');}}
  else if(part&&/^HBR-0(0[1-9]|1[0-8])$/i.test(part)){await repositoryFile('HERBIE_V1/STL/'+part.toUpperCase()+'.stl');}
  else if(view){await loadHerbie(view==='exploded');}
  else {const last=await readRecord('session','last');if(last?.data){validateProject(last.data);workshop.restore(last.data.scene);$('title').value=last.data.title;folder=last.data.folder||'My projects';assetIds=new Set(last.data.assetIds||[]);projectId=last.projectId;normalizeState();renderTree();renderProperties();updateSummary();fit();status('Recovered your last workspace from this browser.');}else await loadHerbie();}

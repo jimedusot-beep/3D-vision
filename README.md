@@ -31,6 +31,16 @@ A separate, **illustrative 13-part assembly**, sourced from Cyborg Hardware's Mc
 
 These links require the updated Pages release. The original H.E.R.B.I.E. robot CAD and mechanical test status are unchanged.
 
+## McGruber B/C — silent blue/red and infrared tripwires in 3D
+
+**[OPEN THE BEGINNER-FRIENDLY 3D TRIPWIRE GALLERY](https://jimedusot-beep.github.io/3D-vision/optical-tripwires.html)**
+
+- **B — salvaged blue LED transmitter → UNPOWERED red LED sensor → missing amplifier → 2N4401 → silent warning LED:** [assembled 3D](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-visible-b-assembled) · [exploded 3D](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-visible-b-exploded)
+- **C — matched 5 V infrared emitter/receiver → 10 kΩ pull-up + 1 kΩ limiter → silent warning LED:** [assembled 3D](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-infrared-c-assembled) · [exploded 3D](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-infrared-c-exploded)
+- [**Experiment 003 instructions, individually named parts, engineering caveats and source geometry**](EXPERIMENTS/003_MCGRUBER_SILENT_TRIPWIRES/README.md)
+
+These **16-part B and 15-part C assemblies are real editable THREE.js scene geometry**, not a static illustration. Experiment B's amplifier is deliberately unresolved. Experiment C's matched-IR warning output is only simulated in the viewer. The parts can be rotated, hidden, isolated and exported; their dimensions/wiring are approximate and **not physically verified or print-ready**. No sound, phone or microcontroller is part of the final hardware output.
+
 ## Save your uploaded files and work
 
 1. **Import files** from your device, or import a public URL/GitHub file link. Original files are retained in **My files**, with searchable folders and display names. Identical bytes are stored once.
