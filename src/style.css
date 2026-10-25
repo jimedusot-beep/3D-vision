@@ -15,3 +15,7 @@
 .optical-switcher .optical-warning{font-size:10px;color:#ffcf94;background:#18212ce8;border-radius:6px;padding:5px 7px}
 .optical-switcher[data-beam=blocked] .optical-switcher-heading{color:#ffc7be;border-color:#a85d60;background:#512b35ed}
 @media(max-width:850px){.optical-switcher{top:82px;left:10px;right:10px;gap:4px}.optical-switcher a,.optical-switcher-heading{font-size:10px;padding:7px}.optical-switcher .optical-warning{flex-basis:100%;font-size:9px}}
+
+.mcgruber-launch{white-space:nowrap;padding:9px 12px;min-height:34px;border:1px solid #5c98ae;border-radius:7px;background:#244455;color:#adf0ff;font-size:11px;font-weight:650;flex-shrink:0}
+.mcgruber-launch:hover{background:#34617b}
+@media(max-width:850px){.mcgruber-launch{font-size:10px;padding:8px;min-height:32px}}
