@@ -33,6 +33,21 @@ try{
   assert.equal(await b.locator('#optical-switcher').isVisible(),true);
   assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  }
+
+ assert.equal(await b.locator('#tripwire-guide').isVisible(),true);
+ assert.equal(await b.locator('#guide-step-count').textContent(),'Stage 1 of 7');
+ assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ await b.locator('#guide-next').click();
+ assert.equal(await b.locator('#guide-step-count').textContent(),'Stage 2 of 7');
+ assert.equal(new URL(b.url()).searchParams.get('step'),'2');
+ await b.locator('#guide-toggle').click();
+ assert.equal(await b.locator('#guide-body').isVisible(),false);
+ await b.locator('#guide-toggle').click();
+ assert.equal(await b.locator('#guide-body').isVisible(),true);
+ await b.locator('#guide-read').click();
+ assert.match(await b.locator('#guide-progress').textContent(),/lessons read.*physical checks still UNVERIFIED/);
+ assert.match(await b.locator('#guide-gate').textContent(),/NOT recorded|Visual placement/);
+ results.push('Guided 3D assembly panel, mobile stages, collapse and local reading-only progress');
  await b.locator('#optical-beam').click();
  await b.waitForFunction(()=>window.vision?.ready&&document.getElementById('optical-switcher')?.dataset.beam==='blocked',null,{timeout:30000});
  assert.match(await b.locator('#tree').textContent(),/Silent warning LED ON/);
