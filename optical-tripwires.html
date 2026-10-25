@@ -27,7 +27,7 @@ footer{margin-top:30px;font-size:12px;color:#8ea6b9}footer a{margin-right:13px}
 <main>
 <div class="eyebrow">Two projects · four 3D assemblies · no sound</div>
 <h1>Explore your tripwire <span>before wiring it.</span></h1>
-<p class="lead">Tap a project to open a rotatable, zoomable 3D scene. Select each component in the left panel, hide or isolate it, and switch between assembled and exploded views. These are <strong>illustrative teaching models</strong>, not proven electrical circuits or measured 3D-printable enclosures.</p>
+<p class="lead">Choose a project to open a rotatable, zoomable 3D scene with an on-screen <strong>step-by-step build instructor</strong>. It highlights exactly which components to inspect, describes the intended wires, and gives a real-life meter test at each stage. The lessons do not mark any physical hardware as verified. These are <strong>illustrative teaching models</strong>, not proven electrical circuits or measured 3D-printable enclosures.</p>
 <div class="overview" aria-label="Simplified physical layout of both tripwires">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 230" role="img" aria-labelledby="title desc">
 <title id="title">Physical setup for two silent optical tripwire projects</title>
@@ -55,7 +55,7 @@ footer{margin-top:30px;font-size:12px;color:#8ea6b9}footer a{margin-right:13px}
 <p>Visualize the battery, measured resistor, blue transmitter, unpowered red LED detector, possible amplifier, 2N4401 switch, and separate silent indicator.</p>
 <ul><li><strong>16 separately selectable 3D part groups</strong></li><li>Amplifier/threshold shown as a <strong>missing, unverified part</strong></li><li>Simulated beam crossing does <strong>not</strong> falsely claim an automatic warning LED</li></ul>
 <div class="actions">
-<a class="primary" href="./?example=mcgruber-visible-b-assembled">Open 3D model</a>
+<a class="primary" href="./?example=mcgruber-visible-b-assembled&amp;step=1">Start 6-stage guided build</a>
 <a href="./?example=mcgruber-visible-b-exploded">Exploded view</a>
 <a href="./?example=mcgruber-visible-b-assembled&amp;beam=blocked">Show blocked beam</a>
 <a href="https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/01-light-beam-tripwire">Actual build research</a>
@@ -67,7 +67,7 @@ footer{margin-top:30px;font-size:12px;color:#8ea6b9}footer a{margin-right:13px}
 <p>Visualize both 5 V supplies, matching IR transmitter and receiver, a 10 kΩ output pull-up, a 1 kΩ indicator resistor, and a red warning LED.</p>
 <ul><li><strong>15 separately selectable 3D part groups</strong></li><li>Based on the <strong>Adafruit 2167/2168</strong> low-voltage module approach</li><li>Block the *simulated* beam to see the warning LED glow</li></ul>
 <div class="actions">
-<a class="primary" href="./?example=mcgruber-infrared-c-assembled">Open 3D model</a>
+<a class="primary" href="./?example=mcgruber-infrared-c-assembled&amp;step=1">Start 7-stage guided build</a>
 <a href="./?example=mcgruber-infrared-c-exploded">Exploded view</a>
 <a href="./?example=mcgruber-infrared-c-assembled&amp;beam=blocked">Show warning ON</a>
 <a href="https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/08-infrared-tripwire">Actual build research</a>
@@ -75,12 +75,12 @@ footer{margin-top:30px;font-size:12px;color:#8ea6b9}footer a{margin-right:13px}
 </section>
 </div>
 <details><summary>How to navigate the 3D builder</summary><ol>
-<li>Choose <strong>Open 3D model</strong> for B or C.</li>
+<li>Choose <strong>Start guided build</strong> for B or C. The tutorial opens in the actual 3D workshop.</li>
 <li>Drag one finger to orbit the camera. Pinch to zoom.</li>
-<li>Press <strong>Show exploded</strong> near the top of the 3D viewer to separate components.</li>
+<li>Read <strong>Stage 1</strong> in the guided panel. It explains which actual 3D components are highlighted and where to place them. Press <strong>Focus camera on parts</strong> to zoom toward them.</li><li>Read <strong>Which wires connect</strong> and the real Fluke checkpoint; these are future hands-on instructions, not verified measurements. Press <strong>Next stage</strong> to continue.</li><li>Press <strong>Show exploded</strong> to separate components; the tutorial stays on the same stage.</li>
 <li>Press <strong>Block beam</strong> or <strong>Restore beam</strong> to change the symbolic visual state.</li>
 <li>Open the <strong>Components</strong> panel to select individual LEDs, resistors, mounts and wires. You can also hide or isolate parts.</li>
-<li>Use <strong>Export</strong> to save a model or a complete <code>.3dv</code> project for later revision.</li>
+<li>Mark a lesson <strong>read</strong> if you want a local reading-progress counter. It never marks the circuit as built or tested.</li><li>Use <strong>Export</strong> to save a model or a complete <code>.3dv</code> project for later revision.</li>
 </ol></details>
 <details><summary>Engineering accuracy and safety</summary>
 <p>These scenes do not simulate real photodiode sensitivity, amplifier gain, threshold, pinout, electrical load, IR range or power-bank behavior. The B amplifier does not have a verified final circuit; the salvaged 2N4401 manufacturer's lead order is unknown. The C demonstration applies to identified Adafruit-style IR modules with an active-LOW open-collector receiver. A different module requires its own datasheet and output measurements.</p>
