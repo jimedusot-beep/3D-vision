@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111e2c">
+<title>McGruber · Silent Tripwire 3D Studio</title>
+<meta name="description" content="Open the interactive 3D assembly of two silent light-beam experiments, visible blue/red and infrared. Concept models, not verified hardware.">
+<style>
+:root{color-scheme:dark;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0c1420;color:#f1f5fe;font-size:16px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0,#15304d 0,#0e1929 48%,#0c1420 85%);min-height:100dvh}a{color:#a9ecf6}a:focus-visible{outline:3px solid #ffc57d;outline-offset:5px}
+header{padding:18px clamp(16px,4vw,46px);border-bottom:1px solid #29435b;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+header strong{letter-spacing:.17em;font-size:13px}header a{font-size:12px;text-decoration:none;border:1px solid #3a6074;padding:9px 12px;border-radius:9px}
+main{width:min(1100px,100%);padding:40px 18px 66px;margin:auto}h1{font-size:clamp(28px,5vw,53px);max-width:850px;margin:8px 0 14px;line-height:1.12}h1 span{color:#85e6e2}p{color:#b2c4d6;line-height:1.55}.eyebrow{letter-spacing:.18em;text-transform:uppercase;color:#8cdbcf;font-size:12px;font-weight:700}
+.lead{max-width:730px;font-size:17px;margin-bottom:26px}.overview{margin:26px 0 36px;background:#112337;border:1px solid #2a5167;border-radius:18px;padding:20px;overflow:hidden}
+.overview svg{width:100%;height:auto;display:block}.overview p{font-size:12px;margin:8px 0 0}
+.layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.card{background:#14283c;border:1px solid #365972;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:9px}
+.card.b{border-top:4px solid #479cf7}.card.c{border-top:4px solid #7de3ce}.card h2{margin:4px 0;font-size:23px}
+.tag{display:inline-block;background:#263e50;color:#b6dff3;border-radius:6px;letter-spacing:.09em;font-size:10px;font-weight:700;padding:7px 9px;align-self:flex-start}
+.card ul{margin:5px 0 14px;padding-left:21px;color:#c5d6e4;font-size:14px;line-height:1.8}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:auto}
+.actions a{text-align:center;text-decoration:none;padding:12px 8px;border-radius:9px;font-size:13px;border:1px solid #507991;background:#203c52;color:#f5fbff;min-height:45px}
+.actions a.primary{background:#83dce4;color:#082432;font-weight:700;border-color:#83dce4}
+.actions a:hover{filter:brightness(1.12)}
+details{margin-top:22px;border:1px solid #35536a;border-radius:13px;padding:16px 20px;background:#111f2f}
+summary{cursor:pointer;font-weight:700}details li{margin:9px 0;color:#bacbdc;line-height:1.5}
+footer{margin-top:30px;font-size:12px;color:#8ea6b9}footer a{margin-right:13px}
+@media(max-width:760px){main{padding:26px 13px 44px}.layout{grid-template-columns:1fr}.card{padding:19px}.overview{padding:11px}}
+</style></head><body>
+<header><strong>◉ McGRUBER · SILENT TRIPWIRES</strong><a href="./">Open complete 3D Vision workshop</a></header>
+<main>
+<div class="eyebrow">Two projects · four 3D assemblies · no sound</div>
+<h1>Explore your tripwire <span>before wiring it.</span></h1>
+<p class="lead">Tap a project to open a rotatable, zoomable 3D scene. Select each component in the left panel, hide or isolate it, and switch between assembled and exploded views. These are <strong>illustrative teaching models</strong>, not proven electrical circuits or measured 3D-printable enclosures.</p>
+<div class="overview" aria-label="Simplified physical layout of both tripwires">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 230" role="img" aria-labelledby="title desc">
+<title id="title">Physical setup for two silent optical tripwire projects</title>
+<desc id="desc">An emitter is mounted on one side, a receiver on the other. B uses a blue visible LED and an unpowered red LED sensing the beam with an as-yet-unverified amplifier. C uses a matched invisible infrared pair and a resistor-limited visible warning light.</desc>
+<rect x="8" y="15" width="943" height="196" rx="14" fill="#10253b" stroke="#3b5e7c"/>
+<text x="33" y="48" fill="#acc9e4" font-family="sans-serif" font-weight="bold" font-size="17">Emitter / light source</text>
+<text x="665" y="48" fill="#acc9e4" font-family="sans-serif" font-weight="bold" font-size="17">Receiver + warning indicator</text>
+<rect x="54" y="76" width="133" height="90" rx="12" fill="#35536f" stroke="#77b7e1"/>
+<rect x="744" y="76" width="133" height="90" rx="12" fill="#35536f" stroke="#77b7e1"/>
+<rect x="171" y="107" width="30" height="30" rx="14" fill="#68aeff"/>
+<rect x="730" y="107" width="30" height="30" rx="14" fill="#e9616b"/>
+<path d="M201 122H729" stroke="#60b7ff" stroke-width="6" stroke-dasharray="13 16" opacity=".68"/>
+<rect x="467" y="79" width="13" height="85" rx="6" fill="#182938" stroke="#d7a67c" stroke-width="2"/>
+<text x="379" y="71" fill="#f0c89b" font-family="sans-serif" font-size="13">A hand or card breaks the beam</text>
+<circle cx="824" cy="85" r="10" fill="#ff646b"/>
+<text x="42" y="191" fill="#9abbd7" font-family="sans-serif" font-size="13">Blue light for B / invisible IR for C (beam is symbolic)</text>
+<text x="670" y="191" fill="#ffbaaa" font-family="sans-serif" font-size="13">Silent red warning light</text>
+</svg>
+<p>Remember: ordinary blue LEDs and infrared sources do not make a glowing beam in clear room air. The line here and in the 3D viewer is a visual guide only.</p>
+</div>
+<div class="layout">
+<section class="card b" aria-labelledby="b-title">
+<span class="tag">EXPERIMENT B · SALVAGED COMPONENTS</span>
+<h2 id="b-title">Blue LED → red LED light sensor</h2>
+<p>Visualize the battery, measured resistor, blue transmitter, unpowered red LED detector, possible amplifier, 2N4401 switch, and separate silent indicator.</p>
+<ul><li><strong>16 separately selectable 3D part groups</strong></li><li>Amplifier/threshold shown as a <strong>missing, unverified part</strong></li><li>Simulated beam crossing does <strong>not</strong> falsely claim an automatic warning LED</li></ul>
+<div class="actions">
+<a class="primary" href="./?example=mcgruber-visible-b-assembled">Open 3D model</a>
+<a href="./?example=mcgruber-visible-b-exploded">Exploded view</a>
+<a href="./?example=mcgruber-visible-b-assembled&amp;beam=blocked">Show blocked beam</a>
+<a href="https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/01-light-beam-tripwire">Actual build research</a>
+</div>
+</section>
+<section class="card c" aria-labelledby="c-title">
+<span class="tag">EXPERIMENT C · MATCHED INFRARED PAIR</span>
+<h2 id="c-title">Invisible IR → silent red warning light</h2>
+<p>Visualize both 5 V supplies, matching IR transmitter and receiver, a 10 kΩ output pull-up, a 1 kΩ indicator resistor, and a red warning LED.</p>
+<ul><li><strong>15 separately selectable 3D part groups</strong></li><li>Based on the <strong>Adafruit 2167/2168</strong> low-voltage module approach</li><li>Block the *simulated* beam to see the warning LED glow</li></ul>
+<div class="actions">
+<a class="primary" href="./?example=mcgruber-infrared-c-assembled">Open 3D model</a>
+<a href="./?example=mcgruber-infrared-c-exploded">Exploded view</a>
+<a href="./?example=mcgruber-infrared-c-assembled&amp;beam=blocked">Show warning ON</a>
+<a href="https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/08-infrared-tripwire">Actual build research</a>
+</div>
+</section>
+</div>
+<details><summary>How to navigate the 3D builder</summary><ol>
+<li>Choose <strong>Open 3D model</strong> for B or C.</li>
+<li>Drag one finger to orbit the camera. Pinch to zoom.</li>
+<li>Press <strong>Show exploded</strong> near the top of the 3D viewer to separate components.</li>
+<li>Press <strong>Block beam</strong> or <strong>Restore beam</strong> to change the symbolic visual state.</li>
+<li>Open the <strong>Components</strong> panel to select individual LEDs, resistors, mounts and wires. You can also hide or isolate parts.</li>
+<li>Use <strong>Export</strong> to save a model or a complete <code>.3dv</code> project for later revision.</li>
+</ol></details>
+<details><summary>Engineering accuracy and safety</summary>
+<p>These scenes do not simulate real photodiode sensitivity, amplifier gain, threshold, pinout, electrical load, IR range or power-bank behavior. The B amplifier does not have a verified final circuit; the salvaged 2N4401 manufacturer's lead order is unknown. The C demonstration applies to identified Adafruit-style IR modules with an active-LOW open-collector receiver. A different module requires its own datasheet and output measurements.</p>
+<p>No physical test has been completed by this software. Enclosures, wires and mounts are approximate teaching geometry and not certified for 3D printing. Use rated low-voltage power, properly limited indicator LEDs, and <strong>no laser, buzzer, speaker or audible alarm</strong>.</p>
+</details>
+<footer><a href="https://github.com/jimedusot-beep/3D-vision">3D Vision source</a><a href="https://github.com/jimedusot-beep/Herbie-cyborg-hardware/tree/main/examples/mcgruber-light-beam-tripwire">Cyborg hardware reference</a><a href="https://github.com/jimedusot-beep/project-mcgruber">McGruber Lab</a></footer>
+</main></body></html>
