@@ -187,8 +187,8 @@ function visibleB({exploded=false,blocked=false}={}){
 }
 function infraredC({exploded=false,blocked=false}={}){
  const stage='C', s=[];
- base(s,'TW-C-01','Emitter demonstration mount','emitter',stage,exploded);
- base(s,'TW-C-02','Receiver demonstration mount','receiver',stage,exploded);
+ base(s,'TW-C-01','Emitter demonstration mount',-158,'emitter',stage,exploded);
+ base(s,'TW-C-02','Receiver demonstration mount',158,'receiver',stage,exploded);
  const powerTx=part('TW-C-03','Regulated 5 V emitter supply · REQUIRED','emitter',stage);
  block(powerTx,0,0,11,43,27,22,'frame');block(powerTx,0,-14,16,19,3,6,'dark');
  add(s,powerTx,-200,29,0,{exploded,shift:-23});
