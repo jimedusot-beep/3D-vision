@@ -227,9 +227,33 @@ jointUI=jointPanel({root:()=>workshop.root,selected:()=>selected,mutate,checkpoi
 // Small documented integration surface for deterministic browser QA and future adapters.
 cloud=createCloudLibrary({notify:status,onOpen:(file,companions,options={})=>loading('Opening cloud file…',()=>addFile(file,{companions,units:'auto',up:'auto',...options})),makeProject:createProjectPackage,saveCurrentProject:saveProject});
 window.vision={workshop,get selected(){return selected},select,mutate,parseModel,makeExport,projectData,saveProject,exportProjectPackage,addFile,analyze,get cloud(){return cloud},get frames(){return frameCount},get analysis(){return lastAnalysis},get assets(){return [...assetIds]},inspect,get ready(){return $('status').dataset.ready==='true'}};
+function setupOpticalSwitcher(exampleId,experiment,exploded,blocked){
+ const nav=$('optical-switcher');
+ const base=experiment==='B'?'mcgruber-visible-b':'mcgruber-infrared-c';
+ const other=experiment==='B'?'mcgruber-infrared-c':'mcgruber-visible-b';
+ const view=exploded?'exploded':'assembled';
+ const link=(name,mode,breakBeam)=>'?example='+name+'-'+mode+(breakBeam?'&beam=blocked':'');
+ nav.hidden=false;
+ nav.dataset.beam=blocked?'blocked':'clear';
+ nav.dataset.experiment=experiment;
+ $('optical-state').textContent='SIMULATED: beam '+(blocked?'BLOCKED':'CLEAR')+' · no sound';
+ $('optical-view').href=link(base,exploded?'assembled':'exploded',blocked);
+ $('optical-view').textContent=exploded?'Show assembled':'Show exploded';
+ $('optical-beam').href=link(base,view,!blocked);
+ $('optical-beam').textContent=blocked?'Restore beam':'Block beam';
+ $('optical-other').href=link(other,view,false);
+ $('optical-other').textContent=experiment==='B'?'Switch to C: infrared':'Switch to B: visible LED';
+ $('optical-build').href=experiment==='B'?
+  'https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/01-light-beam-tripwire':
+  'https://github.com/jimedusot-beep/project-mcgruber/tree/main/projects/08-infrared-tripwire';
+ $('optical-warning').textContent=experiment==='B'?
+  'B: amplifier and threshold are MISSING. Alarm LED is NOT automatic.':
+  'C: Adafruit-style 5 V module illustrated. LED state is simulated, not measured.';
+}
 async function start(){updateBed();resize();await database();await getCatalog();const query=new URLSearchParams(location.search),part=query.get('part'),view=query.get('view'),example=query.get('example');const exampleSpec=exampleModel(example);if(example&&!exampleSpec)throw Error('Unknown example model. Select a model from the repository library.');if(exampleSpec){if(exampleSpec.kind==='procedural'){
  const {objects,blocked}=opticalExample(example,{blocked:query.get('beam')==='blocked'});
  workshop.add(objects);$('title').value=exampleSpec.name;changed();fit();
+ setupOpticalSwitcher(example,exampleSpec.experiment,exampleSpec.exploded,blocked);
  status('Loaded '+exampleSpec.name+' · '+objects.length+' selectable concept parts. '+(exampleSpec.experiment==='B'?'Missing receiver amplifier is NOT solved.':'Beam and warning state are visual examples, not hardware.')+(blocked?' Shown: SIMULATED blocked beam.':''));
  }else{await repositoryFile(exampleSpec.path,exampleSpec.path.split('/').pop(),exampleSpec.options);$('title').value=exampleSpec.name;status('Loaded '+exampleSpec.name+' · 13 illustrative parts; physical fit unverified.');}}
  else if(part&&/^HBR-0(0[1-9]|1[0-8])$/i.test(part)){await repositoryFile('HERBIE_V1/STL/'+part.toUpperCase()+'.stl');}
