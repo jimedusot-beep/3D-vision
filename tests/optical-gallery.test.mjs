@@ -34,7 +34,8 @@ test('B missing amplifier and C simulated IR output cannot be mistaken for real 
  assert.match(doc,/\*\*Unresolved:\*\*/);
  assert.match(doc,/amplifier\/threshold/i);
  assert.match(doc,/illustrative/i);
- assert.match(doc,/NOT.*(?:hardware|physically|electrical)|not.*(?:hardware|physically|electrical)/i);
+ assert.match(doc,/not measured/i);
+ assert.match(doc,/Hardware B next:/);
  assert.match(html,/simulat/i);
  assert.match(html,/no laser/i);
  assert.match(html,/not.*(?:print|verified|measured)/i);
