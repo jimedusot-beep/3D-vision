@@ -1,6 +1,7 @@
 import './style.css';
 import {exampleModel} from './example-models.js';
 import {opticalExample} from './optical-tripwire-models.js';
+import {createTripwireLesson} from './tripwire-guide-ui.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
@@ -230,6 +231,41 @@ jointUI=jointPanel({root:()=>workshop.root,selected:()=>selected,mutate,checkpoi
 // Small documented integration surface for deterministic browser QA and future adapters.
 cloud=createCloudLibrary({notify:status,onOpen:(file,companions,options={})=>loading('Opening cloud file…',()=>addFile(file,{companions,units:'auto',up:'auto',...options})),makeProject:createProjectPackage,saveCurrentProject:saveProject});
 window.vision={workshop,get selected(){return selected},select,mutate,parseModel,makeExport,projectData,saveProject,exportProjectPackage,addFile,analyze,get cloud(){return cloud},get frames(){return frameCount},get analysis(){return lastAnalysis},get assets(){return [...assetIds]},inspect,get ready(){return $('status').dataset.ready==='true'}};
+function focusTripwireParts(parts){
+ // Local viewport camera framing only: no scene geometry is modified.
+ const bounds=new THREE.Box3();
+ for(const part of parts)if(part?.parent&&visible(part))bounds.expandByObject(part);
+ if(bounds.isEmpty())return;
+ const center=bounds.getCenter(new THREE.Vector3());
+ const dims=bounds.getSize(new THREE.Vector3());
+ const extent=Math.max(...dims.toArray(),20);
+ const aspect=Math.max(.35,viewport.clientWidth/Math.max(1,viewport.clientHeight));
+ const direction=camera.position.clone().sub(controls.target);
+ if(direction.lengthSq()<.001)direction.set(1.3,-1.8,1.1);
+ direction.normalize();
+ const distance=extent/Math.min(aspect,1)/Math.tan(THREE.MathUtils.degToRad(21))*.9;
+ camera.position.copy(center).addScaledVector(direction,distance);
+ controls.target.copy(center);
+ camera.near=Math.max(.01,distance/10000);
+ camera.far=Math.max(10000,distance*100);
+ if(camera.isOrthographicCamera){
+  const h=extent*1.7/Math.min(aspect,1);
+  camera.left=-h*aspect/2;camera.right=h*aspect/2;
+  camera.top=h/2;camera.bottom=-h/2;
+  camera.zoom=1;
+ }
+ camera.updateProjectionMatrix();controls.update();invalidate();
+}
+function synchronizeGuideLinks(index){
+ // Preserve the current instructional stage when viewing exploded/assembled
+ // or visually interrupting the simulated beam. No physical test state stored.
+ for(const id of ['optical-view','optical-beam','optical-other']){
+  const anchor=$(id);
+  const url=new URL(anchor.href,location.href);
+  url.searchParams.set('step',String(index+1));
+  anchor.href=url.pathname+url.search;
+ }
+}
 function setupOpticalSwitcher(exampleId,experiment,exploded,blocked){
  const nav=$('optical-switcher');
  const base=experiment==='B'?'mcgruber-visible-b':'mcgruber-infrared-c';
@@ -257,6 +293,14 @@ async function start(){updateBed();resize();await database();await getCatalog();
  const {objects,blocked}=opticalExample(example,{blocked:query.get('beam')==='blocked'});
  workshop.add(objects);$('title').value=exampleSpec.name;changed();fit();
  setupOpticalSwitcher(example,exampleSpec.experiment,exampleSpec.exploded,blocked);
+ createTripwireLesson({
+  experiment:exampleSpec.experiment,
+  modelParts:objects,
+  selectParts:select,
+  focusParts:focusTripwireParts,
+  updateLinks:synchronizeGuideLinks,
+  initialStep:query.get('step'),
+ });
  status('Loaded '+exampleSpec.name+' · '+objects.length+' selectable concept parts. '+(exampleSpec.experiment==='B'?'Missing receiver amplifier is NOT solved.':'Beam and warning state are visual examples, not hardware.')+(blocked?' Shown: SIMULATED blocked beam.':''));
  }else{await repositoryFile(exampleSpec.path,exampleSpec.path.split('/').pop(),exampleSpec.options);$('title').value=exampleSpec.name;status('Loaded '+exampleSpec.name+' · 13 illustrative parts; physical fit unverified.');}}
  else if(part&&/^HBR-0(0[1-9]|1[0-8])$/i.test(part)){await repositoryFile('HERBIE_V1/STL/'+part.toUpperCase()+'.stl');}

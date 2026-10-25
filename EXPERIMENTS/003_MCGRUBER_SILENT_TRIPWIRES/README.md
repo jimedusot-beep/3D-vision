@@ -17,6 +17,25 @@ Each viewport also has a **Block beam / Restore beam** link. For a simulated int
 
 The model is produced by the same in-browser Three.js engine as the rest of 3D Vision; it is **not** a picture posing as an interactive assembly, and does not rely on guessed downloadable binary STL files. The scene can be orbited, zoomed, measured illustratively, edited, and exported as a file or `.3dv` package.
 
+## Guided 3D Assembly Lessons — new beginner mode
+
+Both interactive models now open with an **on-screen 3D build instructor**, using the same actual 16 B and 15 C selectable THREE.js component groups. The instructor doesn't merely replay an illustration:
+
+- **Where to place parts:** each stage highlights its matching 3D pieces. Tap a part name to select only that part or choose **Focus camera on parts**.
+- **Exactly which connections are intended:** a wire-by-wire text path shows source, destination and purpose. In B, the unverified amplifier paths are explicitly **UNDESIGNED — DO NOT WIRE**, not invented hookups.
+- **The real test at that stage:** each step names a Fluke or physical check, the expected *future* observation and where to record measurements. The viewer cannot automatically verify any of them.
+- **Controls:** **Previous / Next**, one-tap **Collapse lesson** for a full view of the 3D model (useful on an iPhone), tap **Mark lesson as read** for browser-local reading progress, and **Reset reading progress**.
+- **Bookmarkable steps:** add `&step=1` through `&step=6` to a B URL, or `&step=1` through `&step=7` for C. Steps persist across assembled/exploded and beam-state navigation.
+- **Limits:** every actual physical checkpoint stays labeled **NOT recorded / UNVERIFIED**. Marking an instructional page as read is not a build completion, does not create a hardware test log, and does not unlock the missing B amplifier.
+
+**Start the guided lessons:**
+- **[B · Stage 1: arrange blue transmitter and red receiver](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-visible-b-assembled&step=1)** — 6 stages.
+- **[C · Stage 1: identify the matched IR transmitter/receiver](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-infrared-c-assembled&step=1)** — 7 stages.
+- **[B · Stage 5: see the unresolved amplifier interface](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-visible-b-exploded&step=5)** — deliberately blocked.
+- **[C · Stage 6: inspect the silent indicator and wiring path](https://jimedusot-beep.github.io/3D-vision/?example=mcgruber-infrared-c-exploded&step=6)** — requires output polarity measurements first.
+
+Code traceability: [step manifests](../../src/tripwire-build-guides.js), [guided viewport UI](../../src/tripwire-guide-ui.js), [validation tests](../../tests/tripwire-build-guides.test.mjs). Physical evidence belongs in McGruber's own measurement logs, **not** in the browser's local reading-progress field.
+
 ## Experiment B — blue LED emitter, red LED detector
 
 **B part IDs: 16 conceptual groups** (all IDs `TW-B-`):

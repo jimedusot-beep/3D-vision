@@ -86,6 +86,52 @@ try{
   assert.match(await study.locator('#selected-name').textContent(),/TW-/);
  }
  report('Actual 16-part B and 15-part C 3D scenes load in assembled and exploded views');
+
+ // Guided B/C assembly: tests real 3D selections, readable wires, stages and
+ // local-only reading progress; no test marks electrical hardware as passed.
+ await study.goto(new URL('?example=mcgruber-visible-b-assembled&step=5',base).href);
+ await ready(study);
+ assert.equal(await study.locator('#tripwire-guide').isVisible(),true);
+ assert.equal(await study.locator('#guide-step-count').textContent(),'Stage 5 of 6');
+ assert.match(await study.locator('#guide-stage-title').textContent(),/Critical gap: amplifier/);
+ assert.match(await study.locator('#guide-gate').textContent(),/BLOCKED/);
+ assert.match(await study.locator('#guide-connections').textContent(),/DO NOT WIRE/);
+ assert.match(await study.locator('#guide-parts').textContent(),/TW-B-09/);
+ assert.match(await study.locator('#guide-progress').textContent(),/physical checks still UNVERIFIED/);
+ assert.ok((await study.evaluate(()=>vision.selected.length))>=3);
+ await study.locator('#guide-focus').click();
+ assert.equal(await study.locator('#stage-badge').getAttribute('data-context'),'tripwire-b');
+ report('B guided stage focuses actual 3D components and blocks its missing amplifier');
+
+ await study.goto(new URL('?example=mcgruber-infrared-c-assembled',base).href);
+ await ready(study);
+ assert.equal(await study.locator('#guide-step-count').textContent(),'Stage 1 of 7');
+ assert.match(await study.locator('#guide-notice').textContent(),/not measured/i);
+ await study.locator('#guide-read').click();
+ assert.match(await study.locator('#guide-progress').textContent(),/1 of 7 lessons read/);
+ assert.match(await study.locator('#guide-gate').textContent(),/NOT recorded/);
+ await study.locator('#guide-next').click();
+ assert.equal(await study.locator('#guide-step-count').textContent(),'Stage 2 of 7');
+ assert.match(new URL(study.url()).searchParams.get('step'),/^2$/);
+ assert.match(await study.locator('#optical-view').getAttribute('href'),/step=2/);
+ await study.locator('#guide-toggle').click();
+ assert.equal(await study.locator('#guide-body').isVisible(),false);
+ await study.locator('#guide-toggle').click();
+ assert.equal(await study.locator('#guide-body').isVisible(),true);
+ await study.locator('#optical-view').click();await ready(study);
+ assert.match(study.url(),/mcgruber-infrared-c-exploded/);
+ assert.equal(await study.locator('#guide-step-count').textContent(),'Stage 2 of 7');
+ await study.goto(new URL('?example=mcgruber-infrared-c-exploded&step=6',base).href);await ready(study);
+ assert.match(await study.locator('#guide-stage-title').textContent(),/Connect the silent red warning LED branch/);
+ assert.match(await study.locator('#guide-connections').textContent(),/1 kΩ/);
+ assert.match(await study.locator('#guide-connections').textContent(),/cathode/i);
+ assert.match(await study.locator('#guide-check-expected').textContent(),/OFF.*ON.*OFF/);
+ assert.match(await study.locator('#guide-gate').textContent(),/NOT recorded/);
+ await study.locator('[data-part="TW-C-10"]').click();
+ assert.equal(await study.evaluate(()=>vision.selected.length),1);
+ assert.match(await study.locator('#selected-name').textContent(),/TW-C-10/);
+ report('C guide walks between physical wiring stages, preserves steps and records reading only');
+
  await study.goto(new URL('?example=mcgruber-infrared-c-assembled',base).href);
  await ready(study);
  await study.locator('#optical-beam').click();

@@ -8,7 +8,7 @@
 
 
 /* McGruber B/C experimental assemblies: controls sit above the 3D viewport. */
-.optical-switcher{position:absolute;top:98px;left:14px;right:14px;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:7px;pointer-events:auto;max-width:720px}
+.optical-switcher{position:absolute;top:98px;left:14px;right:14px;z-index:11;display:flex;flex-wrap:wrap;align-items:center;gap:7px;pointer-events:auto;max-width:720px}
 .optical-switcher-heading{font-size:10px;padding:7px 9px;border:1px solid #3e7481;background:#122c36ed;border-radius:7px;color:#b7f4e6;font-weight:650}
 .optical-switcher a{font-size:10px;padding:7px 10px;border-radius:7px;background:#1a3848ef;color:#d8f8fe;border:1px solid #528a9a;text-decoration:none}
 .optical-switcher a:hover,.optical-switcher a:focus-visible{background:#346478}
@@ -19,3 +19,63 @@
 .mcgruber-launch{white-space:nowrap;padding:9px 12px;min-height:34px;border:1px solid #5c98ae;border-radius:7px;background:#244455;color:#adf0ff;font-size:11px;font-weight:650;flex-shrink:0}
 .mcgruber-launch:hover{background:#34617b}
 @media(max-width:850px){.mcgruber-launch{font-size:10px;padding:8px;min-height:32px}}
+
+
+/* McGruber step-by-step instructional overlay. Nothing here certifies electrical performance. */
+.tripwire-guide{position:absolute;top:160px;right:12px;bottom:65px;width:min(365px,calc(100% - 24px));display:flex;flex-direction:column;background:#102333f4;border:1px solid #40788a;border-radius:14px;box-shadow:0 12px 55px #0009;z-index:8;color:#e9f5fc;overflow:hidden}
+.guide-heading{display:flex;justify-content:space-between;gap:7px;align-items:center;padding:13px 13px 11px;border-bottom:1px solid #2d5162;flex-shrink:0;background:#173044}
+.guide-heading h2{font-size:15px;line-height:1.25;letter-spacing:0;margin:4px 0 0;color:#f3f9fe}
+.guide-kicker{font-size:9px;letter-spacing:.1em;color:#9ce6cf;font-weight:700}
+.guide-heading button{font-size:10px;white-space:nowrap;padding:7px 9px;border:1px solid #5c8e9b;background:#24455c;border-radius:7px;min-height:33px;flex-shrink:0}
+.guide-body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px 14px 18px;display:block;line-height:1.55;font-size:12px}
+.guide-context{background:#302820;border:1px solid #9c7655;color:#ffdaad;padding:10px;border-radius:8px;font-size:11px;margin:0 0 12px}
+.guide-track{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:5px}
+#guide-step-count{font-size:12px;font-weight:750;color:#c8f5df}
+.guide-version{font-size:9px;color:#a0b8cd}
+#guide-progress-bar{display:block;width:100%;height:8px;margin:8px 0 6px;accent-color:#84e6cd}
+.guide-read-progress{font-size:10px;color:#a9c3d5;margin:0 0 12px}
+.guide-body h3{font-size:17px;line-height:1.3;color:#fff;margin:10px 0 12px}
+.guide-block{border-top:1px solid #355164;padding:11px 0 12px}
+.guide-block h4{font-size:11px;color:#b4ecdf;letter-spacing:.025em;margin:0 0 7px}
+.guide-block p{font-size:11px;line-height:1.6;color:#d0e1eb;margin:4px 0 0}
+.guide-block ol{padding-left:19px;margin:7px 0;line-height:1.6}
+.guide-block ol li{margin:0 0 9px;color:#d6e6ef}
+.guide-part-tags{display:flex;flex-wrap:wrap;gap:5px}
+.guide-part{font-size:9px;padding:6px 8px;max-width:100%;text-align:left;overflow-wrap:anywhere;background:#203e52;border:1px solid #3f7d8f;color:#effafa;border-radius:6px}
+.guide-part:focus-visible,.tripwire-guide button:focus-visible{outline:2px solid #ffe09a;outline-offset:2px}
+.guide-mini-actions{display:flex;gap:5px;margin-top:8px}
+.guide-mini-actions button{font-size:10px;padding:7px 8px;flex:1;background:#193c52;border:1px solid #3d7f99;border-radius:7px}
+.guide-connections{list-style:none;padding:0!important;margin:0!important;display:flex;flex-direction:column;gap:7px}
+.guide-connection{padding:8px;border:1px solid #396477;border-left:3px solid #80c9d6;border-radius:7px;background:#172e40;font-size:11px;line-height:1.55}
+.guide-connection strong{color:#fff;overflow-wrap:anywhere}
+.guide-connection p{font-size:10px!important;color:#afcddd!important;margin:4px 0 0}
+.guide-connection.missing{border-left-color:#ff9e6e;background:#302826}
+.guide-connection.target{border-left-color:#d4ca85}
+.guide-connection small{display:block;color:#ffc09f;margin-top:5px}
+.guide-checkpoint{padding:12px;border:1px solid #7b865c;background:#252f2f;border-radius:9px}
+.guide-check-label{font-size:9px;color:#f5d9a2;letter-spacing:.04em;font-weight:700;display:block;margin-bottom:7px}
+.guide-checkpoint strong{display:block;font-size:12px;color:#f1fff0}
+.guide-checkpoint p{font-size:11px;color:#cfdfd2;line-height:1.5;margin:5px 0}
+.guide-check-state{display:block;border-radius:6px;background:#384333;color:#ffe2a4;font-size:10px;padding:6px 8px;margin-top:8px}
+.guide-check-state[data-gate="BLOCKED"]{background:#502c2b;color:#ffd0b0}
+.guide-check-state[data-gate="visual-only"]{background:#27475a;color:#c4effb}
+.guide-caution{padding:9px 10px;border:1px solid #aa6c4a;background:#442d29;color:#ffe5d0;border-radius:7px;font-size:11px;line-height:1.5;margin:11px 0}
+.guide-navigation{display:flex;gap:7px;margin-top:14px}
+.guide-navigation button{flex:1;font-size:12px;min-height:42px;border:1px solid #5f999c;border-radius:8px;color:#f1faf9;background:#22515a}
+.guide-navigation button:disabled{opacity:.4}
+.guide-progress-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.guide-progress-actions button{font-size:11px;min-height:35px;padding:7px 9px;border:1px solid #59788c;border-radius:7px;background:#20364a;color:#dfedfa}
+.guide-progress-actions button[aria-pressed="true"]{border-color:#7ad8c0;color:#aeffed}
+.guide-disclaimer{color:#b4c6d1;font-size:10px;line-height:1.5;margin:12px 0 0}
+.tripwire-guide[data-collapsed="true"]{bottom:auto}
+.tripwire-guide[data-collapsed="true"] .guide-body{display:none}
+@media(max-width:850px){
+ .tripwire-guide{top:auto;left:9px;right:9px;bottom:40px;width:auto;max-height:min(40dvh,330px);border-radius:12px}
+ .tripwire-guide[data-collapsed="true"]{bottom:40px;max-height:none}
+ .guide-heading{padding:9px 12px}
+ .guide-heading h2{font-size:13px}
+ .guide-body{padding:9px 12px 14px}
+ .guide-heading button{min-height:37px}
+ .guide-navigation button{min-height:43px}
+}
+@media(prefers-reduced-motion:reduce){.tripwire-guide{scroll-behavior:auto}}
