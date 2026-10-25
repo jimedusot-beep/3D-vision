@@ -106,7 +106,7 @@ try{
  await ready(study);
  assert.match(await study.locator('#stage-badge').textContent(),/AMPLIFIER MISSING/);
  assert.match(await study.locator('#tree').textContent(),/UNKNOWN amplifier/);
- assert.match(await study.locator('#tree').textContent(),/Warning LED.*UNTESTED/);
+ assert.match(await study.locator('#tree').textContent(),/warning LED.*UNTESTED/i);
  const bNotInvented=await study.evaluate(()=>{
   const parts=[];vision.workshop.root.traverse(o=>{if(o.userData.component)parts.push(o);});
   const warning=parts.find(p=>p.name.startsWith('TW-B-11 ·'));
