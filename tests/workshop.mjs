@@ -56,6 +56,71 @@ try{
  assert.match(await tripwirePage.locator('#title').inputValue(),/tripwire.*assembled/i);
  await tripwirePage.close();
  report('Direct tripwire assembled URL loads 13 components');
+
+ // McGruber project gallery and real 3D Vision editing workflow for B/C.
+ const gallery=await context.newPage();
+ await gallery.goto(new URL('optical-tripwires.html',base).href);
+ await gallery.getByRole('heading',{name:/Explore your tripwire/i}).waitFor();
+ assert.equal(await gallery.locator('section.card').count(),2);
+ assert.equal(await gallery.locator('.card.b .actions a').count(),4);
+ assert.equal(await gallery.locator('.card.c .actions a').count(),4);
+ await gallery.close();
+ report('Beginner-friendly silent B/C gallery and four direct model choices');
+
+ const study=await context.newPage();
+ study.on('pageerror',error=>errors.push('McGruber study: '+error.message));
+ for(const [example,n,contextValue] of [
+  ['mcgruber-visible-b-assembled','16','tripwire-b'],
+  ['mcgruber-visible-b-exploded','16','tripwire-b'],
+  ['mcgruber-infrared-c-assembled','15','tripwire-c'],
+  ['mcgruber-infrared-c-exploded','15','tripwire-c']]){
+  await study.goto(new URL('?example='+example,base).href);
+  await ready(study);
+  await study.waitForFunction(expected=>document.getElementById('component-count').textContent===expected,n);
+  assert.equal(await study.locator('#stage-badge').getAttribute('data-context'),contextValue);
+  assert.equal(await study.locator('.tree-row').count(),Number(n));
+  assert.equal(await study.locator('#optical-switcher').isVisible(),true);
+  assert.match(await study.locator('#optical-state').textContent(),/SIMULATED: beam CLEAR/);
+  assert.ok(await study.locator('#optical-beam').getAttribute('href'));
+  await study.locator('.tree-row button').filter({hasText:/TW-/}).first().click();
+  assert.match(await study.locator('#selected-name').textContent(),/TW-/);
+ }
+ report('Actual 16-part B and 15-part C 3D scenes load in assembled and exploded views');
+ await study.goto(new URL('?example=mcgruber-infrared-c-assembled',base).href);
+ await ready(study);
+ await study.locator('#optical-beam').click();
+ await ready(study);
+ await study.waitForFunction(()=>document.getElementById('optical-switcher').dataset.beam==='blocked');
+ assert.match(await study.locator('#optical-state').textContent(),/beam BLOCKED/);
+ assert.match(await study.locator('#tree').textContent(),/Silent warning LED ON/);
+ const ledGlows=await study.evaluate(()=>{
+  let model=null;vision.workshop.root.traverse(o=>{if(o.userData.component&&o.name.startsWith('TW-C-10 ·'))model=o;});
+  return model?.children.some(o=>o.material?.emissiveIntensity>0)===true;
+ });
+ assert.equal(ledGlows,true);
+ await study.locator('#optical-beam').click();await ready(study);
+ assert.match(await study.locator('#tree').textContent(),/Silent warning LED OFF/);
+ report('C infrared simulated beam-break lights and restores visible indicator without audio');
+
+ await study.goto(new URL('?example=mcgruber-visible-b-assembled&beam=blocked',base).href);
+ await ready(study);
+ assert.match(await study.locator('#stage-badge').textContent(),/AMPLIFIER MISSING/);
+ assert.match(await study.locator('#tree').textContent(),/UNKNOWN amplifier/);
+ assert.match(await study.locator('#tree').textContent(),/Warning LED.*UNTESTED/);
+ const bNotInvented=await study.evaluate(()=>{
+  const parts=[];vision.workshop.root.traverse(o=>{if(o.userData.component)parts.push(o);});
+  const warning=parts.find(p=>p.name.startsWith('TW-B-11 ·'));
+  return warning.children.every(o=>!o.material||o.material.emissiveIntensity===0);
+ });
+ assert.equal(bNotInvented,true);
+ const studyExport=await study.evaluate(async()=>{vision.select([]);return (await vision.makeExport('glb')).size;});
+ assert.ok(studyExport>1000);
+ await study.screenshot({path:path.join(dir,'silent-tripwire-b-desktop.png')});
+ await study.goto(new URL('?example=mcgruber-infrared-c-assembled&beam=blocked',base).href);
+ await ready(study);
+ await study.screenshot({path:path.join(dir,'silent-tripwire-c-desktop.png')});
+ await study.close();
+ report('B missing amplifier remains visibly unproven; editable 3D GLB export succeeds');
  const mobile=await browser.newContext({...devices['iPhone 13'],defaultBrowserType:undefined});await routing(mobile);const mp=await mobile.newPage();await mp.goto(base);await ready(mp);assert.equal(await mp.locator('#component-count').textContent(),'18');assert.equal(await mp.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await mp.locator('#mobile-tree').click();assert.equal(await mp.locator('#left-panel').isVisible(),true);await mp.locator('#mobile-library').click();assert.equal(await mp.locator('#catalog-panel').isVisible(),true);await mp.locator('#mobile-tree').click();assert.equal(await mp.locator('#assembly-panel').isVisible(),true);await mp.locator('.tree-row button').first().click();await mp.locator('#mobile-inspector').click();assert.equal(await mp.locator('#right-panel').isVisible(),true);await mp.locator('#position-x').fill('12');await mp.locator('#apply-transform').click();assert.equal(await mp.evaluate(()=>vision.selected[0].position.x),12);await mp.locator('#close-right').click();await mp.touchscreen.tap(210,340);await mp.screenshot({path:path.join(dir,'mobile-workshop.png')});await mobile.close();report('iPhone 13 viewport/touch emulation: meshes, panels, transform, no horizontal overflow');
  await page.goto(new URL('library.html',base).href);assert.equal(await page.locator('article.part').count(),18);await page.locator('#q').fill('neck');assert.equal(await page.locator('article.part:not([hidden])').count(),1);report('Original 18-part library remains functional');
 }catch(e){console.error('FAIL:',e.stack);results.push({name:e.message,status:'FAIL'});await page.screenshot({path:path.join(dir,'failure.png'),timeout:3000}).catch(()=>{});console.error('Status:',await page.locator('#status').textContent({timeout:3000}).catch(()=>''));console.error('Page errors:',errors);process.exitCode=1;}finally{await context.close();await browser.close();await writeFile(path.join(dir,'browser-results.json'),JSON.stringify({base,engine:'Chromium software WebGL',results},null,2));}
