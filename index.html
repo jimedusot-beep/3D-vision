@@ -13,7 +13,36 @@
  <a id="optical-other" href="?example=mcgruber-infrared-c-assembled">Switch to C</a>
  <a id="optical-build" href="https://github.com/jimedusot-beep/project-mcgruber" target="_blank" rel="noopener noreferrer">Build guide ↗</a>
  <span class="optical-warning" id="optical-warning">Digital concept only — electrical function not verified.</span>
- </nav><div id="empty" hidden><h2>Your next assembly starts here.</h2><p>Import a model or choose a part from the library.</p><button id="empty-import" class="accent">Import files</button></div><div class="view-bottom"><div class="explode-controls"><label for="explode">Explode</label><input type="range" id="explode" min="0" max="200" step="1" value="0"><button id="animate">Play</button><button id="turntable">Turntable</button></div><p>Drag to orbit · Pinch / scroll to zoom · Two fingers / right drag to pan</p></div><div id="busy" hidden role="status"><span class="spinner"></span><span id="busy-text">Loading…</span><button id="cancel-operation" hidden>Cancel</button></div></section>
+ </nav>
+<aside class="tripwire-guide" id="tripwire-guide" aria-labelledby="guide-title" data-collapsed="false" hidden>
+ <div class="guide-heading">
+  <div><span class="guide-kicker">GUIDED 3D ASSEMBLY · NO SOUND</span><h2 id="guide-title">McGruber build lesson</h2></div>
+  <button id="guide-toggle" aria-controls="guide-body" aria-expanded="true">Collapse lesson</button>
+ </div>
+ <div class="guide-body" id="guide-body">
+  <p class="guide-context" id="guide-notice">Digital illustration; physical tests have not been recorded.</p>
+  <div class="guide-track"><span id="guide-step-count" aria-live="polite">Stage 1 of 1</span>
+   <span class="guide-version" id="guide-version">Illustrative workshop</span></div>
+  <progress id="guide-progress-bar" value="0" max="1" aria-label="Lessons read, not physical tests"></progress>
+  <p id="guide-progress" class="guide-read-progress">0 lessons read · physical checks unverified</p>
+  <h3 id="guide-stage-title">Preparing the assembly</h3>
+  <div class="guide-block"><h4>Where the parts go</h4><p id="guide-placement"></p></div>
+  <div class="guide-block"><h4>Highlighted 3D parts</h4><div id="guide-parts" class="guide-part-tags"></div>
+   <div class="guide-mini-actions"><button id="guide-select-stage">Highlight stage parts</button><button id="guide-focus">Focus camera on parts</button></div></div>
+  <div class="guide-block"><h4>Assembly instructions</h4><div id="guide-instructions"></div></div>
+  <div class="guide-block"><h4>Which wires connect</h4><div id="guide-connections"></div></div>
+  <div class="guide-checkpoint"><span class="guide-check-label">REAL BENCH CHECK · NOT AUTOMATICALLY VERIFIED</span>
+   <strong id="guide-check-task"></strong><p id="guide-check-expected"></p><p id="guide-check-record"></p>
+   <span class="guide-check-state" id="guide-gate">Real-world test NOT recorded</span></div>
+  <p class="guide-caution" id="guide-caution"></p>
+  <nav class="guide-navigation" aria-label="Assembly lesson navigation">
+   <button id="guide-prev" disabled>← Previous</button><button id="guide-next">Next stage →</button>
+  </nav>
+  <div class="guide-progress-actions"><button id="guide-read" aria-pressed="false">Mark lesson as read</button><button id="guide-reset">Reset reading progress</button></div>
+  <p class="guide-disclaimer">Marking a lesson as <strong>read</strong> does not mean you built or tested a circuit. No sensor data is collected or certified by this viewer.</p>
+ </div>
+</aside>
+<div id="empty" hidden><h2>Your next assembly starts here.</h2><p>Import a model or choose a part from the library.</p><button id="empty-import" class="accent">Import files</button></div><div class="view-bottom"><div class="explode-controls"><label for="explode">Explode</label><input type="range" id="explode" min="0" max="200" step="1" value="0"><button id="animate">Play</button><button id="turntable">Turntable</button></div><p>Drag to orbit · Pinch / scroll to zoom · Two fingers / right drag to pan</p></div><div id="busy" hidden role="status"><span class="spinner"></span><span id="busy-text">Loading…</span><button id="cancel-operation" hidden>Cancel</button></div></section>
 <aside class="right-panel panel" id="right-panel"><div class="panel-heading"><h2>INSPECTOR</h2><button id="close-right" class="text-button mobile-only">Close</button></div><div class="inspector-body"><h3 id="selected-name">Assembly overview</h3><p id="selection-info" class="hint">Select a component to edit its local transform.</p><details open><summary>Transform</summary><div id="transform-fields"></div><div class="button-grid"><button id="apply-transform">Apply transform</button><button id="bed-drop">Drop to bed</button></div><label>Align selected centers on <select id="align-axis"><option value="x">X</option><option value="y">Y</option><option value="z">Z</option></select></label><button id="align">Align to first selected</button></details>
 <details open id="joints-section"><summary>Assembly joints</summary><button id="joint-create">＋ Create joint</button><p class="hint" id="joint-empty">Fixed placement, hinge rotation or sliding travel between two top-level components.</p><select id="joint-list" aria-label="Saved assembly joints"></select><div id="joint-controls" hidden><p class="hint" id="joint-unit"></p><input id="joint-range" type="range" aria-label="Joint travel slider"><input id="joint-value" type="number" aria-label="Joint travel"><div class="button-grid"><button id="joint-apply">Apply travel</button><button id="joint-animate">Animate joint</button><button id="joint-remove">Remove joint</button></div></div><p class="hint">Kinematic mesh joints, with saved limits and positions. No force simulation or closed-loop constraint solver.</p></details>
 <details open><summary>Inspect & measure</summary><div class="button-grid"><button id="measure-distance">Distance</button><button id="measure-angle">Angle</button><button id="annotate">Add annotation</button><button id="clear-marks">Clear marks</button><button id="bounds">Bounding box</button><button id="normals">Face normals</button><button id="stats">Mesh report</button><button id="collision">Mesh interference</button><button id="repair">Weld & recalculate</button><button id="flip">Flip normals</button></div><p id="measurement" class="hint">Pick surface points for measurements in mm.</p><label>Section plane <select id="section-axis"><option value="off">Off</option><option value="x">X</option><option value="y">Y</option><option value="z">Z</option></select></label><input id="section-offset" aria-label="Section offset millimeters" type="number" step="1" value="0"><p class="hint">Section cuts are visual, without generated end caps.</p><label>Clearance warning (mm) <input id="clearance" type="number" min="0" max="1000" step="0.1" value="0.2"></label><button id="download-report" disabled>Download analysis JSON</button><pre id="report" aria-live="polite"></pre></details>
