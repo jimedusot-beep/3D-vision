@@ -98,3 +98,36 @@ test('No audio, network commands or Arduino dependency in illustrative 3D genera
  }
  assert.throws(()=>opticalExample('../../secret'),/Unknown optical example/);
 });
+
+
+test('B receiver red LED physically faces left toward its blue transmitter',()=>{
+ const model=opticalExample('mcgruber-visible-b-assembled');
+ const blue=matchPart(model,'TW-B-05 ·');
+ const redSensor=matchPart(model,'TW-B-07 ·');
+ assert.ok(blue.position.x<redSensor.position.x);
+ assert.ok(Math.abs(redSensor.rotation.z-Math.PI)<1e-9,
+  'Red sensor lens points +X by default; it must rotate toward the blue LED at -X');
+ assert.match(redSensor.name,/UNPOWERED/);
+});
+test('1k and 10k nominal color bands are accurate and unmeasured parts are not assigned guessed bands',()=>{
+ const b=opticalExample('mcgruber-visible-b-assembled');
+ const c=opticalExample('mcgruber-infrared-c-assembled');
+ const bands=part=>part.children.slice(1,5).map(mesh=>mesh.material.color.getHexString());
+ const colors={brown:'83582e',black:'172333',red:'f04c60',orange:'f2a449',gold:'d9bc68'};
+ const oneK=[colors.brown,colors.black,colors.red,colors.gold];
+ const tenK=[colors.brown,colors.black,colors.orange,colors.gold];
+ const bEmitter=matchPart(b,'TW-B-04 ·'),bOutput=matchPart(b,'TW-B-12 ·');
+ const cPullup=matchPart(c,'TW-C-08 ·'),cIndicator=matchPart(c,'TW-C-09 ·');
+ assert.deepEqual(bands(bEmitter),oneK);
+ assert.deepEqual(bands(cPullup),tenK);
+ assert.deepEqual(bands(cIndicator),oneK);
+ assert.equal(bEmitter.userData.nominalOhms,1000);
+ assert.equal(cPullup.userData.nominalOhms,10000);
+ assert.equal(cIndicator.userData.nominalOhms,1000);
+ assert.equal(bOutput.userData.nominalOhms,null);
+ assert.equal(bOutput.children.length,3,'Unknown output resistor must have no fabricated color bands');
+ for(const part of [bEmitter,bOutput,cPullup,cIndicator]){
+  assert.equal(part.userData.resistanceMeasured,false);
+  assert.equal(part.userData.hardwareTested,false);
+ }
+});
