@@ -21,5 +21,23 @@ try{
  assert.match(await tripwire.locator('#stage-badge').textContent(),/NOT MEASURED/);
  await tripwire.close();results.push('Direct 13-part tripwire deep link on iPhone WebKit');
 
+
+ const b=await context.newPage();
+ for(const [model,expected,stage] of [
+  ['mcgruber-visible-b-assembled','16','tripwire-b'],
+  ['mcgruber-infrared-c-assembled','15','tripwire-c']]){
+  await b.goto(new URL('?example='+model,base).href);
+  await b.waitForFunction(()=>window.vision?.ready,null,{timeout:30000});
+  await b.waitForFunction(n=>document.getElementById('component-count').textContent===n,expected,{timeout:15000});
+  assert.equal(await b.locator('#stage-badge').getAttribute('data-context'),stage);
+  assert.equal(await b.locator('#optical-switcher').isVisible(),true);
+  assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ }
+ await b.locator('#optical-beam').click();
+ await b.waitForFunction(()=>window.vision?.ready&&document.getElementById('optical-switcher')?.dataset.beam==='blocked',null,{timeout:30000});
+ assert.match(await b.locator('#tree').textContent(),/Silent warning LED ON/);
+ assert.match(await b.locator('#stage-badge').textContent(),/HARDWARE UNTESTED/);
+ await b.screenshot({path:'test-results/silent-tripwire-c-iphone.png',timeout:10000});
+ await b.close();results.push('Real B/C generated meshes, touch viewport, symbolic IR indication and honest status on iPhone WebKit');
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);await page.screenshot({path:'test-results/webkit-mobile.png',timeout:10000});console.log('PASS: WebKit iPhone emulation: '+results.join('; '));
 }catch(e){console.error('FAIL: WebKit:',e.stack);results.push('FAIL: '+e.message);process.exitCode=1;}finally{await browser?.close();await writeFile('test-results/webkit-results.json',JSON.stringify({engine:'Playwright WebKit',platform:process.platform,results},null,2));}
