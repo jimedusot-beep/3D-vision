@@ -24,7 +24,7 @@ export const OPTICAL_EXAMPLES=Object.freeze({
 });
 
 const mat=(color,{opacity=1,emissive=null,emissiveIntensity=0,metalness=.12}={})=>
- new THREE.MeshStandardMaterial({color,roughness:.48,metalness,transparent:opacity<1,
+ new THREE.MeshStandardMaterial({color:PALETTE[color]||color,roughness:.48,metalness,transparent:opacity<1,
   opacity,depthWrite:opacity===1,side:THREE.DoubleSide,
   emissive:emissive||'#000000',emissiveIntensity});
 const matte=Object.fromEntries(Object.entries(PALETTE).map(([k,v])=>[k,mat(v)]));
@@ -49,7 +49,18 @@ function tube(group,pts,color,r=.8){
   new THREE.CatmullRomCurve3(points,false,'centripetal');
  return mesh(group,new THREE.TubeGeometry(curve,Math.max(12,pts.length*6),r,5,false),color);
 }
-function lead(group,from,to,color='pin',r=.85){return tube(group,[from,to],color,r);}
+function lead(group,from,to,color='pin',r=.85){
+ // Real straight lead: stable two-point cylinder in the Y-up THREE primitive
+ // coordinate system, avoiding degenerate Frenet frames and NaN vertices.
+ const a=new THREE.Vector3(...from),b=new THREE.Vector3(...to);
+ const axis=new THREE.Vector3().subVectors(b,a);
+ const length=axis.length();
+ if(!(length>1e-6))throw Error('Zero-length electrical lead');
+ const m=mesh(group,new THREE.CylinderGeometry(r,r,length,8),color);
+ m.position.copy(a).add(b).multiplyScalar(.5);
+ m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),axis.normalize());
+ return m;
+}
 function part(id,label,side,stage){
  const group=mark(new THREE.Group(),id+' · '+label);
  group.userData={...group.userData,experiment:stage,side,
@@ -59,7 +70,7 @@ function part(id,label,side,stage){
 function add(scene,p,x,y,z,{exploded=false,shift=0}={}){
  const explosion=exploded?(p.userData.side==='emitter'?-21:p.userData.side==='receiver'?21:p.userData.side==='output'?40:0):0;
  // offsets move full recognizable subassemblies; wiring is schematic only.
- p.position.set(x+explosion,y+(exploded?shift:0),z+(exploded?9:0));
+ p.position.set(x+explosion,y+(exploded?shift:0),z+(exploded&&p.userData.side!=='guide'?9:0));
  scene.push(p);return p;
 }
 function base(scene,id,label,x,side,stage,exploded){
