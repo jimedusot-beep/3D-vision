@@ -41,7 +41,12 @@ function cyl(group,x,y,z,r,h,color,axis='z',options=null){
  return mesh(group,new THREE.CylinderGeometry(r,r,h,12),color,[x,y,z],rot,options);
 }
 function tube(group,pts,color,r=.8){
- const curve=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(...p)),false,'centripetal');
+ const points=pts.map(p=>new THREE.Vector3(...p));
+ if(points.length<2)throw Error('Wire path needs at least two endpoints');
+ // Three.js CatmullRomCurve3 is undefined for a two-point lead; use a true
+ // straight 3D segment for LEDs/resistors and smooth curves for routed wires.
+ const curve=points.length===2?new THREE.LineCurve3(points[0],points[1]):
+  new THREE.CatmullRomCurve3(points,false,'centripetal');
  return mesh(group,new THREE.TubeGeometry(curve,Math.max(12,pts.length*6),r,5,false),color);
 }
 function lead(group,from,to,color='pin',r=.85){return tube(group,[from,to],color,r);}
