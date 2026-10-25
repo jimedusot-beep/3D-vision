@@ -54,9 +54,12 @@ function projectData(){return{format:'3dvision-project',version:1,title:$('title
 function scheduleSession(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>{const data=projectData(),id=projectId;sessionQueue=sessionQueue.then(()=>storeRecord('session',{id:'last',data,projectId:id})).then(()=>{$('save-state').textContent=dirty?'Autosaved on this device · revision not saved':'Saved on this device';}).catch(e=>{status(e.message,true);$('save-state').textContent='Autosave failed — export a backup';});},650);}
 function changed(){sceneVersion++;lastAnalysis=null;$('download-report').disabled=true;invalidate();dirty=true;selected=selected.filter(o=>components(workshop.root).includes(o));renderTree();renderProperties();refreshHelpers();refreshAnnotations();updateSummary();updateTransform();jointUI?.render();scheduleSession();}
 function updateStageContext(){
- const ids=components(workshop.root).map(o=>o.name);
- const visibleB=ids.some(n=>/^TW-B-/.test(n));
- const infraredC=ids.some(n=>/^TW-C-/.test(n));
+ const parts=components(workshop.root);
+ const ids=parts.map(o=>o.name);
+ // Legacy 13-part tripwire also uses "TW-C-" for its controller components.
+ // Only explicit source metadata can distinguish newly generated Experiment C.
+ const visibleB=parts.some(o=>o.userData.experiment==='B' && /^TW-B-/.test(o.name));
+ const infraredC=parts.some(o=>o.userData.experiment==='C' && /^TW-C-/.test(o.name));
  const legacyTripwire=ids.some(n=>/^TW-(E|R|C)-/.test(n));
  const herbie=ids.some(n=>/^HBR-[0-9]{3}/.test(n));
  const stage=$('stage-badge');
