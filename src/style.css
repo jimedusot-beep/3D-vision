@@ -8,7 +8,7 @@
 
 
 /* McGruber B/C experimental assemblies: controls sit above the 3D viewport. */
-.optical-switcher{position:absolute;top:98px;left:14px;right:14px;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:7px;pointer-events:auto;max-width:720px}
+.optical-switcher{position:absolute;top:98px;left:14px;right:14px;z-index:11;display:flex;flex-wrap:wrap;align-items:center;gap:7px;pointer-events:auto;max-width:720px}
 .optical-switcher-heading{font-size:10px;padding:7px 9px;border:1px solid #3e7481;background:#122c36ed;border-radius:7px;color:#b7f4e6;font-weight:650}
 .optical-switcher a{font-size:10px;padding:7px 10px;border-radius:7px;background:#1a3848ef;color:#d8f8fe;border:1px solid #528a9a;text-decoration:none}
 .optical-switcher a:hover,.optical-switcher a:focus-visible{background:#346478}
@@ -70,7 +70,7 @@
 .tripwire-guide[data-collapsed="true"]{bottom:auto}
 .tripwire-guide[data-collapsed="true"] .guide-body{display:none}
 @media(max-width:850px){
- .tripwire-guide{top:auto;left:9px;right:9px;bottom:40px;width:auto;max-height:min(51dvh,470px);border-radius:12px}
+ .tripwire-guide{top:auto;left:9px;right:9px;bottom:40px;width:auto;max-height:min(40dvh,330px);border-radius:12px}
  .tripwire-guide[data-collapsed="true"]{bottom:40px;max-height:none}
  .guide-heading{padding:9px 12px}
  .guide-heading h2{font-size:13px}
