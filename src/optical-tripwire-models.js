@@ -9,7 +9,7 @@ const PALETTE=Object.freeze({
   plastic:'#363a47',pin:'#becbd3',copper:'#e6a964',red:'#f04c60',
   blue:'#479cf7',blueWire:'#299af0',yellow:'#ffd078',orange:'#f2a449',
   green:'#56d8a1',ground:'#36465b',white:'#e5eaf0',gold:'#d9bc68',
-  cyan:'#49d1df',purple:'#806fd4',
+  cyan:'#49d1df',purple:'#806fd4',brown:'#83582e',
 });
 
 export const OPTICAL_EXAMPLES=Object.freeze({
@@ -79,11 +79,16 @@ function base(scene,id,label,x,side,stage,exploded){
  for(const dx of [-63,63])for(const dy of [-44,44])cyl(p,dx,dy,3.4,2.2,3.2,'pin');
  add(scene,p,x,0,0,{exploded,shift:side==='emitter'?-8:8});return p;
 }
-function resistor(p,{x=0,y=0,z=0,axis='x',bands=true}={}){
+function resistor(p,{x=0,y=0,z=0,axis='x',nominalOhms=null}={}){
+ // Nominal bands are illustrations, NOT proof of a measured salvaged part.
+ // 1 kΩ = brown-black-red-gold; 10 kΩ = brown-black-orange-gold.
+ // Unknown values intentionally show NO bands rather than fabricated ratings.
  cyl(p,x,y,z,3.3,18,'yellow',axis);
- const coords=[-5,-2,2,5];
- for(let i=0;i<coords.length&&bands;i++){
-  const d=coords[i],palette=['red','dark','orange','gold'];
+ const coords=[-5,-2,2,5],palette=
+  nominalOhms===1000?['brown','dark','red','gold']:
+  nominalOhms===10000?['brown','dark','orange','gold']:null;
+ for(let i=0;palette&&i<coords.length;i++){
+  const d=coords[i];
   // Rings extend very slightly beyond the ceramic body.
   if(axis==='x')cyl(p,x+d,y,z,3.65,.7,palette[i],'x');
   else cyl(p,x,y+d,z,3.65,.7,palette[i],'y');
@@ -132,8 +137,9 @@ function visibleB({exploded=false,blocked=false}={}){
  block(battery,0,0,13,37,20,25,'plastic');block(battery,-10,0,26,8,9,4,'pin');block(battery,10,0,26,7,7,4,'gold');
  block(battery,0,0,13.4,34,20,13,'frame');
  add(s,battery,-196,23,0,{exploded,shift:-23});
- const limiter=part('TW-B-04','Measured 1 kΩ emitter limiter (candidate)', 'emitter',stage);
- resistor(limiter,{x:0,y:0,z:0});
+ const limiter=part('TW-B-04','1 kΩ emitter resistor CANDIDATE · verify ohms', 'emitter',stage);
+ resistor(limiter,{x:0,y:0,z:0,nominalOhms:1000});
+ limiter.userData.nominalOhms=1000;limiter.userData.resistanceMeasured=false;
  add(s,limiter,-161,-26,23,{exploded,shift:-34});
  const blue=part('TW-B-05','Blue emitter LED · current-limited', 'emitter',stage);
  indicator(blue,'blue','x',true);add(s,blue,-105,0,36,{exploded,shift:-7});
@@ -145,7 +151,10 @@ function visibleB({exploded=false,blocked=false}={}){
  ]);
  add(s,transmitterWires,-158,0,0,{exploded,shift:-17});
  const sensor=part('TW-B-07','RED LED SENSOR · intentionally UNPOWERED','receiver',stage);
- indicator(sensor,'red','x',false); // red lens points toward blue LED (concept)
+ indicator(sensor,'red','x',false);
+ // The LED helper normally points its lens toward +X. The receiver is on
+ // the RIGHT of the transmitter and must face LEFT (-X) to collect blue light.
+ sensor.rotation.z=Math.PI;
  add(s,sensor,108,0,36,{exploded,shift:-7});
  const shield=part('TW-B-08','Optional light shield tube · size unknown','receiver',stage);
  const geo=new THREE.CylinderGeometry(10.5,10.5,24,18,1,true);
@@ -166,7 +175,8 @@ function visibleB({exploded=false,blocked=false}={}){
  indicator(warn,'red','z',false);
  add(s,warn,222,-29,24,{exploded,shift:-17});
  const outputLimiter=part('TW-B-12','Warning LED resistor · independently required','output',stage);
- resistor(outputLimiter,{});
+ resistor(outputLimiter,{nominalOhms:null});
+ outputLimiter.userData.nominalOhms=null;outputLimiter.userData.resistanceMeasured=false;
  add(s,outputLimiter,210,13,23,{exploded,shift:12});
  const receiveWires=part('TW-B-13','Detector leads · NO verified amplifier connection','receiver',stage);
  lead(receiveWires,[-8,-4,30],[1,18,17],'pin');
@@ -208,9 +218,13 @@ function infraredC({exploded=false,blocked=false}={}){
  block(powerRx,0,0,11,43,27,22,'frame');block(powerRx,0,-14,16,19,3,6,'dark');
  add(s,powerRx,200,31,0,{exploded,shift:20});
  const pullup=part('TW-C-08','10 kΩ resistor · output pull-up','receiver',stage);
- resistor(pullup,{axis:'y'});add(s,pullup,145,24,22,{exploded,shift:29});
+ resistor(pullup,{axis:'y',nominalOhms:10000});
+ pullup.userData.nominalOhms=10000;pullup.userData.resistanceMeasured=false;
+ add(s,pullup,145,24,22,{exploded,shift:29});
  const warningLimiter=part('TW-C-09','1 kΩ resistor · warning LED current limit','output',stage);
- resistor(warningLimiter,{axis:'y'});add(s,warningLimiter,184,-15,21,{exploded,shift:-24});
+ resistor(warningLimiter,{axis:'y',nominalOhms:1000});
+ warningLimiter.userData.nominalOhms=1000;warningLimiter.userData.resistanceMeasured=false;
+ add(s,warningLimiter,184,-15,21,{exploded,shift:-24});
  const led=part('TW-C-10',blocked?'Silent warning LED ON · symbolic':'Silent warning LED OFF · symbolic','output',stage);
  indicator(led,'red','z',blocked);
  add(s,led,211,-14,31,{exploded,shift:-11});
