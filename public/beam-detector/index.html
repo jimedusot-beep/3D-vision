@@ -61,12 +61,13 @@ select{display:block;width:100%;min-height:46px;background:#19283f;color:white;b
 </section>
 <section class="panel" aria-labelledby="test-heading">
  <h2 id="test-heading">Range &amp; reliability test</h2>
- <p class="help">Start while armed and the beam is detected. Cross exactly ten times without touching the phone; then confirm below. Leave the beam clear for the timed stationary test.</p>
+ <p class="help">Start while armed and the beam is detected. Choose ten or thirty crossings. Cross that many times without touching the phone; then confirm below. Leave the beam clear for the timed stationary test.</p>
  <div class="row2"><label>Distance<select id="test-distance"><option>6 in</option><option>1 ft</option><option>3 ft</option><option>6 ft</option><option>10 ft</option><option>15 ft</option></select></label><label>Source<select id="test-source"><option>HyperGear flashlight</option><option>Red LED + resistor</option></select></label></div>
- <div class="row2"><label>Room lighting<select id="test-lighting"><option>Indoor artificial</option><option>Daylight</option><option>Dim room</option></select></label><label>Stationary check<select id="test-duration"><option value="120000">2 minutes · range test</option><option value="300000">5 minutes · final check</option></select></label></div>
- <button id="begin-test" class="primary large" disabled>Start ten-crossing test</button>
+ <div class="row2"><label>Room lighting<select id="test-lighting"><option>Indoor artificial</option><option>Daylight</option><option>Dim room</option></select></label><label>Stationary check<select id="test-duration"><option value="120000">2 minutes · range test</option><option value="300000">5 minutes · final check</option><option value="900000">15 minutes · fixed-rig check</option></select></label></div>
+ <label>Crossings required<select id="test-crossings"><option value="10">10 · basic prototype</option><option value="30">30 · fixed-rig trial</option></select></label>
+ <button id="begin-test" class="primary large" disabled>Start crossing test</button>
  <p id="test-status" role="status" aria-live="polite">NOT TESTED · No distance has passed yet.</p>
- <label class="help"><input id="crossings-confirm" type="checkbox" disabled> I made exactly ten physical crossings and the beam is restored.</label>
+ <label class="help"><input id="crossings-confirm" type="checkbox" disabled> I completed the selected number of physical crossings, observed one count per crossing without misses or extras, and restored the beam.</label>
  <button id="finish-crossings" class="green large" disabled>Finish crossings → start stationary timer</button>
  <button id="cancel-test" class="ghost large" disabled>Cancel this test</button>
  <p id="range-summary" class="help">0 of 6 distances passed for this source and lighting.</p>
