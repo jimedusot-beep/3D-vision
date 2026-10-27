@@ -1,0 +1,30 @@
+name: H.E.R.B.I.E. head/neck kinematics study
+on:
+  pull_request:
+    paths:
+      - 'EXPERIMENTS/002_HEAD_NECK_KINEMATICS/**'
+      - 'tests/head-neck-concept.test.mjs'
+      - '.github/workflows/head-neck-study.yml'
+permissions:
+  contents: read
+jobs:
+  validate-concept:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate conceptual metadata against original CAD
+        run: node --test tests/head-neck-concept.test.mjs
+      - name: Install OpenSCAD parser
+        run: sudo apt-get update && sudo apt-get install -y openscad
+      - name: Compile non-printable CSG studies
+        run: |
+          openscad -o "$RUNNER_TEMP/herbie-neck-neutral.csg" \
+            EXPERIMENTS/002_HEAD_NECK_KINEMATICS/Head_Neck_Kinematics.scad
+          openscad -o "$RUNNER_TEMP/herbie-neck-illustrative.csg" \
+            -D 'pan_preview_deg=20' -D 'tilt_preview_deg=15' \
+            EXPERIMENTS/002_HEAD_NECK_KINEMATICS/Head_Neck_Kinematics.scad
+          test -s "$RUNNER_TEMP/herbie-neck-neutral.csg"
+          test -s "$RUNNER_TEMP/herbie-neck-illustrative.csg"
+      - name: Explain validation scope
+        run: echo "SCAD syntax and source metadata only; NOT verified physical fit, safe travel, or load."
