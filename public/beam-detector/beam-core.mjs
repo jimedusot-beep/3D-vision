@@ -33,9 +33,9 @@ export class BeamDetector {
 }
 export class QualificationRun {
   constructor(meta = {}, time, count) {
-    this.meta={...meta, idleMs:meta.idleMs === 300000 ? 300000 : 120000};
+    this.meta={...meta, requiredCrossings:meta.requiredCrossings===30?30:10, idleMs:[120000,300000,900000].includes(meta.idleMs)?meta.idleMs:120000};
     this.startedAt=time; this.baseCount=count; this.lastCount=count;
-    this.phase='crossings'; this.reason='Make exactly ten crossings without touching the screen.';
+    this.phase='crossings'; this.reason=`Make exactly ${this.meta.requiredCrossings} crossings without touching the screen.`;
     this.idleStart=null; this.observedBreaks=0; this.operatorConfirmed=false; this.idleElapsedMs=0;
   }
   observe(time,count,state) {
@@ -45,14 +45,14 @@ export class QualificationRun {
     if (this.phase === 'idle') {
       this.idleElapsedMs=Math.max(0,time-this.idleStart);
       if (count !== this.idleCount || state !== 'present') { this.phase='failed'; this.reason='False interruption during the stationary test.'; }
-      else if (this.idleElapsedMs >= this.meta.idleMs) { this.phase='passed'; this.reason='Ten operator-confirmed crossings and stationary test passed for this setup only.'; }
+      else if (this.idleElapsedMs >= this.meta.idleMs) { this.phase='passed'; this.reason=`${this.meta.requiredCrossings} operator-confirmed crossings and stationary test passed for this setup only.`; }
     }
   }
   finishCrossings(time,count,state,operatorConfirmed) {
     if (this.phase !== 'crossings' || !operatorConfirmed) return false;
     this.observedBreaks=count-this.baseCount; this.operatorConfirmed=true;
-    if (this.observedBreaks !== 10 || state !== 'present') {
-      this.phase='failed'; this.reason='Need ten counted breaks and beam restored after ten actual crossings.'; return false;
+    if (this.observedBreaks !== this.meta.requiredCrossings || state !== 'present') {
+      this.phase='failed'; this.reason=`Need ${this.meta.requiredCrossings} counted breaks and the beam restored after the same number of actual crossings.`; return false;
     }
     this.idleCount=count; this.idleStart=time; this.phase='idle'; this.reason='Leave the light uninterrupted and the app in the foreground.'; return true;
   }
