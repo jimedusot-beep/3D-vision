@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "collection": "slp-larynx-v1",
+  "title": "Illustrative larynx anatomy",
+  "scientific_status": "simplified_educational_illustration_unvalidated",
+  "units": "arbitrary_visual_units_not_anatomical_measurements",
+  "animation_status": "disabled_pending_validated_geometry_and_review",
+  "source_ids": [
+    "openstax-ap22-1"
+  ],
+  "structures": [
+    {
+      "id": "thyroid-cartilage",
+      "label": "Thyroid cartilage",
+      "kind": "cartilage",
+      "description": "Prominent protective cartilage surrounding the front of the larynx."
+    },
+    {
+      "id": "cricoid-cartilage",
+      "label": "Cricoid cartilage",
+      "kind": "cartilage",
+      "description": "Ring-shaped cartilage below the thyroid cartilage."
+    },
+    {
+      "id": "left-arytenoid",
+      "label": "Left arytenoid cartilage",
+      "kind": "cartilage",
+      "description": "One of two arytenoid cartilages associated with vocal-fold positioning."
+    },
+    {
+      "id": "right-arytenoid",
+      "label": "Right arytenoid cartilage",
+      "kind": "cartilage",
+      "description": "One of two arytenoid cartilages associated with vocal-fold positioning."
+    },
+    {
+      "id": "left-vocal-fold",
+      "label": "Left vocal fold",
+      "kind": "fold",
+      "description": "One of the paired tissue folds involved in phonation."
+    },
+    {
+      "id": "right-vocal-fold",
+      "label": "Right vocal fold",
+      "kind": "fold",
+      "description": "One of the paired tissue folds involved in phonation."
+    },
+    {
+      "id": "left-posterior-cricoarytenoid",
+      "label": "Left posterior cricoarytenoid",
+      "kind": "muscle",
+      "description": "Posterior cricoarytenoid muscles help abduct the vocal folds."
+    },
+    {
+      "id": "right-posterior-cricoarytenoid",
+      "label": "Right posterior cricoarytenoid",
+      "kind": "muscle",
+      "description": "Posterior cricoarytenoid muscles help abduct the vocal folds."
+    },
+    {
+      "id": "left-lateral-cricoarytenoid",
+      "label": "Left lateral cricoarytenoid",
+      "kind": "muscle",
+      "description": "Lateral cricoarytenoid muscles help adduct the vocal folds."
+    },
+    {
+      "id": "right-lateral-cricoarytenoid",
+      "label": "Right lateral cricoarytenoid",
+      "kind": "muscle",
+      "description": "Lateral cricoarytenoid muscles help adduct the vocal folds."
+    }
+  ]
+}

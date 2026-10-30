@@ -13,6 +13,10 @@ All 18 H.E.R.B.I.E. CAD parts remain provisional; no physical fit is certified.
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
+## SLP interactive anatomy prototype (experimental)
+
+A separate [SLP larynx teaching scene](ANATOMY/SLP/index.html) offers a **schematic, unvalidated** 3D larynx illustration, mouse/touch orbit, labels, selection, isolation, transparency, keyboard controls and a versioned H.E.R.B.I.E. iframe message protocol. See [limitations and source record](ANATOMY/SLP/SOURCES.md). This does not replace or mix with H.E.R.B.I.E. mechanical CAD; no medical geometry is certified, phonation animation remains disabled, and no private coursework is included.
+
 ## McGruber Lab — repository-driven experiments
 
 **[Experiment 001: H.E.R.B.I.E. Skeleton Workshop](EXPERIMENTS/001_HERBIE_SKELETON/README.md)** · [Generated models and files](EXPERIMENTS/001_HERBIE_SKELETON/) · [Automated generation](.github/workflows/experiment-001.yml)
