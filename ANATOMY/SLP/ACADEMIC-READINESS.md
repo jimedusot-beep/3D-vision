@@ -32,6 +32,14 @@ Status: **draft prototype**, not an accredited syllabus, university equivalence,
 5. Choose “I recalled it” or “Review again later”; the latter adds it to the back of this session's queue.
 6. Repeat. **No percentage mastery claim is made.** A trained reviewer must evaluate whether each objective and prompt is appropriate for an actual SLP syllabus.
 
+## Follow-up usability and resilience pass — 2026-10-30
+
+- **Search the actual catalog.** A keyboard-accessible input filters the existing ten structure buttons by name/ID. A live count reports matched items; zero matches explain how to restore the complete list. The filtering is local: queries are not sent to a server or persisted. This becomes more useful as validated structures are added.
+- **Practice this anatomical concept.** After selecting a structure, the learner can start just its related source-linked questions. For left/right homologous structures, the same functional teaching concept is shared *without copying or inventing extra prompts*. "Restart all questions" reinitializes the twelve-item session; no personal record is created, retained or exported. The main model's selection and the study-question scope are independent until the learner explicitly changes the scope.
+- **No false anatomical validation.** Filtering structure names and pairing teaching questions does not validate mesh shape, biomechanics or lateralized injury findings. The source files remain the authority for written explanations only.
+- **Older-device protection.** Rendering is suspended when the page is hidden and resumed on visibility change; an unavailable `ResizeObserver` uses a standard window resize listener. The no-WebGL/text study fallback is also tested with `ResizeObserver` disabled.
+- **New acceptance tests.** Unit assertions cover bilateral filtering and privacy, while desktop Chromium and iPhone WebKit browser automation cover visible/hidden search results, empty-state text, selected-part practice, complete-session restart and narrow-screen search. Real screen-reader testing and physical devices remain required.
+
 ## University-parity gap register (not built or validated)
 
 | Priority | Requirement | Acceptance evidence |
