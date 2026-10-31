@@ -51,7 +51,7 @@ test('standalone Draco viewer has source/licensing disclosure, text-first interf
  const js=readFileSync(new URL('../ANATOMY/SLP/neural.js',import.meta.url),'utf8');
  const pkg=readFileSync(new URL('../package.json',import.meta.url),'utf8');
  const vite=readFileSync(new URL('../vite.config.js',import.meta.url),'utf8');
- for(const id of ['neural-stage','neural-select','neural-filters','neural-note-text',
+ for(const id of ['neural-stage','neural-select','neural-filters','neural-search','neural-side','neural-search-count','neural-visible-count','neural-note-text',
  'neural-status','neural-fallback','neural-focus','neural-isolate','neural-lesson-start',
  'neural-lesson-progress','neural-lesson-next','neural-lesson-prev','neural-lesson-close',
  'neural-lesson-note','neural-lesson-summary'])
