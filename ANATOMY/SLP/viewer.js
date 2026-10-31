@@ -15,7 +15,7 @@ let stageMode='map'; // An explanatory concept map is the honest default.
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0e1a26);
 const camera=new THREE.PerspectiveCamera(45,1,.05,100);
-camera.position.set(0,2.1,7.3);
+camera.position.set(0,1.2,5.8);
 // Older devices and restricted browsers may lack WebGL; preserve the text-only study UI.
 let renderer=null,orbit=null,graphicsLost=false;
 try {
@@ -384,7 +384,7 @@ function renderState() {
 function select(id){view.selected=id;view.isolated=null;renderState();}
 function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
 function setIsolated(id){view.selected=id;view.isolated=id;renderState();}
-function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(0,2.1,7.3);if(orbit){orbit.target.set(0,0,0);orbit.update();}renderState();}
+function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(0,1.2,5.8);if(orbit){orbit.target.set(0,0,0);orbit.update();}renderState();}
 $('show-all').onclick=()=>{view.isolated=null;renderState();};
 $('reset').onclick=reset;
 $('transparent').onchange=e=>{view.transparent=e.target.checked;renderState();};
@@ -460,11 +460,14 @@ if(typeof ResizeObserver==='function')new ResizeObserver(fit).observe(stage);
 else window.addEventListener('resize',fit);
 const overviewLabels=new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold']);
 function drawLabels(){
-  // Four overview labels instead of ten overlapping tags, or one when selected.
+  // On narrow screens an overview has no floating tags: their overlap
+  // obscures the model and the selected-structure ribbon already names it.
+  // Only the selected label is allowed on mobile.
+  const narrow=window.matchMedia('(max-width:760px)').matches;
   for(const [id,label] of labels) {
     const m=meshes.get(id);
     label.hidden=stageMode!=='three'||!view.labels||!m.visible||
-      (view.selected ? view.selected!==id : !overviewLabels.has(id));
+      (view.selected ? view.selected!==id : narrow||!overviewLabels.has(id));
     if(label.hidden)continue;
     const point=m.getWorldPosition(new THREE.Vector3()).project(camera);
     label.hidden=point.z < -1||point.z>1||Math.abs(point.x)>1||Math.abs(point.y)>1;
@@ -494,7 +497,7 @@ document.addEventListener('visibilitychange',()=>{
 function presetCamera(direction){
   if(!renderer)return;
   root.rotation.set(0,0,0);
-  camera.position.set(0,2.1,direction==='back'?-7.3:7.3);
+  camera.position.set(0,1.2,direction==='back'?-5.8:5.8);
   camera.up.set(0,1,0);
   orbit?.target.set(0,0,0);
   orbit?.update();
