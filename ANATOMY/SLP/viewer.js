@@ -182,7 +182,7 @@ async function ensureReferenceModel(){
     updateReferenceSelection(null);
     applyReferenceState();
     frameRealModel('front');
-    $('notice').textContent='Real BodyParts3D 4.3 anatomy meshes (CC BY-SA 2.1 Japan) — NOT clinically reviewed. Vocal ligaments are NOT complete true vocal folds. Source credits in Notes.';
+    if(stageMode==='three')$('notice').textContent='BodyParts3D 4.3 meshes (CC BY-SA 2.1 JP), NOT clinically reviewed. Vocal ligaments are NOT complete folds. See credits under Notes.';
     $('status').textContent='Licensed 3D source geometry loaded: 20 selectable groups. Expert review pending.';
   }catch(err){
     referenceState='error';
@@ -435,7 +435,7 @@ function renderState() {
     description.textContent=info.description;
     const caveat=document.createElement('p');
     caveat.className='evidence-note';
-    caveat.textContent='The references support the written anatomy note, NOT the approximate 3D shape or its relative placement.';
+    caveat.textContent='References support the written notes, not 3D clinical validation. The optional BodyParts3D 4.3 source meshes group left/right anatomy; its vocal ligaments are NOT complete mucosa-covered vocal folds.';
     const cited=document.createElement('div');
     cited.className='evidence-links';
     const intro=document.createElement('strong');
