@@ -1,7 +1,7 @@
 // Expandable SLP curriculum scaffold, not a claim of comprehensive coverage.
-// "outline" modules have NOT been supplied licensed 3D assets or validated lessons.
-// Respiratory lungs/airways and larynx have separate source-derived 3D meshes.
-// Diaphragm, rib cage and all other eight topics still lack integrated 3D anatomy.
+// "outline" means no anatomical 3D model; "study" means a PARTIAL licensed
+// model (oral salivary glands/tongue/jaw), not the full subject. 
+// Respiratory, larynx and diaphragm have separate, source-licensed 3D viewers.
 export const systemModules=[
   {
     "id": "respiration",
@@ -64,8 +64,8 @@ export const systemModules=[
     "id": "articulation",
     "name": "Articulatory and orofacial system",
     "group": "Speech mechanism",
-    "stage": "outline",
-    "overview": "Tongue, lips, teeth, mandible, hard/soft palate and the source-filter model of spoken sounds.",
+    "stage": "study",
+    "overview": "Partial source-derived 3D of tongue, mandible and hyoid with salivary glands/ducts; lips, teeth, palate and dynamic speech articulation are not yet modeled.",
     "objectives": [
       "Identify major oral articulators and their attachments.",
       "Describe place, manner and voicing of consonants.",
@@ -73,7 +73,7 @@ export const systemModules=[
       "Distinguish speech production from phonological organization."
     ],
     "next": [
-      "Licensed oral cavity and tongue meshes",
+      "Expand beyond currently licensed tongue, jaw, hyoid and salivary anatomy to lips, teeth, palate and internal tongue muscles",
       "IPA/place-of-articulation study lab",
       "Articulatory motion with validated reference"
     ],
@@ -121,8 +121,8 @@ export const systemModules=[
     "id": "swallowing",
     "name": "Feeding, swallowing and airway protection",
     "group": "Aerodigestive",
-    "stage": "outline",
-    "overview": "Oral preparation, oral transit, pharyngeal swallowing and esophageal transit; airway protection.",
+    "stage": "study",
+    "overview": "Oral-phase introduction with source-derived 3D tongue, mandible, hyoid and salivary glands; pharyngeal/esophageal swallowing and airway protection remain outlines.",
     "objectives": [
       "Identify oral, pharyngeal and esophageal components.",
       "Explain laryngeal elevation and airway closure concepts.",
@@ -130,7 +130,7 @@ export const systemModules=[
       "Recognize aspiration and referral boundaries without simulating diagnosis."
     ],
     "next": [
-      "Licensed aerodigestive anatomy",
+      "Extend partial oral salivary and jaw anatomy into pharynx, esophagus and laryngeal protection structures",
       "Reviewed phase-based schematic illustrations",
       "Faculty-approved swallowing safety content"
     ],
@@ -321,7 +321,9 @@ export const respiratoryQuestions=[
 export function validateSystems(){
   const ids=new Set(systemModules.map(s=>s.id));
   if(ids.size!==10||!ids.has('respiration')||!ids.has('phonation'))throw Error('Incomplete multi-system SLP curriculum');
-  if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='respiration,phonation')throw Error('Only verified lung/airway and larynx groups have licensed 3D assets');
+  if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='respiration,phonation'|| 
+  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='articulation,swallowing')
+  throw Error('Full anatomy models and partial oral anatomy modules must be distinguished');
   if(respiratoryTerms.length!==10||respiratoryQuestions.length!==6)throw Error('Respiratory study coverage mismatch');
   const terms=new Set(respiratoryTerms.map(s=>s.id));
   if(terms.size!==10||respiratoryQuestions.some(q=>!terms.has(q.answer)||!q.choices.includes(q.answer)))throw Error('Respiratory clue mismatch');
