@@ -4,7 +4,7 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;font-src 'self';connect-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
 <title>H.E.R.B.I.E. · SLP Body Systems Study Atlas</title>
-<meta name="description" content="A source-aware speech-language pathology body systems study atlas, containing a navigable 3D study-topic layout, verified larynx and lung/airway source models, and SLP learning modules.">
+<meta name="description" content="H.E.R.B.I.E. SLP Atlas: seven independent licensed interactive 3D anatomy labs for larynx, lungs, diaphragm, oral structures, pharynx, ear and cranial nerves, with ten learning areas.">
 <style>
 :root{font:16px/1.48 system-ui,sans-serif;background:#0e1923;color:#ecf5f7}
 *{box-sizing:border-box}body{margin:0}button,input{font:inherit}a{color:#96e5da}
@@ -55,6 +55,11 @@ h2{font-size:1.27rem}h3{font-size:1.02rem}p{margin:.6rem 0}
 #resp-score{color:#b2e9d5;font-weight:650}
 #resp-answer:not([hidden]){padding:.8rem;background:#214352;border-left:4px solid #8cdcc0}
 #resp-next:disabled{opacity:.5;cursor:not-allowed}
+#anatomy-launcher{margin:0 0 1.5rem}
+.anatomy-launch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:.65rem;margin:.85rem 0}
+.anatomy-launch{display:flex;flex-direction:column;gap:.4rem;min-height:106px;padding:.9rem;border:1px solid #6a91a0;border-radius:11px;background:#214653;text-decoration:none}
+.anatomy-launch:hover,.anatomy-launch:focus-visible{background:#285e61;border-color:#a1e7d2}
+.anatomy-launch strong{font-size:1.02rem;color:#f5ffff}.anatomy-launch span{color:#c9e5e8;font-size:.85rem}
 footer{border-top:1px solid #406777;margin:2rem 0 0;padding:1rem clamp(1rem,3vw,2rem);color:#c4d8dd;font-size:.82rem}
 @media(max-width:560px){#systems-network{height:clamp(310px,44dvh,390px)}header{padding:1rem}.module-card{padding:.8rem}#resp-diagram{padding:.2rem}}
 </style></head><body>
@@ -63,12 +68,26 @@ footer{border-top:1px solid #406777;margin:2rem 0 0;padding:1rem clamp(1rem,3vw,
 <nav aria-label="Atlas navigation"><a href="./index.html">3D Larynx Lab</a><a href="./lungs.html">3D Lungs &amp; Airways</a><a href="./diaphragm.html">3D Diaphragm</a><a href="./oral.html">3D Oral Anatomy</a><a href="./pharynx.html">3D Pharynx &amp; Soft Palate</a><a href="./ear.html">3D Right Ear</a><a href="./neural.html">3D Cranial Nerves &amp; Brainstem</a><a href="../../index.html">Robotics workshop</a><a href="./about.html">Anatomy source and license notes</a></nav>
 </header>
 <main>
-<h2>Human systems and SLP learning domains</h2>
-<p class="intro">The atlas is organized around ten interconnected study areas. The existing larynx and new lung/airway modules use <strong>source-derived 3D meshes</strong>. Use the interactive 3D topic layout to navigate ten areas; it represents educational relationships, <strong>not human anatomical coordinates</strong>. The oral anatomy lab supplies a partial 3D study for articulation and swallowing; six other subjects remain outlines awaiting suitable anatomical assets. The respiratory module also retains its breathing lessons and quizzes.</p>
-<section id="systems-network" role="region" tabindex="0" aria-label="Three-dimensional SLP curriculum topic navigation; select a colored topic marker or use the ten native buttons below">
-<p id="systems-3d-status" role="status">Interactive topic-space overview. Source-derived 3D anatomical geometry is available in the respiratory and larynx modules only.</p>
+<section id="anatomy-launcher" aria-labelledby="anatomy-launcher-title">
+<h2 id="anatomy-launcher-title">Open a 3D anatomy model</h2>
+<p class="intro">Start with any body region. Each lab opens its own interactive, rotatable model and written study notes. Your browser downloads only the model you open. Use Back to return to this hub.</p>
+<div class="anatomy-launch-grid">
+<a class="anatomy-launch" href="./index.html"><strong>01 · Larynx and phonation</strong><span>20 labeled groups · voice and glottal anatomy</span></a>
+<a class="anatomy-launch" href="./lungs.html"><strong>02 · Lungs and airways</strong><span>20 groups · respiratory tour and quiz</span></a>
+<a class="anatomy-launch" href="./diaphragm.html"><strong>03 · Diaphragm</strong><span>13 groups · breathing attachments and landmarks</span></a>
+<a class="anatomy-launch" href="./oral.html"><strong>04 · Oral cavity structures</strong><span>15 groups · tongue, jaw, hyoid and saliva</span></a>
+<a class="anatomy-launch" href="./pharynx.html"><strong>05 · Pharynx and soft palate</strong><span>20 groups · constrictors and resonance muscles</span></a>
+<a class="anatomy-launch" href="./ear.html"><strong>06 · Ear and hearing</strong><span>16 right-ear groups · sound-path study</span></a>
+<a class="anatomy-launch" href="./neural.html"><strong>07 · Cranial nerves and brainstem</strong><span>74 records · function recall and source notes</span></a>
+</div>
+<p class="alert"><strong>Important:</strong> These are seven independently sourced 3D anatomy models, not one spatially registered human body. We have not validated the transformations needed to assemble them into one accurate head or torso.</p>
 </section>
-<p id="systems-legend"><strong>3D topic map ≠ anatomical body:</strong> brighter markers link to available lung/airway or larynx models. Muted markers are topic outlines. Drag to rotate; tap a marker or select a card below. All content remains available without WebGL.</p>
+<h2>Human systems and SLP learning domains</h2>
+<p class="intro">Choose any of the <strong>seven real, source-derived 3D anatomy labs</strong> below. Their models load separately for usability and to preserve their independently licensed source coordinates. The ten-area interactive topic map organizes SLP lessons; <strong>it is not an anatomically aligned whole-body skeleton</strong>. Several systems remain partial or conceptual; no patient-specific or diagnostic model is claimed.</p>
+<section id="systems-network" role="region" tabindex="0" aria-label="Three-dimensional SLP curriculum topic navigation; select a colored topic marker or use the ten native buttons below">
+<p id="systems-3d-status" role="status">Study-topic map. Seven separate source-derived 3D anatomy labs are linked on this page; markers are conceptual, not body coordinates.</p>
+</section>
+<p id="systems-legend"><strong>3D topic map ≠ anatomical body:</strong> brighter markers denote modules with available or partial licensed source geometry; muted markers remain topic outlines. Drag to rotate, select a marker, or use the native module buttons. The seven anatomy labs are independent and accessible without this map.</p>
 <div id="module-grid" aria-label="Choose a body system or study foundation"></div>
 <section id="module-detail" tabindex="-1" aria-labelledby="module-title">
 <p id="module-status" class="tag"></p><h2 id="module-title">Respiratory system</h2>
