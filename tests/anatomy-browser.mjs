@@ -149,6 +149,8 @@ try {
   const noGpu=await desktop.newPage();
   noGpu.on('pageerror',e=>errors.push(e.message));
   await noGpu.addInitScript(()=>{
+    // Model an older browser without usable WebGL or ResizeObserver.
+    Object.defineProperty(window,'ResizeObserver',{value:undefined,configurable:true});
     const original=HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext=function(type,...args) {
       if(['webgl','webgl2','experimental-webgl'].includes(type))return null;
