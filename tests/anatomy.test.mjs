@@ -36,6 +36,20 @@ test('anatomy evidence notes are published as a dedicated HTML page',()=>{
  assert.match(evidenceHtml,/Illustrative geometry, not validated medical anatomy/);
  for(const ref of catalog.references)assert.ok(evidenceHtml.includes(ref.url));
 });
+test('public anatomy documents restrict script origins and referrer leakage',()=>{
+ const pages=[html,readFileSync(new URL('ANATOMY/SLP/about.html',root),'utf8')];
+ for(const page of pages){
+   assert.ok(page.includes('<meta name="referrer" content="no-referrer">'));
+   assert.ok(page.includes('http-equiv="Content-Security-Policy"'));
+   assert.ok(page.includes("script-src 'self'"));
+   assert.ok(page.includes("object-src 'none'"));
+   assert.ok(page.includes("base-uri 'self'"));
+   assert.ok(page.includes("form-action 'none'"));
+ }
+ assert.ok(viewer.includes('resolveEmbedOrigin'));
+ const workflow=readFileSync(new URL('.github/workflows/smoke-viewer.yml',root),'utf8');
+ assert.ok(workflow.includes("      - 'ANATOMY/**'"));
+});
 test('anatomy catalog has stable distinct IDs and descriptive provenance',()=>{
  assert.equal(catalog.schema_version,1);
  assert.equal(ids.size,catalog.structures.length);
