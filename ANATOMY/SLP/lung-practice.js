@@ -59,7 +59,7 @@ export function initLungPractice({selectStructure,focusStructure,resetScene}){
   options.replaceChildren();
   $('lung-practice-progress').textContent='Question '+(index+1)+' of '+questions.length+
    ' · '+correct+' correct';
-  $('lung-practice-question').textContent='Which anatomical region contains the source-model group “'+question.name+'”?';
+  $('lung-practice-question').textContent='Which lobe or airway category is assigned to the source-model group “'+question.name+'”?';
   for(const choice of regionChoices(question)){
    const button=document.createElement('button');
    button.type='button';button.textContent=choice.label;
