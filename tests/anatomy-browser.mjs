@@ -31,6 +31,16 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  const policy=await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content');
+  assert.match(policy,/script-src 'self'/);
+  assert.match(await page.locator('meta[name="referrer"]').getAttribute('content'),/no-referrer/);
+  const inlineScriptBlocked=await page.evaluate(()=>{
+    const injected=document.createElement('script');
+    injected.textContent='window.__anatomyUnsafeInlineScript=1';
+    document.head.append(injected);
+    return window.__anatomyUnsafeInlineScript===undefined;
+  });
+  assert.equal(inlineScriptBlocked,true,'Inline JavaScript must be blocked by the anatomy page CSP');
   assert.equal(await page.locator('#learning-objectives li').count(),4);
   assert.match(await page.locator('#study-progress').textContent(),/nothing is saved/);
   assert.equal(await page.locator('button[data-isolate="left-vocal-fold"]').getAttribute('aria-label'),'Isolate Left vocal fold');
@@ -184,6 +194,23 @@ try {
   await outsider.waitForTimeout(250);
   assert.equal(await restricted.locator('button[data-id="left-vocal-fold"]').getAttribute('aria-pressed'),'false');
   console.log('PASS: '+name+' rejects commands from unapproved parent origins');
+  // Even when a hostile embedder supplies a URL, only a canonical origin is
+  // a permitted opt-in. A path-bearing URL must fall back to same-origin.
+  const malformedSrc=origin+'/ANATOMY/SLP/index.html?embedOrigin='+
+    encodeURIComponent('https://untrusted.test/some-path');
+  await outsider.evaluate(src=>new Promise(resolve=>{
+    const frame=document.querySelector('iframe');
+    frame.addEventListener('load',resolve,{once:true});
+    frame.src=src;
+  }),malformedSrc);
+  await restricted.locator('button[data-id="left-vocal-fold"]').waitFor();
+  await outsider.evaluate(()=>document.querySelector('iframe').contentWindow.postMessage(
+    {source:'herbie',version:1,action:'select',structureId:'left-vocal-fold',requestId:'bad-origin-url'},
+    'https://3dvision.test'
+  ));
+  await outsider.waitForTimeout(250);
+  assert.equal(await restricted.locator('button[data-id="left-vocal-fold"]').getAttribute('aria-pressed'),'false');
+  console.log('PASS: '+name+' rejects path-bearing iframe origin opt-in');
 
   const mobile=await browser.newContext({...devices['iPhone 13']});
   await routeAssets(mobile);
