@@ -124,6 +124,27 @@ for(const s of catalog.structures) {
   overlay.append(label);
   labels.set(s.id,label);
 }
+// Mobile navigation is local UI state, separate from the H.E.R.B.I.E. API.
+const mobilePanels=['panel-structures','panel-details','panel-practice'];
+function openMobilePanel(id,scroll=false) {
+  if(!mobilePanels.includes(id))return;
+  for(const name of mobilePanels){
+    $(name).dataset.mobileActive=String(name===id);
+  }
+  for(const button of document.querySelectorAll('#mobile-tabs [data-mobile-target]')){
+    button.setAttribute('aria-pressed',String(button.dataset.mobileTarget===id));
+  }
+  if(scroll&&window.matchMedia('(max-width:760px)').matches)
+    $('mobile-tabs').scrollIntoView({block:'start',behavior:'auto'});
+}
+for(const button of document.querySelectorAll('#mobile-tabs [data-mobile-target]')){
+  button.addEventListener('click',()=>openMobilePanel(button.dataset.mobileTarget));
+}
+$('open-details').addEventListener('click',()=>openMobilePanel('panel-details',true));
+$('practice-from-detail').addEventListener('click',()=>{
+  if(!$('study-selected').disabled)$('study-selected').click();
+  openMobilePanel('panel-practice',true);
+});
 // Functional grouping, NOT an anatomical coordinate map: every link points to
 // an existing sourced teaching entry, and the viewer invents no new structures.
 const mapGroups=[
@@ -296,6 +317,9 @@ function renderState() {
   $('labels').checked=view.labels;
   const info=byId.get(view.selected);
   const related=info?questionsForStructure(catalog.review_prompts,info.id):[];
+  $('selection-ribbon').hidden=!info;
+  $('selection-name').textContent=info?'Selected: '+info.label:'';
+  $('practice-from-detail').disabled=related.length===0;
   $('study-selected').disabled=related.length===0;
   $('study-selected').title=info
     ?related.length+' question(s) about '+info.label
