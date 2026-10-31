@@ -116,10 +116,11 @@ footer{padding:1rem;color:#c3d6df;font-size:.82rem;border-top:1px solid #466b7c}
 <button type="button" data-view="left">Left</button><button type="button" data-view="right">Right</button>
 <button type="button" data-view="top">Top</button>
 </div>
-<div id="lung-explosion">
+<div id="lung-explosion" role="group" aria-label="Actual lung source-mesh explosion controls">
+<button type="button" id="lung-explode" aria-pressed="false" disabled>Explode 3D</button>
 <label for="lung-separate">Separate lobes for study <output for="lung-separate" id="lung-separate-value">0%</output></label>
-<input id="lung-separate" type="range" min="0" max="100" step="5" value="0">
-<button id="lung-assemble" type="button">Reassemble</button>
+<input id="lung-separate" type="range" min="0" max="100" step="5" value="0" disabled>
+<button id="lung-assemble" type="button" disabled>Reassemble</button>
 </div>
 <p class="warning">Exploded positions are diagrammatic. Surfaces retain their original shapes, but separated lobes are <strong>not in anatomical position</strong>. This model omits the diaphragm, ribs, pleura, alveoli and many fine airways. The diaphragm is available in a separate unregistered 3D source model.</p>
 </section>
