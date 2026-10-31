@@ -23,6 +23,16 @@ Status: **draft prototype**, not an accredited syllabus, university equivalence,
 - **Accessibility and device resilience:** Keyboard, HTML study panel, titled isolate buttons, WebGL fallback and loss handling, responsive iPhone-size tests. A qualified accessibility audit and real-device test remain open.
 - **Model integrity:** Existing mesh geometry is schematic; never derive examination correct answers from where the user clicked in that scene. No phonation simulation or clinical model assessment is available.
 
+## Mobile usability iteration — 2026-10-31
+
+A live iPhone user confirmed the separate Render preview runs but finds the experience incomplete. This round addresses navigability **rather than claiming the larynx shapes became anatomically accurate**:
+
+- The concept map now grows with the document on narrow screens; there is **one normal browser scroll** rather than an inner scrolling box nested inside a longer page.
+- Three native-button sections separate **Parts**, **Notes**, and **Practice** on iPhone-sized screens; the desktop reference layout retains all sections. Pressed states reflect the visible section.
+- Selecting a structure shows a sticky, named **Read structure notes** action while exploring the mobile map. The notes link to primary educational sources and include a button to launch its already-authored related self-study questions.
+- Tests cover the entire map → note → practice → reset journey in emulated iPhone WebKit and Chromium, empty search and no-WebGL fallback. Nothing records student actions.
+- Remaining blockers: production-grade medically validated 3D meshes, human-source review, VoiceOver testing, real physical iPhone layout and thermal/battery tests. Automated browser checks are necessary, **not** proof of real-device usability or teaching efficacy.
+
 ## Example lesson flow
 
 1. Review outcome “Compare intrinsic laryngeal muscle actions”.
