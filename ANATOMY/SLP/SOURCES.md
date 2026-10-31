@@ -21,7 +21,7 @@ No private coursework from HERBIE_SLP_Knowledge_2026-10-30.zip is redistributed.
 ## H.E.R.B.I.E. iframe protocol
 
 Viewer URL: ANATOMY/SLP/index.html?select=left-vocal-fold (selection is optional).
-For a cross-origin embed, add embedOrigin parameter set to the expected HTTPS parent origin. Production integration must approve its embedding origin.
+For a cross-origin embed, add embedOrigin parameter set to the expected HTTPS parent origin. **This query parameter is chosen by the embedder; it is not authentication or an authorization proof.** The protocol must remain limited to public viewer state, and production H.E.R.B.I.E. integration must independently validate the intended parent origin and must not transmit private course data, files, microphone input or hardware commands.
 
 The parent sends an object using postMessage targeted at the exact viewer origin:
 
