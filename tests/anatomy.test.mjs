@@ -231,6 +231,15 @@ test('mobile-first study navigation links map selections to accessible cited lea
   assert.ok(viewer.includes("$('practice-from-detail').disabled=related.length===0"));
   assert.ok(!viewer.includes('localStorage'));
 });
+test('iPhone 3D canvas uses CSS-pixel bounds and camera avoids clipped Retina geometry',()=>{
+  assert.ok(html.includes('#stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%'));
+  assert.ok(html.includes('#stage.mode-map canvas,#stage.mode-map #overlay{display:none}'));
+  assert.ok(html.includes('#stage.mode-three{isolation:isolate}'));
+  assert.ok(viewer.includes('renderer.setSize(w,h,false)'));
+  assert.ok(viewer.includes("camera.position.set(0,1.2,5.8)"));
+  assert.ok(viewer.includes("const narrow=window.matchMedia('(max-width:760px)').matches"));
+  assert.ok(viewer.includes('view.selected!==id : narrow||!overviewLabels.has(id)'));
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
