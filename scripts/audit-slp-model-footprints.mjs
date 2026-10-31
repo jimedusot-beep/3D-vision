@@ -5,7 +5,8 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
 const files=[
   ['larynx','larynx.glb'],['lungs','lungs.glb'],['diaphragm','diaphragm.glb'],
-  ['oral','oral.glb'],['pharynx','pharynx.glb'],['ear','ear.glb'],['neural','neural.glb']
+  ['oral','oral.glb'],['pharynx','pharynx.glb'],['ear','ear.glb'],['neural','neural.glb'],
+  ['neural-study','neural-study.glb']
 ];
 const componentByteWidths={5120:1,5121:1,5122:2,5123:2,5125:4,5126:4};
 const typeWidths={SCALAR:1,VEC2:2,VEC3:3,VEC4:4,MAT2:4,MAT3:9,MAT4:16};
