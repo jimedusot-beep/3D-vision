@@ -55,7 +55,7 @@ test('referenced study prompts are complete, unique and text-only',()=>{
  assert.equal(catalog.coverage.omitted_structures.length>=8,true);
  assert.match(catalog.coverage.statement,/NOT absent/);
  assert.match(html,/id="study-question"/);
- assert.match(html,/id="study-answer" hidden/);
+ assert.match(html,/id="study-answer"[^>]*\bhidden\b/);
  assert.match(viewer,/prompt\.source_ids/);
 });
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
