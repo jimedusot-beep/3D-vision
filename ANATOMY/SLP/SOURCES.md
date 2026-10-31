@@ -11,7 +11,10 @@
 ## Reference context (not model provenance)
 
 - OpenStax, Anatomy and Physiology 2e, section 22.1, Organs and Structures of the Respiratory System: https://openstax.org/books/anatomy-and-physiology-2e/pages/22-1-organs-and-structures-of-the-respiratory-system
-- Terminology and muscle-action statements in structures.json should be checked against approved SLP references by a qualified reviewer.
+- NCBI Bookshelf, Anatomy, Head and Neck: Larynx: https://www.ncbi.nlm.nih.gov/books/NBK538202/
+- NCBI Bookshelf, Anatomy, Head and Neck: Laryngeal Muscles: https://www.ncbi.nlm.nih.gov/books/NBK545265/
+
+Each entry in `structures.json` now records source IDs for its **written description**; these do not validate the corresponding 3D mesh. See the [evidence matrix and acceptance gates](VALIDATION.md). Terminology and muscle-action statements must still be reviewed by an SLP/anatomy-qualified reviewer.
 
 No private coursework from HERBIE_SLP_Knowledge_2026-10-30.zip is redistributed. This is an interaction prototype, not medically precise geometry.
 
