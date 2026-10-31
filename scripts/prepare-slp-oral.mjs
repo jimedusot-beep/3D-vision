@@ -13,10 +13,11 @@ export const oralModel=Object.freeze({
  path:'apps/web/public/models/salivary-glands.glb',
  bytes:754496,
  gitBlobSha1:'b1e943c7fab677bff21f74e16d86830cc516f3df',
+ sha256:'4bce66ed11d182e098dc8fecd60aa2011a0b44932a12a7ea8466059000964b92',
  license:'CC-BY-SA-4.0',
  source:'Z-Anatomy FBX (via OrganUI)',
  expectedGroups:15,
- // SHA-256 will also be pinned following a verified CI download.
+ // Both source content-addressed SHA-1 and independently verified SHA-256 are mandatory.
 });
 const source='https://raw.githubusercontent.com/'+oralModel.repo+'/'+oralModel.commit+'/'+oralModel.path;
 const output=path.resolve('public/models/slp/oral.glb');
@@ -25,7 +26,7 @@ export function validOralModel(data){
  if(data.byteLength!==oralModel.bytes||data.subarray(0,4).toString('ascii')!=='glTF'||
  data.readUInt32LE(4)!==2||data.readUInt32LE(8)!==oralModel.bytes)return false;
  const blob=createHash('sha1').update('blob '+data.length+'\0').update(data).digest('hex');
- return blob===oralModel.gitBlobSha1&&(!oralModel.sha256||oralSha256(data)===oralModel.sha256);
+ return blob===oralModel.gitBlobSha1&&oralSha256(data)===oralModel.sha256;
 }
 export async function prepareOralModel(){
  try{
