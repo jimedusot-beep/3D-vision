@@ -80,6 +80,32 @@ try{
        jsHeapBytes:performance.memory?.usedJSHeapSize??null,
        deviceMemoryGB:navigator.deviceMemory??null};
     }),errors,failedRequests:requests};
+   // User-facing contract: "Explode 3D" must visibly change the *canvas*,
+   // never merely open a note, status message or concept text panel.
+   // A visible source mesh should move, then return to 0% after Reassemble.
+   const explodeButton=item.id==='larynx'?'#mode-explode':
+     item.id==='lungs'?'#lung-explode':'#'+item.id+'-explode';
+   const reassembleButton=item.id==='larynx'?'#explode-assemble':
+     item.id==='lungs'?'#lung-assemble':'#'+item.id+'-assemble';
+   const stageDataKey=item.id==='lungs'?'separation':'explosionAmount';
+   const beforeExplosion=await canvas.screenshot({timeout:15000});
+   assert.equal(await page.locator(explodeButton).isEnabled(),true,
+     item.id+' actual 3D explode control not enabled after source load');
+   await page.locator(explodeButton).click();
+   await page.waitForFunction(({stage,key})=>
+     Number(document.querySelector(stage)?.dataset[key])>0,
+     {stage:item.stage,key:stageDataKey},{timeout:15000});
+   await page.waitForTimeout(120); // let WebGL paint after the 3D transform
+   const afterExplosion=await canvas.screenshot({timeout:15000});
+   assert.notDeepEqual(afterExplosion,beforeExplosion,
+     item.id+' explode click did not visibly change the actual 3D canvas');
+   await page.locator(reassembleButton).click();
+   await page.waitForFunction(({stage,key})=>
+     Number(document.querySelector(stage)?.dataset[key])===0,
+     {stage:item.stage,key:stageDataKey},{timeout:15000});
+   data.explode3D={
+     button:explodeButton,canvasPixelsChanged:true,reassembledAtZero:true
+   };
    if(data.telemetry.glbRequests<1)throw Error('No real source GLB requested');
    if(errors.length)throw Error('Uncaught JavaScript errors: '+errors.slice(0,3).join(' | '));
    if(requests.length)throw Error('Failed network requests: '+JSON.stringify(requests.slice(0,3)));
