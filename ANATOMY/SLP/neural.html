@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self';font-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
+<title>H.E.R.B.I.E. · 3D Cranial Nerves and Brainstem</title>
+<meta name="description" content="Licensed source-derived 3D cranial nerve and brainstem anatomy and honest SLP teaching notes.">
+<style>
+:root{font:16px/1.5 system-ui,sans-serif;background:#0d1c27;color:#eaf5f6}*{box-sizing:border-box}
+body{margin:0}a{color:#9fe9dc}button,select{font:inherit;min-height:44px;border-radius:8px;border:1px solid #8badb4;background:#264957;color:#f0fbfc;padding:.55rem .75rem}
+button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #a5edcf;outline-offset:2px}
+header{background:#173442;border-bottom:1px solid #456779;padding:1rem clamp(.75rem,3vw,2rem)}
+header h1{font-size:1.45rem;margin:0}header p{margin:.4rem 0}
+nav{display:flex;flex-wrap:wrap;gap:.8rem;padding-top:.4rem}
+main{max-width:1250px;margin:auto;padding:1rem}
+.intro,.warning{border-left:4px solid #a2d7c6;background:#1e3c49;border-radius:6px;padding:.8rem;line-height:1.5}
+.warning{border-left-color:#e2c49e}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(285px,.85fr);gap:1rem}
+#neural-stage{position:relative;height:clamp(380px,62dvh,680px);border:1px solid #507d87;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse,#275262,#122d3b 70%,#0f1d29)}
+#neural-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
+#neural-status{position:absolute;bottom:.5rem;left:.5rem;right:.5rem;z-index:2;background:#0d2a38e8;padding:.6rem;border-radius:8px;border:1px solid #658d9d;font-size:.82rem}
+#neural-fallback{padding:1rem;position:relative;z-index:1}
+#neural-stage[data-fallback="true"]{height:auto;min-height:220px}
+#neural-stage[data-fallback="true"] #neural-status{position:relative}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0}
+.controls button[aria-pressed="true"]{background:#166c58;border-color:#a6eed4}
+.panel{border:1px solid #4a7886;border-radius:12px;padding:.9rem;background:#1b3542;min-width:0}
+.panel h2{font-size:1.1rem;margin:.1rem 0 .5rem}
+#ear-select{width:100%;margin:.4rem 0}
+#ear-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+#ear-filters label{display:flex;gap:.4rem;align-items:center;padding:.5rem;background:#214553;border-radius:7px;font-size:.84rem}
+#ear-filters input{width:20px;height:20px;accent-color:#85dcbf}
+#ear-note{border-radius:8px;padding:.75rem;background:#274957;margin:.9rem 0;min-height:140px}
+#ear-note h3{font-size:1rem;margin:0}
+#ear-note p{margin:.45rem 0}
+#ear-note-id{font-size:.84rem;color:#cee2e6}
+.study{margin:1rem 0;border:1px solid #5d8595;background:#173440;border-radius:12px;padding:.9rem}
+.study h2{font-size:1.1rem;margin:0 0 .4rem}
+.study p{margin:.5rem 0}
+.study li{margin:.4rem 0}
+footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
+[hidden]{display:none!important}
+@media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#neural-stage{height:clamp(340px,52dvh,540px)}#ear-filters{grid-template-columns:1fr}}
+
+#ear-load-note{font-size:.88rem;color:#c4dce0}
+
+#neural-lesson{margin:1rem 0;padding:1rem;background:#193a46;border:1px solid #678c95;border-radius:12px}
+#neural-lesson h2{font-size:1.1rem;margin:.2rem 0}
+#neural-lesson-active{margin-top:.6rem}
+#neural-lesson-progress{font-weight:700;color:#a7ebd4}
+#neural-lesson-note{border-left:4px solid #8dcfca;padding:.65rem;background:#234956}
+#neural-lesson-summary{font-weight:650}
+[hidden]{display:none!important}
+
+#neural-select{width:100%}
+#neural-filters{display:flex;flex-wrap:wrap;gap:.5rem}
+#neural-filters label{display:flex;align-items:center;gap:.5rem;padding:.45rem}
+#neural-filters input{width:20px;height:20px}
+#neural-lesson-note{border-left:4px solid #8bd3c3;padding:.6rem;background:#234956}
+#neural-lesson-progress{font-weight:700}
+</style></head><body>
+<header><h1>H.E.R.B.I.E. · Cranial Nerves and Brainstem</h1>
+<p>Real 3D source anatomy for part of the neural control of speech, hearing and swallowing.</p>
+<nav aria-label="SLP anatomy Atlas">
+<a href="./systems.html?system=neural">Neural system lessons</a>
+<a href="./ear.html">3D ear and hearing</a>
+<a href="./pharynx.html">3D pharynx and palate</a>
+<a href="./oral.html">3D oral anatomy</a>
+<a href="./index.html">3D larynx</a>
+<a href="./about.html">Sources and limitations</a>
+</nav></header>
+<main>
+<p class="intro"><strong>Actual coverage:</strong> 44 source-labeled <em>cranial-nerve or branch records</em> and 30 <em>brainstem / nucleus records</em> selected from an independently licensed 437-node brain model. These are <strong>not</strong> all twelve complete cranial-nerve pairs, a full brainstem nuclei atlas or nerve conduction simulations. In particular <strong>CN IX is missing as a separate 3D mesh</strong> and the displayed vestibular nerve is not the whole auditory CN VIII pathway.</p>
+<section class="layout">
+<div>
+<div id="neural-stage" role="region" tabindex="0" aria-label="Three-dimensional source nerve and brainstem model; drag to rotate and use the structure picker">
+<p id="neural-fallback" hidden>3D anatomy unavailable here. Select from all 74 named source records and continue with the written study guide.</p>
+<p id="neural-status" role="status" aria-live="polite">Loading source-derived neural anatomy and local decompression files…</p>
+</div>
+<div class="controls" role="group" aria-label="View model orientations">
+<button type="button" data-neural-view="front">Model front</button>
+<button type="button" data-neural-view="back">Model back</button>
+<button type="button" data-neural-view="left">Model left</button>
+<button type="button" data-neural-view="right">Model right</button>
+<button type="button" data-neural-view="top">Model top</button>
+</div>
+<div class="controls" role="group" aria-label="Anatomy model controls">
+<button id="neural-focus" type="button" disabled>Focus structure</button>
+<button id="neural-isolate" type="button" disabled aria-pressed="false">Isolate structure</button>
+<button id="neural-all" type="button">Show selected categories</button>
+<button id="neural-reset" type="button">Reset 3D camera</button>
+</div>
+<p class="warning"><strong>Static educational geometry only.</strong> No patient-specific nerves, injury simulation, electrical activity, clinical testing or clinical localization. The underlying brain model contains additional cortical/subcortical geometry which is <strong>hidden by default</strong>, not displayed as a complete brain reconstruction. No unverified overlay with the separate ear, larynx, oral or pharynx models.</p>
+</div>
+<aside class="panel" aria-label="Neural anatomy labels and notes">
+<h2>74 named 3D source records</h2>
+<label for="neural-select">Choose anatomical group</label>
+<select id="neural-select"><option value="">Select a structure</option></select>
+<fieldset><legend>Show anatomy categories</legend><div id="neural-filters"></div></fieldset>
+<div id="neural-note" aria-live="polite">
+<h3 id="neural-note-name">Select a structure</h3>
+<p id="neural-note-text">Source-based anatomy for 44 cranial-nerve/branch and 30 brainstem/nucleus records.</p>
+<p id="neural-note-id"></p>
+</div>
+<p><strong>Reference:</strong> <a href="https://www.ncbi.nlm.nih.gov/books/NBK470353/" target="_blank" rel="noopener noreferrer">NCBI — Cranial nerves</a> · <a href="https://www.asha.org/practice-portal/clinical-topics/adult-dysphagia/" target="_blank" rel="noopener noreferrer">ASHA — Dysphagia</a>.</p>
+<p><strong>3D source:</strong> <a href="https://github.com/itayinbarr/brainproject" target="_blank" rel="noopener noreferrer">Brain Project</a> by itayinbarr; 437-node manifest and the selected nerve/brainstem meshes are Z-Anatomy / BodyParts3D-derived. Model assets: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>. Its original viewer code is Apache-2.0 and has not been copied as a substitute application.</p>
+<p>The underlying Brain Project also contains atlas-registered derived nuclei with approximate geometry. This interface selects <strong>only 74 records marked as Z-Anatomy / BodyParts3D</strong>, not its registered nuclei. Retained transformations and source uncertainty are explained in <a href="https://github.com/itayinbarr/brainproject/blob/2929e94f521a8ddceab26bc100a98dc06b0da060/docs/registration.md" target="_blank" rel="noopener noreferrer">the original methodology</a>.</p>
+</aside>
+</section>
+<section id="neural-lesson" aria-labelledby="neural-lesson-heading">
+<h2 id="neural-lesson-heading">Seven SLP-relevant nerve checkpoints</h2>
+<p>Follow CN V, VII, the available vestibular branch of VIII, IX (text only), X, XI and XII. Selectable source meshes are highlighted when available. This is a <strong>functional study sequence</strong>, not a real nerve route or brainstem circuit.</p>
+<button id="neural-lesson-start" type="button">Start neural study</button>
+<div id="neural-lesson-active" hidden>
+<p id="neural-lesson-progress" role="status" aria-live="polite"></p>
+<p id="neural-lesson-note" role="status" aria-live="polite"></p>
+<div class="controls" role="group" aria-label="Neural study navigation">
+<button id="neural-lesson-prev" type="button" disabled>Previous</button>
+<button id="neural-lesson-next" type="button">Next</button>
+<button id="neural-lesson-close" type="button">Close study</button>
+</div>
+</div>
+<p id="neural-lesson-summary" role="status" aria-live="polite" hidden></p>
+</section>
+<section class="study" aria-labelledby="neural-boundaries">
+<h2 id="neural-boundaries">Study connections and limits</h2>
+<ol>
+<li><strong>Articulation and oral control:</strong> CN V supports chewing and facial sensation, CN VII facial expression and lip control, and CN XII most tongue muscle movement.</li>
+<li><strong>Swallowing and voice:</strong> CN IX sensory functions and CN X laryngeal/pharyngeal functions are important. CN IX is <strong>not</strong> present as a 3D structure in this dataset.</li>
+<li><strong>Hearing:</strong> The displayed vestibular nerve is balance-related. Study the cochlea and complete auditory concepts in the <a href="./ear.html">separate hearing lab</a>; do not treat this as a model of the cochlear nerve or the central auditory system.</li>
+</ol>
+<p>References: <a href="https://www.ncbi.nlm.nih.gov/books/NBK470353/">NCBI cranial-nerve overview</a>, <a href="https://www.ncbi.nlm.nih.gov/books/NBK554405/">NCBI anatomy of swallowing</a> and <a href="https://www.asha.org/practice-portal/clinical-topics/adult-dysphagia/">ASHA dysphagia practice portal</a>.</p>
+</section>
+</main><footer>H.E.R.B.I.E. SLP Atlas · 74 source-derived neural records · 3D data CC BY-SA 4.0 · Personal study only · No diagnosis or patient data</footer>
+<script type="module" src="./neural.js"></script>
+</body></html>
