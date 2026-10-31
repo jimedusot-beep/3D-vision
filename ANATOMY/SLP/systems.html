@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;font-src 'self';connect-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
+<title>H.E.R.B.I.E. · SLP Body Systems Study Atlas</title>
+<meta name="description" content="A source-aware speech-language pathology body systems study atlas, containing a navigable 3D study-topic layout, verified larynx and lung/airway source models, and SLP learning modules.">
+<style>
+:root{font:16px/1.48 system-ui,sans-serif;background:#0e1923;color:#ecf5f7}
+*{box-sizing:border-box}body{margin:0}button,input{font:inherit}a{color:#96e5da}
+button{cursor:pointer;border-radius:9px;border:1px solid #83a4b1;color:#edf9fb;background:#254859;min-height:44px;padding:.55rem .85rem}
+button:focus-visible,a:focus-visible{outline:3px solid #a0e6d9;outline-offset:2px}
+header{padding:1.2rem clamp(1rem,3vw,2rem);background:#132c3a;border-bottom:1px solid #3e6676}
+header h1{font-size:clamp(1.35rem,2.5vw,1.9rem);margin:0 0 .25rem}
+header p{max-width:72ch;color:#c4d7e0;margin:.35rem 0}
+nav{display:flex;flex-wrap:wrap;gap:.6rem;margin:.8rem 0 .1rem}
+nav a{display:inline-block;border:1px solid #688a9c;border-radius:9px;padding:.52rem .8rem;background:#183645;min-height:43px}
+main{max-width:1280px;margin:auto;padding:clamp(.8rem,3vw,2rem)}
+h2{font-size:1.27rem}h3{font-size:1.02rem}p{margin:.6rem 0}
+.intro{color:#c2d6de;max-width:80ch}
+
+#systems-network{position:relative;height:clamp(330px,49vh,530px);background:radial-gradient(ellipse at center,#264c5c,#102736 78%);border:1px solid #58808b;border-radius:14px;overflow:hidden;margin:.8rem 0 .45rem}
+#systems-network canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:pan-y}
+#systems-network #systems-3d-status{position:absolute;bottom:.45rem;left:.45rem;right:.45rem;background:#0e2b39e6;border:1px solid #5c9193;border-radius:8px;padding:.5rem .6rem;font-size:.8rem;pointer-events:none}
+#systems-network:focus-visible{outline:3px solid #9cead4}
+#systems-legend{font-size:.81rem;color:#bad9df;margin:.6rem 0 1rem}
+#module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:.8rem}
+.module-card{background:#1a3342;border:1px solid #436878;border-radius:13px;padding:1rem;min-width:0}
+.module-card h3{margin:.25rem 0}.module-card p{font-size:.87rem;line-height:1.42;color:#c7d9e1}
+.module-card button{width:100%;text-align:left}
+.module-card[data-active="true"]{border-color:#9bdacc;box-shadow:0 0 0 2px #467d73}
+.pill{font-size:.75rem;border:1px solid #7395a6;border-radius:99px;display:inline-block;padding:.12rem .47rem;color:#cde9e6}
+.section{margin-top:1.3rem;border-top:1px solid #507183;padding-top:1.2rem}
+#module-detail{background:#132b39;border:1px solid #557789;border-radius:14px;padding:clamp(.85rem,2vw,1.4rem);margin-top:1.2rem;min-height:230px}
+#module-title{margin:.1rem 0}.tag{color:#83ddc5;font-weight:700}
+#module-objectives{padding-left:1.25rem}#module-objectives li{margin:.42rem 0}
+#module-next{padding-left:1.25rem}#module-next li{margin:.3rem 0}
+.alert{border-left:4px solid #99d2c3;background:#1b3946;padding:.65rem .9rem;margin:.95rem 0;border-radius:5px}
+#respiratory-study[hidden],#module-open-3d[hidden],#resp-answer[hidden]{display:none}
+#respiratory-study h3{margin:1rem 0 .4rem}
+#resp-flow{display:flex;gap:.5rem;flex-wrap:wrap;margin:.6rem 0}
+#resp-flow button[aria-pressed="true"]{background:#17645b;border-color:#b6f7e4}
+#flow-description{font-weight:600;min-height:2.2rem}
+#resp-diagram{width:100%;max-width:550px;height:auto;display:block;margin:.6rem auto;background:#173340;border:1px solid #567f8d;border-radius:12px;padding:.5rem}
+#resp-diagram text{font:12px system-ui;fill:#f4f9fb}
+#term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:.7rem}
+.term{border:1px solid #668594;padding:.7rem;border-radius:10px;background:#1e3b49}
+.term h4{margin:.2rem 0;font-size:1rem}
+.term p{font-size:.85rem;color:#dbebed}
+.term p:last-child{color:#a8dacc}
+#resp-options{display:grid;gap:.45rem;max-width:680px;margin:1rem 0}
+#resp-options button{text-align:left}
+#resp-options button[aria-pressed="true"]{border-color:#a8e1d8;background:#276f68}
+#resp-question{font-size:1.08rem;font-weight:650}
+#resp-score{color:#b2e9d5;font-weight:650}
+#resp-answer:not([hidden]){padding:.8rem;background:#214352;border-left:4px solid #8cdcc0}
+#resp-next:disabled{opacity:.5;cursor:not-allowed}
+footer{border-top:1px solid #406777;margin:2rem 0 0;padding:1rem clamp(1rem,3vw,2rem);color:#c4d8dd;font-size:.82rem}
+@media(max-width:560px){#systems-network{height:clamp(310px,44dvh,390px)}header{padding:1rem}.module-card{padding:.8rem}#resp-diagram{padding:.2rem}}
+</style></head><body>
+<header><h1>H.E.R.B.I.E. · SLP Systems Atlas</h1>
+<p>Learn how breathing, voice, speech, hearing, neural control and swallowing connect. Built for <strong>digital anatomy and physiology study</strong>, not a printable model or clinical decision tool.</p>
+<nav aria-label="Atlas navigation"><a href="./index.html">3D Larynx Lab</a><a href="./lungs.html">3D Lungs &amp; Airways</a><a href="./diaphragm.html">3D Diaphragm</a><a href="./oral.html">3D Oral Anatomy</a><a href="./pharynx.html">3D Pharynx &amp; Soft Palate</a><a href="../../index.html">Robotics workshop</a><a href="./about.html">Anatomy source and license notes</a></nav>
+</header>
+<main>
+<h2>Human systems and SLP learning domains</h2>
+<p class="intro">The atlas is organized around ten interconnected study areas. The existing larynx and new lung/airway modules use <strong>source-derived 3D meshes</strong>. Use the interactive 3D topic layout to navigate ten areas; it represents educational relationships, <strong>not human anatomical coordinates</strong>. The oral anatomy lab supplies a partial 3D study for articulation and swallowing; six other subjects remain outlines awaiting suitable anatomical assets. The respiratory module also retains its breathing lessons and quizzes.</p>
+<section id="systems-network" role="region" tabindex="0" aria-label="Three-dimensional SLP curriculum topic navigation; select a colored topic marker or use the ten native buttons below">
+<p id="systems-3d-status" role="status">Interactive topic-space overview. Source-derived 3D anatomical geometry is available in the respiratory and larynx modules only.</p>
+</section>
+<p id="systems-legend"><strong>3D topic map ≠ anatomical body:</strong> brighter markers link to available lung/airway or larynx models. Muted markers are topic outlines. Drag to rotate; tap a marker or select a card below. All content remains available without WebGL.</p>
+<div id="module-grid" aria-label="Choose a body system or study foundation"></div>
+<section id="module-detail" tabindex="-1" aria-labelledby="module-title">
+<p id="module-status" class="tag"></p><h2 id="module-title">Respiratory system</h2>
+<p id="module-description"></p>
+<h3>Learning objectives</h3><ol id="module-objectives"></ol>
+<div id="module-open-3d" hidden><a id="model-target-link" href="./index.html">Open the verified source-derived anatomy model</a></div>
+<section id="respiratory-study" aria-labelledby="resp-title" hidden>
+<h3 id="resp-title">Respiratory anatomy — study starter</h3>
+<p>The introductory notes emphasize a core connection from your phonation lecture: <strong>respiration provides the energy for phonation</strong>. Review the airway and respiratory muscles before returning to the larynx. The 3D lung model includes 17 segment groups and trachea/bronchial-tree groups, but NOT diaphragm or ribs. A separate 3D diaphragm lab uses a different BodyParts3D version and is not spatially registered to the lung model.</p>
+<p><a href="./lungs.html">Explore the real 3D lung segments and airways</a> · <a href="./diaphragm.html">Study the separate 3D diaphragm</a> · <a href="./index.html">Compare with the 3D larynx</a></p>
+<div id="resp-flow" role="group" aria-label="Compare breathing phases">
+<button id="flow-inhale" type="button" aria-pressed="true">Quiet inspiration</button>
+<button id="flow-speak" type="button" aria-pressed="false">Speech exhalation</button>
+</div>
+<p id="flow-description" role="status" aria-live="polite"></p>
+<svg id="resp-diagram" viewBox="0 0 540 315" role="img" aria-label="Simplified educational respiratory schematic showing the airway, lungs, diaphragm and route toward the larynx. Not to anatomical scale.">
+<path d="M271 35 L271 112" stroke="#b4d7e6" stroke-width="17" stroke-linecap="round"/>
+<path d="M271 112 L229 159 M271 112 L310 159" stroke="#b4d7e6" stroke-width="15" fill="none" stroke-linecap="round"/>
+<path d="M224 100 C162 101 123 155 134 224 C141 267 218 266 240 228 L252 140 Z" fill="#80b0ba" stroke="#add6db" stroke-width="3"/>
+<path d="M316 100 C378 101 417 155 406 224 C399 267 322 266 300 228 L288 140 Z" fill="#80b0ba" stroke="#add6db" stroke-width="3"/>
+<path d="M145 270 Q270 302 395 270" stroke="#f1c1a7" stroke-width="12" fill="none" stroke-linecap="round"/>
+<path d="M271 64 L271 125" stroke="#92efdb" stroke-width="4" stroke-dasharray="6 5"/>
+<text x="281" y="24">Larynx (above)</text>
+<text x="286" y="96">Trachea</text>
+<text x="166" y="190">Lung</text><text x="335" y="190">Lung</text>
+<text x="225" y="311">Diaphragm</text>
+<text x="22" y="278">Concept schematic — not anatomical scale</text>
+</svg>
+<h3>Ten foundational structures and concepts</h3>
+<div id="term-grid"></div>
+<section class="section" aria-labelledby="resp-quiz-title">
+<h3 id="resp-quiz-title">Respiration and speech: six recall checks</h3>
+<p>No account, stored score or diagnostic interpretation.</p>
+<p id="resp-score" role="status" aria-live="polite"></p>
+<p id="resp-question"></p>
+<div id="resp-options"></div>
+<p id="resp-answer" role="status" aria-live="polite" hidden></p>
+<button id="resp-next" type="button" disabled>Next question</button>
+<button id="resp-restart" type="button">Restart six checks</button>
+</section>
+</section>
+<section class="section" aria-labelledby="next-title">
+<h3 id="next-title">What still needs to be developed</h3>
+<ul id="module-next"></ul>
+<p id="module-source"></p>
+</section>
+<p class="alert"><strong>Accuracy and scope:</strong> These are introductory teaching summaries. Diagrams are conceptual, not anatomical measurements, surgical views, patient data or physiological simulations. The uploaded lecture slides are study references; copyrighted slide art is not copied into this public repository.</p>
+</section>
+</main>
+<footer>SLP knowledge map follows ASHA scope areas, while the first respiratory concepts connect to uploaded CDD 2260 phonation lecture/study material. Anatomical, curricular and accessibility expert review remains outstanding.</footer>
+<script type="module" src="./systems.js"></script>
+</body></html>

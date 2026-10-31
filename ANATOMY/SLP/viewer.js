@@ -1,5 +1,11 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {modelIdForLesson,lessonForModelId,modelStructureNames,modelSelectionNote} from './reference-mapping.js';
+import {explosionOffset,assertExplosionCoverage} from './exploded-study.js';
+import {sourceStudy,sourceCategories,getSourceStudy} from './source-study.js';
+import {guidedLarynxTour} from './guided-tour.js';
+import {buildIdentificationDeck,checkIdentification} from './identification-challenge.js';
 import catalog from './structures.json';
 import {parseCommand, resolveEmbedOrigin, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
@@ -9,12 +15,188 @@ const $=id=>document.getElementById(id);
 const ids=new Set(catalog.structures.map(s=>s.id));
 const byId=new Map(catalog.structures.map(s=>[s.id,s]));
 const references=new Map(catalog.references.map(s=>[s.id,s]));
+const shownCategories=new Set(Object.keys(sourceCategories));
+function selectSourcePart(id){
+  if(!getSourceStudy(id))return;
+  view.selected=null;view.isolated=null;
+  updateReferenceSelection(id);
+  renderState();
+}
+function renderSourceNote(){
+  const id=referenceSelected||modelIdForLesson(view.selected);
+  const note=id?getSourceStudy(id):null;
+  $('source-note').hidden=!note;
+  if(!note){$('source-select').value='';return;}
+  $('source-note-name').textContent=modelStructureNames[id];
+  $('source-note-pronunciation').textContent='Say it (approximate): '+note.pronunciation;
+  $('source-note-function').textContent=note.function;
+  $('source-note-limitation').textContent='Model limitation: '+note.limitation;
+  $('source-note-links').replaceChildren();
+  for(const reference of note.sources){
+    const link=document.createElement('a');
+    link.href=reference.url;
+    link.rel='noopener noreferrer';
+    link.target='_blank';
+    link.textContent=reference.label;
+    $('source-note-links').append(link);
+  }
+  $('source-select').value=id;
+}
+for(const item of sourceStudy){
+  const option=document.createElement('option');
+  option.value=item.id;
+  option.textContent=modelStructureNames[item.id];
+  $('source-select').append(option);
+}
+$('source-select').addEventListener('change',e=>selectSourcePart(e.target.value));
+for(const [category,title] of Object.entries(sourceCategories)){
+  const label=document.createElement('label'),box=document.createElement('input');
+  box.type='checkbox';box.checked=true;box.value=category;box.dataset.layer=category;
+  label.append(box,document.createTextNode(title));
+  $('layer-options').append(label);
+  box.addEventListener('change',()=>{
+    if(box.checked)shownCategories.add(category);
+    else shownCategories.delete(category);
+    applyReferenceState();updateLayerCount();
+  });
+}
+function updateLayerCount(){
+  const count=sourceStudy.filter(s=>shownCategories.has(s.category)).length;
+  $('layer-count').textContent=count+' of 20 source groups enabled (some are paired).';
+}
+$('source-show-all').addEventListener('click',()=>{
+  for(const box of $('layer-options').querySelectorAll('input')){
+    box.checked=true;shownCategories.add(box.value);
+  }
+  applyReferenceState();updateLayerCount();
+});
+updateLayerCount();
+let tourStep=0;
+function showTourStep(){
+  const t=guidedLarynxTour[tourStep];
+  $('tour-progress').textContent='Step '+(tourStep+1)+' of '+guidedLarynxTour.length;
+  $('tour-heading').textContent=t.title;
+  $('tour-explanation').textContent=t.summary;
+  $('tour-question').textContent='Check yourself: '+t.question;
+  $('tour-answer').textContent=t.answer;
+  $('tour-answer').hidden=true;
+  $('tour-previous').disabled=tourStep===0;
+  $('tour-next').disabled=tourStep===guidedLarynxTour.length-1;
+}
+$('tour-previous').addEventListener('click',()=>{tourStep=Math.max(0,tourStep-1);showTourStep();});
+$('tour-next').addEventListener('click',()=>{tourStep=Math.min(guidedLarynxTour.length-1,tourStep+1);showTourStep();});
+$('tour-reveal').addEventListener('click',()=>{$('tour-answer').hidden=false;});
+$('tour-view').addEventListener('click',()=>{
+  const id=guidedLarynxTour[tourStep].id;
+  if(!renderer||graphicsLost){
+    selectSourcePart(id);
+    openMobilePanel('panel-details',true);
+    $('status').textContent='3D graphics unavailable: showing source-backed text notes instead.';
+    return;
+  }
+  setPresentation('three');
+  selectSourcePart(id);
+  if(window.matchMedia('(max-width:760px)').matches)stage.scrollIntoView({block:'start',behavior:'auto'});
+});
+showTourStep();
+// Function-to-structure retrieval practice. No personal data or progress is saved.
+const challengeDeck=buildIdentificationDeck(sourceStudy,modelStructureNames);
+let challengeIndex=0,challengeCorrect=0,challengeAnswered=false;
+function showChallenge(){
+  const q=challengeDeck[challengeIndex];
+  challengeAnswered=false;
+  $('identify-progress').textContent='Question '+(challengeIndex+1)+' of '+challengeDeck.length+
+    ' · '+challengeCorrect+' correct so far (session only)';
+  $('identify-clue').textContent=q.clue;
+  $('identify-feedback').hidden=true;
+  $('identify-feedback').textContent='';
+  $('identify-explanation').hidden=true;
+  $('identify-explanation').textContent='';
+  $('identify-references').hidden=true;
+  $('identify-references').replaceChildren();
+  $('identify-next').disabled=true;
+  $('identify-next').textContent=challengeIndex===challengeDeck.length-1?'Finish practice':'Next question';
+  $('identify-find').disabled=true;
+  $('identify-options').replaceChildren();
+  for(const id of q.options){
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent=modelStructureNames[id];
+    button.dataset.answerId=id;
+    button.setAttribute('aria-pressed','false');
+    button.addEventListener('click',()=>answerChallenge(id));
+    $('identify-options').append(button);
+  }
+}
+function answerChallenge(id){
+  if(challengeAnswered)return;
+  const q=challengeDeck[challengeIndex];
+  const correct=checkIdentification(q,id);
+  challengeAnswered=true;
+  if(correct)challengeCorrect++;
+  for(const button of $('identify-options').querySelectorAll('button')){
+    button.disabled=true;
+    button.setAttribute('aria-pressed',String(button.dataset.answerId===id));
+  }
+  $('identify-progress').textContent='Question '+(challengeIndex+1)+' of '+challengeDeck.length+
+    ' · '+challengeCorrect+' correct so far (session only)';
+  $('identify-feedback').hidden=false;
+  $('identify-feedback').textContent=correct?'Correct — '+modelStructureNames[q.id]
+    :'Not quite. The answer is '+modelStructureNames[q.id]+'.';
+  $('identify-explanation').hidden=false;
+  $('identify-explanation').textContent=q.source.function+' Model limitation: '+q.source.limitation;
+  $('identify-references').hidden=false;
+  for(const evidence of q.source.sources){
+    const link=document.createElement('a');
+    link.href=evidence.url;link.textContent='Read: '+evidence.label;
+    link.target='_blank';link.rel='noopener noreferrer';
+    $('identify-references').append(link);
+  }
+  $('identify-next').disabled=false;
+  $('identify-find').disabled=false;
+}
+$('identify-next').addEventListener('click',()=>{
+  if(!challengeAnswered)return;
+  if(challengeIndex===challengeDeck.length-1){
+    $('identify-progress').textContent='Completed '+challengeDeck.length+
+      ' questions · '+challengeCorrect+' correctly identified in this session.';
+    $('identify-clue').textContent='Use Restart all 20 to practice again, or review the cited anatomy notes.';
+    $('identify-options').replaceChildren();
+    $('identify-next').disabled=true;
+    $('identify-find').disabled=true;
+    $('identify-feedback').hidden=true;
+    $('identify-explanation').hidden=true;
+    $('identify-references').hidden=true;
+    return;
+  }
+  challengeIndex++;
+  showChallenge();
+});
+$('identify-restart').addEventListener('click',()=>{
+  challengeIndex=0;challengeCorrect=0;showChallenge();
+});
+$('identify-find').addEventListener('click',()=>{
+  if(!challengeAnswered)return; // Do not show correct anatomy before an answer.
+  const id=challengeDeck[challengeIndex].id;
+  // Existing 3D filters must never invisibly hide an answer being studied.
+  for(const input of $('layer-options').querySelectorAll('input')){
+    input.checked=true;shownCategories.add(input.value);
+  }
+  updateLayerCount();
+  if(renderer&&!graphicsLost)setPresentation('three');
+  selectSourcePart(id);
+  if(!renderer||graphicsLost)openMobilePanel('panel-details',true);
+  else if(window.matchMedia('(max-width:760px)').matches)
+    stage.scrollIntoView({block:'start',behavior:'auto'});
+});
+showChallenge();
 const meshes=new Map();
 const stage=$('stage'), overlay=$('overlay');
+let stageMode='map'; // An explanatory concept map is the honest default.
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0e1a26);
 const camera=new THREE.PerspectiveCamera(45,1,.05,100);
-camera.position.set(0,2.1,7.3);
+camera.position.set(0,1.2,5.8);
 // Older devices and restricted browsers may lack WebGL; preserve the text-only study UI.
 let renderer=null,orbit=null,graphicsLost=false;
 try {
@@ -92,6 +274,158 @@ ellipsoid('right-posterior-cricoarytenoid',[sideX('right',.56),-.54,-.73],[.23,.
 ellipsoid('left-lateral-cricoarytenoid',[sideX('left',.72),-.32,-.25],[.15,.32,.18]);
 ellipsoid('right-lateral-cricoarytenoid',[sideX('right',.72),-.32,-.25],[.15,.32,.18]);
 
+// BodyParts3D / Anatomography 4.3 as adapted by OrganUI, CC BY-SA 2.1 JP.
+// Loaded only when the 3D view is chosen; the build verifies exact SHA-256
+// and serves this 5.3 MB GLB from our own origin. No external runtime calls.
+let referenceRoot=null, referenceMeshes=[], referenceSelected=null;
+let referenceState='idle',referenceError='';
+const referenceGroups=new Map();
+let explosionUnit=1,explodedMode=false,explosionAmount=65;
+/** Grouping meshes rigidly leaves all geometry and its original orientation unchanged. */
+function applyExplosion(){
+  if(!referenceRoot)return;
+  const amount=explodedMode?explosionAmount:0;
+  for(const [id,group] of referenceGroups){
+    const offset=explosionOffset(id,amount,explosionUnit);
+    group.position.set(...offset);
+  }
+  referenceRoot.updateMatrixWorld(true);
+}
+function setExplosionAmount(value){
+  if(!Number.isFinite(value))return;
+  explosionAmount=Math.max(0,Math.min(100,Math.round(value/5)*5));
+  $('explode-amount').value=String(explosionAmount);
+  $('explode-value').textContent=explosionAmount+'%';
+  stage.dataset.explosionAmount=String(explodedMode?explosionAmount:0);
+  applyExplosion();
+  if(referenceRoot&&stageMode==='three')frameRealModel('current');
+}
+$('explode-amount').addEventListener('input',e=>setExplosionAmount(Number(e.target.value)));
+$('explode-assemble').addEventListener('click',()=>{
+  setExplosionAmount(0);
+  $('status').textContent='Sourced anatomical groups restored to original relative positions.';
+});
+const expectedReference=['thyroid-cartilage','cricoid-cartilage','arytenoid-cartilages',
+  'vocal-ligaments','posterior-crico-arytenoid','lateral-crico-arytenoid','epiglottis','trachea'];
+function updateReferenceSelection(id) {
+  referenceSelected=id;
+  $('model-structure').textContent=id
+    ?'Source mesh: '+modelStructureNames[id]+'. '+modelSelectionNote(id):'';
+  $('model-structure').hidden=!id;
+}
+function applyReferenceState(){
+  if(!referenceRoot)return;
+  const selected=referenceSelected||modelIdForLesson(view.selected);
+  const isolated=modelIdForLesson(view.isolated);
+  for(const mesh of referenceMeshes){
+    const id=mesh.userData.structureId||mesh.name;
+    mesh.visible=shownCategories.has(getSourceStudy(id)?.category)&&(!view.isolated||id===isolated);
+    const faded=(selected&&id!==selected)||(view.transparent&&id!==selected);
+    const material=mesh.material;
+    const materials=Array.isArray(material)?material:[material];
+    for(const m of materials){
+      m.transparent=!!faded;
+      m.opacity=faded ? 0.18 : 1;
+      m.depthWrite=!faded;
+      if(m.emissive)m.emissive.setHex(id===selected?0x203c32:0x000000);
+      m.needsUpdate=true;
+    }
+  }
+}
+function frameRealModel(direction='front'){
+  if(!referenceRoot)return;
+  const bounds=new THREE.Box3().setFromObject(referenceRoot);
+  const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+  const aspect=Math.max(.4,stage.clientWidth/Math.max(1,stage.clientHeight));
+  const tan=Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5);
+  const distance=Math.max(size.y/(2*tan*.72),size.x/(2*tan*aspect*.72),size.z*1.8,2.5);
+  const d=Math.min(60,distance);
+  const viewVector=direction==='current'&&orbit
+    ?camera.position.clone().sub(orbit.target).normalize()
+    :direction==='left'?new THREE.Vector3(1,0,0)
+    :direction==='right'?new THREE.Vector3(-1,0,0)
+    :direction==='top'?new THREE.Vector3(0,1,0)
+    :new THREE.Vector3(0,0,direction==='back'?-1:1);
+  if(viewVector.lengthSq()<.1)viewVector.set(0,0,1);
+  camera.up.set(0,0,direction==='top'?-1:0);
+  if(direction!=='top')camera.up.set(0,1,0);
+  orbit?.target.copy(center);
+  camera.position.copy(center).addScaledVector(viewVector,d);
+  camera.lookAt(center);
+  camera.lookAt(center);
+  if(orbit){
+    orbit.minDistance=Math.max(.65,size.length()*.3);
+    orbit.maxDistance=Math.max(20,d*4);
+    orbit.update();
+  }
+  fit();
+  scheduleFrame();
+}
+async function ensureReferenceModel(){
+  if(!renderer||referenceState!=='idle')return;
+  referenceState='loading';
+  $('status').textContent='Loading the sourced anatomy model (5.3 MB)…';
+  try{
+    const url=new URL('../../models/slp/larynx.glb',location.href);
+    const response=await fetch(url,{signal:AbortSignal.timeout(40000)});
+    if(!response.ok)throw new Error('source geometry unavailable (HTTP '+response.status+')');
+    const data=await response.arrayBuffer();
+    if(data.byteLength!==5257920 || new DataView(data).getUint32(0,true)!==0x46546c67)
+      throw new Error('source geometry has an unexpected file header or size');
+    const gltf=await new GLTFLoader().parseAsync(data,'');
+    const nodes=[];
+    const ids=new Set();
+    gltf.scene.traverse(o=>{
+      if(o.isMesh){
+        const id=o.userData.structureId||o.name;
+        if(!Object.prototype.hasOwnProperty.call(modelStructureNames,id))
+          throw new Error('Unknown source model structure '+id);
+        ids.add(id);
+        const old=o.material;
+        o.material=Array.isArray(old)?old.map(m=>m.clone()):old.clone();
+        nodes.push(o);
+      }
+    });
+    if(expectedReference.some(id=>!ids.has(id))||ids.size!==20)
+      throw new Error('Source model is missing verified anatomical groups');
+    // Source GLB contains 45 meshes assigned to 20 group identities. Move
+    // all source parts in each named group by ONE rigid transform. attach()
+    // retains original world orientation, dimensions, and relative positions.
+    assertExplosionCoverage(ids);
+    gltf.scene.updateMatrixWorld(true);
+    for(const id of ids){
+      const wrapper=new THREE.Group();
+      wrapper.name='study-explode-'+id;
+      gltf.scene.add(wrapper);
+      referenceGroups.set(id,wrapper);
+    }
+    for(const node of nodes)
+      referenceGroups.get(node.userData.structureId||node.name).attach(node);
+    referenceRoot=gltf.scene;
+    referenceMeshes=nodes;
+    const originalBounds=new THREE.Box3().setFromObject(referenceRoot);
+    const span=originalBounds.getSize(new THREE.Vector3());
+    explosionUnit=Math.max(span.x,span.y,span.z)*.38;
+    applyExplosion();
+    scene.add(referenceRoot);
+    root.visible=false;
+    overlay.hidden=true;
+    referenceState='ready';
+    // Preserve a study-tour selection made while the geometry was loading.
+    applyReferenceState();
+    frameRealModel('front');
+    if(stageMode==='three'&&!explodedMode)$('notice').textContent='BodyParts3D 4.3 meshes (CC BY-SA 2.1 JP), NOT clinically reviewed. Vocal ligaments are NOT complete folds. See credits under Notes.';
+    $('status').textContent='Licensed 3D source geometry loaded: 20 selectable groups. Expert review pending.';
+  }catch(err){
+    referenceState='error';
+    referenceError=err?.message||'unknown load error';
+    root.visible=false; // Never silently present fabricated shapes as source anatomy.
+    overlay.hidden=true;
+    $('status').textContent='Source anatomy unavailable: '+referenceError+'. The text study map and notes remain available.';
+    $('notice').textContent='The licensed 3D model could not load. Use Study map and sourced written notes; no fake anatomy substituted.';
+  }
+}
+
 const view={selected:null,isolated:null,transparent:false,labels:true};
 const labels=new Map();
 const structureRows=[];
@@ -122,6 +456,61 @@ for(const s of catalog.structures) {
   label.textContent=s.label;
   overlay.append(label);
   labels.set(s.id,label);
+}
+// Mobile navigation is local UI state, separate from the H.E.R.B.I.E. API.
+const mobilePanels=['panel-structures','panel-details','panel-practice'];
+function openMobilePanel(id,scroll=false) {
+  if(!mobilePanels.includes(id))return;
+  for(const name of mobilePanels){
+    $(name).dataset.mobileActive=String(name===id);
+  }
+  for(const button of document.querySelectorAll('#mobile-tabs [data-mobile-target]')){
+    button.setAttribute('aria-pressed',String(button.dataset.mobileTarget===id));
+  }
+  if(scroll&&window.matchMedia('(max-width:760px)').matches)
+    $('mobile-tabs').scrollIntoView({block:'start',behavior:'auto'});
+}
+for(const button of document.querySelectorAll('#mobile-tabs [data-mobile-target]')){
+  button.addEventListener('click',()=>openMobilePanel(button.dataset.mobileTarget));
+}
+$('open-details').addEventListener('click',()=>openMobilePanel('panel-details',true));
+$('practice-from-detail').addEventListener('click',()=>{
+  if(!$('study-selected').disabled)$('study-selected').click();
+  openMobilePanel('panel-practice',true);
+});
+// Functional grouping, NOT an anatomical coordinate map: every link points to
+// an existing sourced teaching entry, and the viewer invents no new structures.
+const mapGroups=[
+  {kind:'cartilage',title:'Structural framework',summary:'Supporting cartilages and attachment landmarks',ids:['thyroid-cartilage','cricoid-cartilage','left-arytenoid','right-arytenoid']},
+  {kind:'fold',title:'Voiced sound source',summary:'True vocal folds; no vibration is simulated',ids:['left-vocal-fold','right-vocal-fold']},
+  {kind:'muscle-open',title:'Opening the glottis',summary:'Posterior cricoarytenoid muscles abduct the folds',ids:['left-posterior-cricoarytenoid','right-posterior-cricoarytenoid']},
+  {kind:'muscle-close',title:'Closing the glottis',summary:'Lateral cricoarytenoid muscles adduct the folds',ids:['left-lateral-cricoarytenoid','right-lateral-cricoarytenoid']}
+];
+const mapButtons=new Map();
+for(const group of mapGroups){
+  const card=document.createElement('article');
+  card.className='map-group';
+  card.dataset.kind=group.kind;
+  const title=document.createElement('h3');
+  title.textContent=group.title;
+  const desc=document.createElement('p');
+  desc.textContent=group.summary;
+  const parts=document.createElement('div');
+  parts.className='map-parts';
+  for(const id of group.ids){
+    const structure=byId.get(id);
+    if(!structure)throw Error('Unknown concept-map structure '+id);
+    const button=document.createElement('button');
+    button.type='button';
+    button.dataset.conceptId=id;
+    button.textContent=structure.label;
+    button.setAttribute('aria-pressed','false');
+    button.addEventListener('click',()=>select(id));
+    parts.append(button);
+    mapButtons.set(id,button);
+  }
+  card.append(title,desc,parts);
+  $('concept-groups').append(card);
 }
 // The catalog filter uses textContent only. No user-entered HTML or network requests.
 $('structure-search').addEventListener('input',event=>{
@@ -255,14 +644,23 @@ function renderState() {
     b.setAttribute('aria-pressed',String(b.dataset.id===view.selected));
   for(const b of $('structures').querySelectorAll('button[data-isolate]'))
     b.setAttribute('aria-pressed',String(b.dataset.isolate===view.isolated));
+  for(const [id,button] of mapButtons)
+    button.setAttribute('aria-pressed',String(id===view.selected));
   $('transparent').checked=view.transparent;
   $('labels').checked=view.labels;
   const info=byId.get(view.selected);
   const related=info?questionsForStructure(catalog.review_prompts,info.id):[];
+  const selectedSource=referenceSelected||modelIdForLesson(view.selected);
+  $('selection-ribbon').hidden=!info&&!selectedSource;
+  $('selection-name').textContent=info?'Selected: '+info.label
+    :selectedSource?'Selected: '+modelStructureNames[selectedSource]:'';
+  $('practice-from-detail').disabled=related.length===0;
   $('study-selected').disabled=related.length===0;
   $('study-selected').title=info
     ?related.length+' question(s) about '+info.label
     :'Select a structure to enable focused practice';
+  applyReferenceState();
+  renderSourceNote();
   const detail=$('detail');
   detail.replaceChildren();
   if(info) {
@@ -272,7 +670,7 @@ function renderState() {
     description.textContent=info.description;
     const caveat=document.createElement('p');
     caveat.className='evidence-note';
-    caveat.textContent='The references support the written anatomy note, NOT the approximate 3D shape or its relative placement.';
+    caveat.textContent='References support the written notes, not 3D clinical validation. The optional BodyParts3D 4.3 source meshes group left/right anatomy; its vocal ligaments are NOT complete mucosa-covered vocal folds.';
     const cited=document.createElement('div');
     cited.className='evidence-links';
     const intro=document.createElement('strong');
@@ -292,14 +690,14 @@ function renderState() {
     const provenance=document.createElement('details');
     provenance.className='candidate-provenance';
     const summary=document.createElement('summary');
-    summary.textContent='Possible open-data model (NOT imported or validated)';
+    summary.textContent='Separate BodyParts3D 4.0 index crosswalk (unvalidated)';
     provenance.append(summary);
     const note=document.createElement('p');
     const candidate=info.candidate_model;
     if(candidate.status==='indexed_not_imported_unvalidated') {
       note.textContent='BodyParts3D official index lists "'+candidate.source_label+
         '" ('+candidate.concept_id+', '+candidate.representation_id+
-        '). This is an index match only: NO source mesh is loaded or scientifically reviewed.';
+        '). This is an independent 4.0 index match, not the licensed 4.3 GLB currently loaded in the 3D viewer. It has NOT been separately imported or scientifically reviewed.';
     } else {
       note.textContent='No exact complete true vocal-fold mesh has been matched in this candidate index. A vocal ligament is NOT equivalent to an entire true vocal fold.';
     }
@@ -312,17 +710,32 @@ function renderState() {
     provenance.append(indexLink);
     detail.append(provenance);
   } else {
-    detail.textContent='Select a structure to learn its name and function. All model shapes are conceptual placeholders.';
+    detail.textContent=selectedSource?'Source-derived structure details and references appear above.':'Select an anatomy structure to read its sourced function and limitations.';
   }
   $('status').textContent=!renderer
     ?'3D view unavailable; text-based anatomy study is ready.'
+    :stageMode==='three'&&referenceState==='loading'?'Loading licensed BodyParts3D larynx surface geometry…'
+    :stageMode==='three'&&referenceState==='error'?'Licensed model unavailable: '+referenceError+'. Use the study map and notes.'
+    :stageMode==='three'&&referenceState==='ready'?(info?'Selected '+info.label+'. Bilateral source geometry may represent both sides.':selectedSource?'Selected '+modelStructureNames[selectedSource]+'. Source-derived surface; details under Notes.':'BodyParts3D 4.3 anatomy surfaces loaded. Independent review pending.')
     :graphicsLost?'3D graphics are temporarily unavailable; anatomy notes and recall still work.'
-    :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.':'Illustrative larynx scene ready.';
+    :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.'
+    :stageMode==='map'?'Structure-and-function study map ready. No spatial or clinical claims.':'Unvalidated 3D sketch ready.';
 }
-function select(id){view.selected=id;view.isolated=null;renderState();}
-function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
-function setIsolated(id){view.selected=id;view.isolated=id;renderState();}
-function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(0,2.1,7.3);if(orbit){orbit.target.set(0,0,0);orbit.update();}renderState();}
+function select(id){updateReferenceSelection(null);view.selected=id;view.isolated=null;renderState();}
+function isolate(id){updateReferenceSelection(null);view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
+function setIsolated(id){updateReferenceSelection(null);view.selected=id;view.isolated=id;renderState();}
+function reset(){
+  updateReferenceSelection(null);view.selected=null;view.isolated=null;
+  view.transparent=false;view.labels=true;
+  if(explodedMode)setPresentation('three');
+  // Reset restores the assembled model and defaults the NEXT study explosion
+  // to a useful separation (the active 3D view remains exactly un-exploded).
+  setExplosionAmount(65);
+  root.rotation.set(0,0,0);
+  if(referenceRoot)frameRealModel('front');
+  else{camera.position.set(0,1.2,5.8);if(orbit){orbit.target.set(0,0,0);orbit.update();}}
+  renderState();
+}
 $('show-all').onclick=()=>{view.isolated=null;renderState();};
 $('reset').onclick=reset;
 $('transparent').onchange=e=>{view.transparent=e.target.checked;renderState();};
@@ -344,20 +757,32 @@ renderer?.domElement.addEventListener('click',e=>{
   const bounds=renderer.domElement.getBoundingClientRect();
   mouse.set((e.clientX-bounds.left)/bounds.width*2-1,-((e.clientY-bounds.top)/bounds.height*2-1));
   raycaster.setFromCamera(mouse,camera);
-  const hit=raycaster.intersectObjects([...meshes.values()],false).find(x=>x.object.visible);
-  if(hit) select(hit.object.userData.structureId);
+  const targets=referenceRoot?referenceMeshes:[...meshes.values()];
+  const hit=raycaster.intersectObjects(targets,false).find(x=>x.object.visible);
+  if(hit){
+    if(referenceRoot){
+      const id=hit.object.userData.structureId||hit.object.name;
+      const lesson=lessonForModelId(id);
+      if(lesson)select(lesson);
+      else{
+        view.selected=null;view.isolated=null;
+        updateReferenceSelection(id);renderState();
+      }
+    }else select(hit.object.userData.structureId);
+  }
 });
 function setCameraDistance(factor) {
   // Match OrbitControls limits for keyboard zoom, preventing near-plane clipping.
   const target=orbit?orbit.target:new THREE.Vector3();
   const offset=camera.position.clone().sub(target);
-  const distance=THREE.MathUtils.clamp(offset.length()*factor,2.5,16);
+  const distance=THREE.MathUtils.clamp(offset.length()*factor,orbit?.minDistance||2.5,orbit?.maxDistance||16);
   if(offset.lengthSq()===0)return;
   camera.position.copy(target).add(offset.normalize().multiplyScalar(distance));
   camera.updateProjectionMatrix();
   orbit?.update();
 }
 stage.addEventListener('keydown',e=>{
+  if(stageMode!=='three')return;
   const map={ArrowLeft:[0,-.12],ArrowRight:[0,.12],ArrowUp:[-.12,0],ArrowDown:[.12,0]};
   if(map[e.key]){e.preventDefault();root.rotation.x+=map[e.key][0];root.rotation.y+=map[e.key][1];}
   else if(e.key==='+'||e.key==='='){e.preventDefault();setCameraDistance(.9);}
@@ -385,7 +810,8 @@ function receive(event) {
 window.addEventListener('message',receive);
 if(window.parent!==window)window.parent.postMessage({source:'3d-vision-anatomy',version:VERSION,ready:true,scene:'slp-larynx-v1'},allowedOrigin);
 function fit(){
-  if(!renderer)return;
+  // The hidden canvas must not resize while the mobile document-flow map is active.
+  if(stageMode!=='three'||!renderer)return;
   const w=stage.clientWidth,h=stage.clientHeight;
   if(w<1||h<1)return;
   camera.aspect=w/h;camera.updateProjectionMatrix();
@@ -394,10 +820,16 @@ function fit(){
 // ResizeObserver is absent in some recovered-phone browsers.
 if(typeof ResizeObserver==='function')new ResizeObserver(fit).observe(stage);
 else window.addEventListener('resize',fit);
+const overviewLabels=new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold']);
 function drawLabels(){
+  // On narrow screens an overview has no floating tags: their overlap
+  // obscures the model and the selected-structure ribbon already names it.
+  // Only the selected label is allowed on mobile.
+  const narrow=window.matchMedia('(max-width:760px)').matches;
   for(const [id,label] of labels) {
     const m=meshes.get(id);
-    label.hidden=!view.labels||!m.visible;
+    label.hidden=referenceRoot!==null||stageMode!=='three'||!view.labels||!m.visible||
+      (view.selected ? view.selected!==id : narrow||!overviewLabels.has(id));
     if(label.hidden)continue;
     const point=m.getWorldPosition(new THREE.Vector3()).project(camera);
     label.hidden=point.z < -1||point.z>1||Math.abs(point.x)>1||Math.abs(point.y)>1;
@@ -408,13 +840,13 @@ function drawLabels(){
 // A hidden tab must not continually consume GPU/CPU or burn phone battery.
 let frameScheduled=false;
 function scheduleFrame(){
-  if(!renderer||graphicsLost||document.hidden||frameScheduled)return;
+  if(stageMode!=='three'||!renderer||graphicsLost||document.hidden||frameScheduled)return;
   frameScheduled=true;
   requestAnimationFrame(animate);
 }
 function animate(){
   frameScheduled=false;
-  if(!renderer||graphicsLost||document.hidden)return;
+  if(stageMode!=='three'||!renderer||graphicsLost||document.hidden)return;
   orbit?.update();
   root.updateMatrixWorld(true);
   drawLabels();
@@ -424,4 +856,63 @@ function animate(){
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden){fit();scheduleFrame();}
 });
-fit();scheduleFrame();
+function presetCamera(direction){
+  if(!renderer)return;
+  if(referenceRoot){frameRealModel(direction);return;}
+  root.rotation.set(0,0,0);
+  camera.position.set(0,1.2,direction==='back'?-5.8:5.8);
+  camera.up.set(0,1,0);
+  orbit?.target.set(0,0,0);
+  orbit?.update();
+  fit();
+  scheduleFrame();
+}
+function setPresentation(mode){
+  if(!['map','three','explode'].includes(mode))return;
+  if(mode!=='map'&&(!renderer||graphicsLost))return;
+  explodedMode=mode==='explode';
+  stageMode=mode==='map'?'map':'three';
+  stage.classList.toggle('mode-map',stageMode==='map');
+  stage.classList.toggle('mode-three',stageMode==='three');
+  $('mode-map').setAttribute('aria-pressed',String(mode==='map'));
+  $('mode-three').setAttribute('aria-pressed',String(mode==='three'));
+  $('mode-explode').setAttribute('aria-pressed',String(mode==='explode'));
+  $('mode-three').disabled=!renderer;
+  $('mode-explode').disabled=!renderer;
+  $('three-view-controls').hidden=stageMode!=='three';
+  $('source-tools').hidden=stageMode!=='three';
+  $('explode-controls').hidden=!explodedMode;
+  stage.dataset.explosionAmount=String(explodedMode?explosionAmount:0);
+  applyExplosion();
+  stage.setAttribute('aria-label',mode==='map'
+    ?'Interactive structure-and-function study map'
+    :explodedMode
+      ?'Exploded study layout: source anatomy groups temporarily separated; not their original positions'
+      :'BodyParts3D 4.3 anatomy surface model; drag to rotate, pinch to zoom');
+  if(stageMode==='three')stage.setAttribute('tabindex','0');
+  else stage.removeAttribute('tabindex');
+  $('notice').textContent=mode==='map'
+    ?'Concepts grouped by function, NOT anatomical position. No measurements or clinical use.'
+    :explodedMode
+      ?'EXPLODED STUDY LAYOUT: parts moved for visibility, NOT in anatomical positions. Source shapes unchanged. CC BY-SA 2.1 JP; not clinically reviewed.'
+      :referenceState==='ready'
+        ?'BodyParts3D 4.3 surfaces, CC BY-SA 2.1 JP. Not clinically reviewed. Vocal ligaments are not complete folds.'
+        :'Loading source anatomy. Not for clinical use.';
+  if(stageMode==='three'){
+    fit();
+    if(referenceRoot)frameRealModel('front');
+    scheduleFrame();
+    void ensureReferenceModel();
+  }
+  renderState();
+}
+$('mode-map').addEventListener('click',()=>setPresentation('map'));
+$('mode-three').addEventListener('click',()=>setPresentation('three'));
+$('mode-explode').addEventListener('click',()=>setPresentation('explode'));
+$('camera-front').addEventListener('click',()=>presetCamera('front'));
+$('camera-back').addEventListener('click',()=>presetCamera('back'));
+$('camera-left').addEventListener('click',()=>presetCamera('left'));
+$('camera-right').addEventListener('click',()=>presetCamera('right'));
+$('camera-top').addEventListener('click',()=>presetCamera('top'));
+fit();
+setPresentation('map');

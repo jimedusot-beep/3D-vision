@@ -33,7 +33,9 @@ test('anatomy evidence notes are published as a dedicated HTML page',()=>{
  assert.ok(vite.includes("anatomyEvidence:'ANATOMY/SLP/about.html'"));
  assert.ok(html.includes('href="./about.html"'));
  assert.ok(!html.includes('href="./SOURCES.md"'));
- assert.match(evidenceHtml,/Illustrative geometry, not validated medical anatomy/);
+ assert.match(evidenceHtml,/Open-source surface anatomy — not clinically validated/);
+ assert.match(evidenceHtml,/CC BY-SA 2.1 Japan/);
+ assert.match(evidenceHtml,/vocal ligaments/);
  for(const ref of catalog.references)assert.ok(evidenceHtml.includes(ref.url));
 });
 test('public anatomy documents restrict script origins and referrer leakage',()=>{
@@ -77,7 +79,7 @@ test('every anatomy note links to explicit HTTPS educational sources, never to v
    for(const id of structure.source_ids)assert.ok(references.has(id),structure.id+' has unknown reference '+id);
  }
  assert.match(html,/references support the written anatomy note|anatomy note &amp; references/);
- assert.match(viewer,/NOT the approximate 3D shape/);
+ assert.match(viewer,/not 3D clinical validation/);
  assert.match(viewer,/noopener noreferrer/);
 });
 test('referenced study prompts are complete, unique and text-only',()=>{
@@ -189,6 +191,57 @@ test('3D redraw pauses in hidden tabs and provides resize fallback',()=>{
  assert.match(viewer,/typeof ResizeObserver==='function'/);
  assert.match(viewer,/window\.addEventListener\('resize',fit\)/);
 });
+test('concept map defaults to evidence-aware functional groups instead of misleading geometry',()=>{
+  assert.ok(html.includes('class="mode-map"'));
+  assert.ok(html.includes('id="mode-map" aria-pressed="true"'));
+  assert.ok(html.includes('id="mode-three" aria-pressed="false"'));
+  assert.ok(html.includes('id="concept-groups"'));
+  assert.ok(html.includes('functional map, not a spatial anatomy diagram'));
+  assert.ok(viewer.includes("let stageMode='map'"));
+  assert.ok(viewer.includes("function setPresentation(mode)"));
+  assert.ok(viewer.includes("if(stageMode!=='three'||!renderer"));
+  assert.ok(viewer.includes("new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold'])"));
+  const groups=[
+    ['thyroid-cartilage','cricoid-cartilage','left-arytenoid','right-arytenoid'],
+    ['left-vocal-fold','right-vocal-fold'],
+    ['left-posterior-cricoarytenoid','right-posterior-cricoarytenoid'],
+    ['left-lateral-cricoarytenoid','right-lateral-cricoarytenoid']
+  ];
+  const expected=new Set(catalog.structures.map(s=>s.id));
+  const covered=groups.flat();
+  assert.equal(covered.length,10);
+  assert.equal(new Set(covered).size,10);
+  for(const id of covered)assert.ok(expected.has(id));
+  for(const id of covered)assert.ok(viewer.includes("'"+id+"'"));
+  assert.ok(!viewer.includes("function animate(){\n  frameScheduled=false;\n  if(!renderer"));
+});
+test('mobile-first study navigation links map selections to accessible cited learning',()=>{
+  for(const id of ['panel-structures','panel-details','panel-practice'])
+    assert.ok(html.includes('id="'+id+'"'));
+  assert.ok(html.includes('id="mobile-tabs"'));
+  assert.ok(html.includes('id="selection-ribbon" hidden'));
+  assert.ok(html.includes('id="open-details"'));
+  assert.ok(html.includes('id="practice-from-detail"'));
+  assert.ok(html.includes('data-mobile-target="panel-details"'));
+  assert.ok(html.includes('data-mobile-target="panel-practice"'));
+  assert.ok(html.includes('#stage.mode-map #concept-map{position:relative;inset:auto;overflow:visible'));
+  assert.ok(html.includes('.mobile-panel[data-mobile-active="false"]{display:none}'));
+  assert.ok(viewer.includes("function openMobilePanel(id,scroll=false)"));
+  assert.ok(viewer.includes("openMobilePanel('panel-details',true)"));
+  assert.ok(viewer.includes("openMobilePanel('panel-practice',true)"));
+  assert.ok(viewer.includes("$('selection-ribbon').hidden=!info"));
+  assert.ok(viewer.includes("$('practice-from-detail').disabled=related.length===0"));
+  assert.ok(!viewer.includes('localStorage'));
+});
+test('iPhone 3D canvas uses CSS-pixel bounds and camera avoids clipped Retina geometry',()=>{
+  assert.ok(html.includes('#stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%'));
+  assert.ok(html.includes('#stage.mode-map canvas,#stage.mode-map #overlay{display:none}'));
+  assert.ok(html.includes('#stage.mode-three{isolation:isolate}'));
+  assert.ok(viewer.includes('renderer.setSize(w,h,false)'));
+  assert.ok(viewer.includes("camera.position.set(0,1.2,5.8)"));
+  assert.ok(viewer.includes("const narrow=window.matchMedia('(max-width:760px)').matches"));
+  assert.ok(viewer.includes('view.selected!==id : narrow||!overviewLabels.has(id)'));
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
@@ -220,7 +273,7 @@ test('older devices retain study mode when WebGL is unavailable',()=>{
  assert.match(viewer,/catch \{/);
  assert.match(viewer,/webgl-fallback/);
  assert.match(viewer,/text-based anatomy study is ready/);
- assert.match(viewer,/MathUtils\.clamp\(offset\.length\(\)\*factor,2\.5,16\)/);
+ assert.match(viewer,/orbit\?\.minDistance\|\|2\.5/);
 });
 test('keyboard, touch and origin checks included',()=>{
  assert.match(viewer,/OrbitControls/);

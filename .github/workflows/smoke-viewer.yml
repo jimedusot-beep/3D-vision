@@ -44,12 +44,54 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: '1'
       - name: SLP anatomy desktop and touch interaction
         run: node tests/anatomy-browser.mjs
+      - name: SLP systems and respiratory iPhone study
+        run: node tests/slp-systems-browser.mjs
+      - name: Licensed 3D lungs/airway browser study and mobile anatomy
+        run: node tests/slp-lungs-browser.mjs
+      - name: Pinned 3D diaphragm source, mobile study and accessibility fallback
+        run: node tests/slp-diaphragm-browser.mjs
+      - name: Z-Anatomy oral structure identification and mobile study
+        run: node tests/slp-oral-browser.mjs
+      - name: Pinned BodyParts3D 4.3 pharynx, soft-palate and source-model mobile study
+        run: node tests/slp-pharynx-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: workshop-test-results
+          path: test-results/
+          if-no-files-found: ignore
+  anatomy-iphone:
+    # Isolate anatomy changes from unrelated CAD animation timing failures.
+    # This does not replace or weaken the existing WebKit workshop gate.
+    runs-on: macos-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install webkit
+      - name: Anatomy concept map, sourced notes and iPhone touch journey
+        run: BROWSER_ENGINE=webkit node tests/anatomy-browser.mjs
+      - name: SLP systems and respiratory iPhone Safari coverage
+        run: BROWSER_ENGINE=webkit node tests/slp-systems-browser.mjs
+      - name: Licensed lung/airway model on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-lungs-browser.mjs
+      - name: Pinned diaphragm 3D on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-diaphragm-browser.mjs
+      - name: Z-Anatomy oral structures on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-oral-browser.mjs
+      - name: Pharynx and soft palate source anatomy on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-pharynx-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anatomy-iphone-results
           path: test-results/
           if-no-files-found: ignore
   webkit-mobile:

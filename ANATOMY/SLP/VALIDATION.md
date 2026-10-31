@@ -1,6 +1,42 @@
 # SLP larynx atlas — evidence and validation plan
 
-**Status:** engineering prototype. The ten displayed meshes are original, intentionally schematic Three.js primitives. There has been **no anatomical landmark, dimensional, spatial, or expert validation** of the meshes. Do not print, diagnose from, or assess clinical competency using these shapes.
+
+## Study Experience V2.1 — 20-part active recall and traceability (2026-10-31)
+
+**Intended use:** Short, personal educational retrieval practice on verified source **identities**, without storing scores or claiming anatomical competency.
+
+- Added a 20-question, four-choice structure identification exercise: **one original functional clue for each of the 20 genuine BodyParts3D source groups**, with a preference for same-category distractors where possible. Questions and choices are generated from the same ID manifest and source-note records; missing groups fail tests.
+- Every response produces immediate **correct / not yet** feedback, a short sourced explanation, clear model limitations, and a link to the relevant NCBI or ASHA page. The quiz does not store responses or generate a certification score; only a temporary in-page tally is shown.
+- A correct or incorrect response unlocks **Find the answer in 3D / notes**: when WebGL works, select the mesh and reset visibility filters so the answer cannot be accidentally hidden; otherwise open accessible source-backed notes. The answer-view action stays locked until the question is answered.
+- Tests check all twenty targets, four distinct options per question, source evidence, incorrect answer rejection, no storage APIs, desktop and emulated iPhone interaction, and the source-model highlighting path.
+- **Evidence:** [NCBI Larynx](https://www.ncbi.nlm.nih.gov/books/NBK538202/), [NCBI Laryngeal Muscles](https://www.ncbi.nlm.nih.gov/books/NBK545265/), [NCBI Thyrohyoid Membrane](https://www.ncbi.nlm.nih.gov/books/NBK532995/), [NCBI Thyroid](https://www.ncbi.nlm.nih.gov/books/NBK470452/), and [ASHA Vocal Tract Visualization and Imaging](https://www.asha.org/practice-portal/clinical-topics/voice-disorders/vocal-tract-visualization-and-imaging/). These support the general written learning concepts; faculty review of each clue and geometry remains outstanding.
+
+## Study Experience V2 — scoped evidence and known limitations (2026-10-31)
+
+- **20/20 source group identification:** `source-study.js` provides one original, short learning summary, approximate English pronunciation cue, category, limitation, and direct NCBI or ASHA reference link per actual source model ID. The labels are validated against the model's 20-name manifest, but the **summaries still require qualified anatomy/SLP review**. Pronunciation cues are editorial approximations, not IPA or recorded clinical pronunciations.
+- **Visibility filters:** cartilage/bone, ligaments/membranes, intrinsic muscles, airway and adjacent thyroid gland form **five** complete mutually exclusive labels. Filtering changes only rendering; it does not claim absent tissue. The thyroid gland is adjacent endocrine tissue rather than a laryngeal voice muscle.
+- **Larynx study cameras:** front, back, subject-left, subject-right and superior directions; these are viewing orientations, not verification of specific anatomical measurements.
+- **Guided learning:** six short optional, self-paced steps cite the same 20 source groups and use revealable, unscored questions. There are still 12 separate original recall exercises. No saved history or inferred mastery.
+- **Phonation concepts:** four authored 2D **static schematics** explain open glottis, approximate closure, airflow-driven vibratory concepts, and qualitative pitch/tension. These are not frame-by-frame vocal-fold motion, audiological measurements, glottal reconstruction, disease models or medically accurate oscillation. In particular, the GLB contains **vocal ligament geometry, not layered vocal-fold mucosa**.
+- **Scientific sources for V2 source study:** [NCBI Anatomy of the Larynx](https://www.ncbi.nlm.nih.gov/books/NBK538202/); [NCBI Laryngeal Muscles](https://www.ncbi.nlm.nih.gov/books/NBK545265/); [NCBI Thyrohyoid Membrane](https://www.ncbi.nlm.nih.gov/books/NBK532995/); [NCBI Thyroid Anatomy](https://www.ncbi.nlm.nih.gov/books/NBK470452/); [ASHA Vocal Tract Visualization](https://www.asha.org/practice-portal/clinical-topics/voice-disorders/vocal-tract-visualization-and-imaging/).
+- **Release gates:** no PR merge or replacement of the existing public robotics site without the current-head Node/build/workshop/Chromium/WebKit jobs passing; physical iPhone Safari + VoiceOver and faculty content review remain outstanding. The manually updated Render preview is isolated from production.
+
+## Digital exploded anatomy for personal study — 2026-10-31
+
+**Intended use:** A phone-first, interactive **study tool**, not a school display, print-ready model, physical assembly, surgery simulator, or representation of actual displacement in the body.
+
+- Added **Exploded study** beside Study map and normal 3D anatomy, with a reversible **0–100% separation** control and **Reassemble**.
+- The downloaded GLB remains BodyParts3D 4.3/OrganUI source geometry, CC BY-SA 2.1 Japan. The twenty manually curated motion vectors represent *readable study spacing* in subject-oriented X/Y/Z, **not measured physiological travel or anatomical force vectors**.
+- Keep all 45 original mesh elements rigidly bundled by their **20 actual source group identifiers**. Use Three.js parent groups and `attach()` to preserve world-space mesh transforms before translating. Never scale, warp, subdivide, or pretend bilateral groups are independently separable sides.
+- `0%` exactly restores each whole-group translation to `[0,0,0]`. Exiting exploded view or pressing Reset returns to the source anatomical assembly; selecting a group still highlights its existing source model. Relative alignment is original only when not exploded.
+- Camera fit dynamically handles separated geometry without changing source mesh shape or proportions. Three-button presentation includes a visible educational warning while pieces are separated.
+- Unit tests verify strict twenty-ID coverage, deterministic translation, exact 0% restoration and invalid-amount rejection; browser tests cover 3D → exploded → slider → reassemble → source 3D/map on desktop and iPhone WebKit. These are interaction tests, not anatomical accuracy certification.
+- Retain previously cited **limitations**: the asset includes only vocal ligaments, not entire vocal folds; some source structures group bilateral geometry; expert spatial/medical review and actual-device VoiceOver inspection are still required.
+
+**Protection:** Existing robot/CAD workshop remains unmodified. Draft anatomy PR and separate opt-in Render preview remain distinct from deployed `main`.
+
+
+**Current status:** experimental digital study prototype. The **20 BodyParts3D 4.3 source-derived mesh groups** are shown in the optional 3D view; the original ten rough schematic primitives are legacy implementation details, hidden when source-derived anatomy is used. There has been **no independent landmark, dimensional, anatomical, or clinical expert validation** of the rendered meshes or lesson content. Do not print, diagnose from, or assess clinical competency using these models.
 
 ## What has actually been checked
 
@@ -51,6 +87,30 @@ These references do not validate the author's simplified geometry. Source IDs in
 - **Automated acceptance:** Unit tests assert the coordinate convention and published source-page configuration; browser tests open the compiled evidence page and exercise mid-session context loss. Release requires green **final-commit** CI, real phone/assistive-technology checks and independent anatomy review.
 
 Reference context for anatomical sidedness: [DICOM human orientation](https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html) and [anatomical position explanation](https://med.libretexts.org/Bookshelves/Anatomy_and_Physiology/Human_Anatomy_Laboratory_Manual/01%3A_Overview_and_the_Microscope/1.02%3A_Anatomical_Position_and_Planes).
+
+## iPhone screen capture investigation — high-DPI canvas clipping (2026-10-31)
+
+A real Safari screenshot showed the unvalidated 3D sketch clipped in the **lower-right** with several projected labels overlapping near the center. This was not merely a subjective preference: the viewer called `renderer.setPixelRatio(Math.min(devicePixelRatio,2))` and `renderer.setSize(stageWidth,stageHeight,false)`, but the CSS provided no definite canvas width/height. Consequently its high-resolution **drawing buffer pixel dimensions became its CSS layout dimensions** on Retina devices, while the stage clipped its contents. The scene and labels used different visual coordinate systems.
+
+Correction:
+- Explicitly size the canvas to exactly 100% of the stage in **CSS pixels**, use absolute positioning and keep the device-resolution backing buffer for clarity. No medical geometry changes.
+- Center the optional sketch with a modestly closer front/back camera preset; hide floating overview labels on narrow screens, leaving one only when a structure is selected.
+- Reduce the mobile header and warning footprint while preserving explicit warnings about schematic/unvalidated geometry.
+- Add a high-density iPhone browser regression asserting the canvas *rendered bounding rect* exactly matches its parent even when `canvas.width` is significantly larger in device pixels. The test also checks no overlapping default labels and camera-preset controls.
+
+**Release gate:** maintain separate draft PR and manually deployed Render preview; do not treat desktop rendering alone as proof of phone correctness. Actual on-device Safari and VoiceOver reviews remain required.
+
+## Visual safety audit — structure/function map (2026-10-31)
+
+**Observed usability problem:** the first-release canvas drew an assembly of arbitrary cylinders, cones and rods, using ten projected labels. That appearance was difficult to interpret and could incorrectly imply a realistic laryngeal reconstruction. Changing lighting or sculpting novel anatomy without validated source meshes would worsen scientific misrepresentation.
+
+**Remediation:** the default view is now a clearly titled, interactive **functional concept map**. Four groups use the existing ten entries and their already referenced descriptions: supporting cartilages, true vocal folds, posterior cricoarytenoids (abduction), and lateral cricoarytenoids (adduction). A conspicuous explanation says this map is **not spatial anatomy**. Selecting an item highlights the corresponding sidebar entry and opens its cited note. Existing H.E.R.B.I.E. selection messages continue to work.
+
+**3D retained by consent:** a distinct *3D sketch* toggle retains the earlier simplified model for exploring mouse/touch rotation. The sketch explicitly says it is not an anatomical reconstruction, clinical resource, or measuring tool. The original CAD workshop is separate and unmodified. Only four overview labels are shown until an item is selected; its single label remains legible. Camera front/back presets are navigational controls only, not anatomical validation.
+
+**Device and accessibility:** map buttons use native buttons and pressed state, and remain usable when WebGL initialization fails or an older browser cannot render 3D. The sketch animation loop is inactive in map mode. Browser automation checks map grouping, selection synchronization, optional 3D access, and fallback on desktop and emulated iPhone WebKit. Manual screen-reader and physical-device checks remain required.
+
+**Unresolved academic gate:** this is a structure-and-function concept **map**, not an anatomical atlas. A truly university-quality 3D larynx requires source-licensed meshes with provenance, spatial registration, landmark validation, educator review and acceptance testing. No outside assets, private lectures or diagnostic functions were imported.
 
 ## Findings and risk controls
 
