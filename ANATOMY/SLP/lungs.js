@@ -24,6 +24,8 @@ function select(id){
  if(info)enabled.add(info.region);
  for(const b of $('layer-choices').querySelectorAll('input'))b.checked=enabled.has(b.value);
  $('lung-select').value=id||'';
+ $('lung-focus').disabled=!id||!model||!renderer;
+ if(!id)delete stage.dataset.focusedGroup;
  $('lung-note-name').textContent=info?.name||'Select a structure';
  $('lung-note-text').textContent=info?info.description+' · Source model ID: '+info.id+'.':'Tap a segment in 3D or select it by name. Source groups are not validated clinical segment borders.';
  show();
@@ -46,7 +48,9 @@ $('lung-isolate').addEventListener('click',()=>{
 });
 $('lung-all').addEventListener('click',()=>{
  isolate=false;selected=null;
- $('lung-select').value='';$('lung-isolate').setAttribute('aria-pressed','false');
+ $('lung-select').value='';$('lung-focus').disabled=true;
+ delete stage.dataset.focusedGroup;
+ $('lung-isolate').setAttribute('aria-pressed','false');
  $('lung-note-name').textContent='Select a structure';
  $('lung-note-text').textContent='All source-defined lung segments, trachea and bronchial trees restored.';
  for(const name of Object.keys(lungRegions))enabled.add(name);
@@ -110,7 +114,7 @@ function fallback(reason){
  $('fallback').hidden=false;
  message('3D graphics unavailable: '+reason+'. All 20 written source-model labels and descriptions remain available. Reload this page to retry 3D.');
  $('lung-objects').textContent='Text study available for all 20 licensed model groups; graphics unavailable.';
- for(const id of ['lung-isolate','lung-separate','lung-assemble'])$(id).disabled=true;
+ for(const id of ['lung-focus','lung-isolate','lung-separate','lung-assemble'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-view]'))button.disabled=true;
 }
 function startScene(){
@@ -192,15 +196,15 @@ async function load(){
   if(stage.dataset.fallback==='true')return;
   stage.dataset.modelStatus='ready';
   message('Licensed BodyParts3D 4.3 lung segments and airway surfaces loaded. Rotate or select a group; this is not a breathing simulation.');
-  show();view('front');size();lungTour?.refresh();
+  show();view('front');size();$('lung-focus').disabled=!selected;lungTour?.refresh();
  }catch(e){model=null;fallback(String(e?.message||'asset or decoder problem'));}
 }
 // Camera framing uses only the source mesh bounds; it never changes or invents anatomy.
-function focusTourStructure(id){
+function focusTourStructure(id,reassemble=true){
  if(!renderer||!model||!camera||!controls)return;
  const selectedMesh=meshNodes.find(mesh=>mesh.name===id);
  if(!selectedMesh)return;
- setAmount(0);
+ if(reassemble)setAmount(0);
  const bounds=new THREE.Box3().setFromObject(selectedMesh);
  const center=bounds.getCenter(new THREE.Vector3());
  const length=Math.max(...bounds.getSize(new THREE.Vector3()).toArray());
@@ -208,8 +212,9 @@ function focusTourStructure(id){
  camera.up.set(0,1,0);
  camera.position.copy(center).add(new THREE.Vector3(0,0,Math.min(35,distance)));
  controls.target.copy(center);
- camera.lookAt(center);controls.update();draw();
+ camera.lookAt(center);controls.update();stage.dataset.focusedGroup=id;draw();
 }
+$('lung-focus').addEventListener('click',()=>{if(selected)focusTourStructure(selected,false);});
 lungTour=initLungTour({
  selectStructure:select,
  focusStructure:focusTourStructure,
