@@ -16,7 +16,7 @@ test('SLP system study map has ten unique, source-linked curriculum areas',()=>{
     assert.ok(['3d','study','outline'].includes(m.stage));
   }
   assert.deepEqual(systemModules.filter(x=>x.stage==='3d').map(x=>x.id),['respiration','phonation']);
-  assert.deepEqual(systemModules.filter(x=>x.stage==='study').map(x=>x.id),['resonance','articulation','hearing','swallowing']);
+  assert.deepEqual(systemModules.filter(x=>x.stage==='study').map(x=>x.id),['resonance','articulation','neural','hearing','swallowing']);
 });
 test('respiration content covers airway, breathing muscles, subglottal pressure and speech coordination',()=>{
  const ids=new Set(respiratoryTerms.map(x=>x.id));
