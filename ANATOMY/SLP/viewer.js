@@ -15,7 +15,7 @@ scene.background=new THREE.Color(0x0e1a26);
 const camera=new THREE.PerspectiveCamera(45,1,.05,100);
 camera.position.set(0,2.1,7.3);
 // Older devices and restricted browsers may lack WebGL; preserve the text-only study UI.
-let renderer=null,orbit=null;
+let renderer=null,orbit=null,graphicsLost=false;
 try {
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
@@ -37,6 +37,16 @@ try {
   stage.removeAttribute('tabindex');
   stage.prepend(fallback);
 }
+// If a mobile GPU is suspended or resets mid-session, keep study controls usable.
+renderer?.domElement.addEventListener('webglcontextlost',event=>{
+  event.preventDefault();
+  graphicsLost=true;
+  $('status').textContent='3D graphics are temporarily unavailable; anatomy notes and recall still work.';
+});
+renderer?.domElement.addEventListener('webglcontextrestored',()=>{
+  graphicsLost=false;
+  renderState();
+});
 scene.add(new THREE.HemisphereLight(0xffffff,0x435266,2.4));
 const directional=new THREE.DirectionalLight(0xffffff,2.2);
 directional.position.set(2,5,5);
@@ -97,6 +107,7 @@ for(const s of catalog.structures) {
   iso.type='button';
   iso.textContent='Isolate';
   iso.title='Show only '+s.label;
+  iso.setAttribute('aria-label','Isolate '+s.label);
   iso.dataset.isolate=s.id;
   iso.setAttribute('aria-pressed','false');
   iso.onclick=()=>isolate(s.id);
@@ -190,6 +201,7 @@ function renderState() {
   }
   $('status').textContent=!renderer
     ?'3D view unavailable; text-based anatomy study is ready.'
+    :graphicsLost?'3D graphics are temporarily unavailable; anatomy notes and recall still work.'
     :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.':'Illustrative larynx scene ready.';
 }
 function select(id){view.selected=id;view.isolated=null;renderState();}
@@ -283,6 +295,7 @@ function drawLabels(){
 function animate(){
   if(!renderer)return;
   requestAnimationFrame(animate);
+  if(graphicsLost)return;
   orbit?.update();
   root.updateMatrixWorld(true);
   drawLabels();
