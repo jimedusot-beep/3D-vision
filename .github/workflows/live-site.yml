@@ -30,6 +30,10 @@ jobs:
         run: node tests/slp-public-site.mjs
         env:
           BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - name: Seven actual published 3D render checks and load-time audit
+        run: node tests/slp-runtime-audit.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -55,6 +59,10 @@ jobs:
           BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - name: Public SLP Atlas model downloads and launch buttons on iPhone WebKit
         run: BROWSER_ENGINE=webkit node tests/slp-public-site.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - name: Seven actual published 3D render checks on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-runtime-audit.mjs
         env:
           BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - uses: actions/upload-artifact@v4
