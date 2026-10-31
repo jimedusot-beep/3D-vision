@@ -84,6 +84,13 @@ test('educational anatomy files cannot be auto-listed as mechanical parts or pri
  assert.match(discover,/\['node_modules'[^\n]*'ANATOMY'\]/);
  assert.doesNotMatch(vite,/anatomy.*input.*models/);
 });
+test('older devices retain study mode when WebGL is unavailable',()=>{
+ assert.match(viewer,/new THREE\.WebGLRenderer/);
+ assert.match(viewer,/catch \{/);
+ assert.match(viewer,/webgl-fallback/);
+ assert.match(viewer,/text-based anatomy study is ready/);
+ assert.match(viewer,/MathUtils\.clamp\(offset\.length\(\)\*factor,2\.5,16\)/);
+});
 test('keyboard, touch and origin checks included',()=>{
  assert.match(viewer,/OrbitControls/);
  assert.match(viewer,/ArrowLeft/);
