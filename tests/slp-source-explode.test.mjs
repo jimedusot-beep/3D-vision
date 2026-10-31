@@ -49,6 +49,23 @@ test('separate meshes in one source identity remain rigidly grouped',()=>{
  explosion.setAmount(0);
  assert.ok(Math.abs(pos(a).distanceTo(pos(b))-initial)<1e-9);
 });
+test('hidden unrelated geometry never changes the visible source explosion layout',()=>{
+ const {root,a,b,c}=buildScene();
+ const groups=[{id:'a',meshes:[a]},{id:'b',meshes:[b]},{id:'c',meshes:[c]}];
+ const baseline=createSourceExplosion({THREE,model:root,groups});
+ baseline.setAmount(65);
+ const expected=[a,b,c].map(pos);
+ baseline.setAmount(0);
+ const hidden=new THREE.Mesh(new THREE.BoxGeometry(12000,9000,11000),new THREE.MeshBasicMaterial());
+ hidden.name='unrelated-hidden-brain-geometry';hidden.position.set(25000,25000,25000);
+ hidden.visible=false;root.add(hidden);
+ const focus=createSourceExplosion({THREE,model:root,groups});
+ focus.setAmount(65);
+ [a,b,c].forEach((mesh,i)=>assert.ok(pos(mesh).distanceTo(expected[i])<1e-8,
+  'Hidden off-study source records cannot alter explosion distance or position'));
+ assert.ok(hidden.position.distanceTo(new THREE.Vector3(25000,25000,25000))<1e-9);
+ focus.setAmount(0);
+});
 test('reject fabricated or repeated source meshes and invalid separation',()=>{
  const {root,a,b,c}=buildScene();
  assert.throws(()=>createSourceExplosion({THREE,model:root,groups:[{id:'one',meshes:[a]}]}),/multiple/);
