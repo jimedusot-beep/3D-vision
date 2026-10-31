@@ -84,6 +84,33 @@ test('referenced study prompts are complete, unique and text-only',()=>{
  assert.match(html,/id="study-answer"[^>]*\bhidden\b/);
  assert.match(viewer,/prompt\.source_ids/);
 });
+test('undergraduate draft objectives trace all recall items to educational references',()=>{
+  assert.equal(catalog.learning_objectives.length,4);
+  assert.equal(catalog.review_prompts.length,12);
+  assert.equal(catalog.course.status,'draft_unreviewed_formative_material');
+  const objectiveIds=new Set(catalog.learning_objectives.map(o=>o.id));
+  assert.equal(objectiveIds.size,catalog.learning_objectives.length);
+  const sourceIds=new Set(catalog.references.map(r=>r.id));
+  for(const objective of catalog.learning_objectives) {
+    assert.ok(objective.statement.length>60);
+    assert.ok(objective.source_ids.length);
+    for(const id of objective.source_ids)assert.ok(sourceIds.has(id));
+    assert.ok(catalog.review_prompts.some(p=>p.objective_id===objective.id));
+  }
+  for(const prompt of catalog.review_prompts){
+    assert.ok(objectiveIds.has(prompt.objective_id),prompt.id+' lacks objective');
+    assert.ok(['recall','compare','application'].includes(prompt.level));
+    assert.ok(prompt.explanation.length>45);
+  }
+  assert.ok(html.includes('id="learning-objectives"'));
+  assert.ok(html.includes('id="study-progress"'));
+  assert.ok(html.includes('id="study-again" disabled'));
+  assert.ok(html.includes('id="study-recognized" disabled'));
+  assert.ok(viewer.includes('createPracticeSession(catalog.review_prompts)'));
+  assert.ok(!viewer.includes('localStorage'));
+  assert.ok(!viewer.includes('sessionStorage'));
+  assert.ok(!viewer.includes('indexedDB'));
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
