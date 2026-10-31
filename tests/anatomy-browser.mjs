@@ -277,7 +277,11 @@ try {
   // On phones the concept map must scroll with the page, not in a nested pane.
   assert.equal(await touch.locator('#concept-map').evaluate(el=>getComputedStyle(el).position),'relative');
   assert.equal(await touch.locator('#concept-map').evaluate(el=>getComputedStyle(el).overflowY),'visible');
-  await touch.locator('button[data-concept-id="right-vocal-fold"]').click();
+  // Scroll the regular document once before a real touch click; no inner
+  // scrolling region or continuous GPU resize should move the target.
+  await touch.locator('button[data-concept-id="right-vocal-fold"]')
+    .evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));
+  await touch.locator('button[data-concept-id="right-vocal-fold"]').click({timeout:15000});
   assert.equal(await touch.locator('button[data-concept-id="right-vocal-fold"]').getAttribute('aria-pressed'),'true');
   assert.equal(await touch.locator('#selection-ribbon').isVisible(),true);
   assert.match(await touch.locator('#selection-name').textContent(),/Right vocal fold/);
