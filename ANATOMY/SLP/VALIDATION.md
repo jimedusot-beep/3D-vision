@@ -42,6 +42,16 @@ These references do not validate the author's simplified geometry. Source IDs in
 - Added live announcements for reveal answers. Screen-reader and actual-device manual testing still remain open acceptance gates.
 - **Release status:** code and browser tests on the draft branch do not make the atlas clinically validated. Keep both anatomy and Herbie document search integration unmerged until review.
 
+## Audit pass 3 — published evidence, patient-side orientation, and graphics continuity (2026-10-30)
+
+- **Anatomical laterality correction:** In a subject-facing anterior view, anatomical left appears on the observer's right. Earlier schematic geometry used a viewer-side mapping. Paired objects now use a shared `sideX` convention and the catalog explicitly declares `+X` as subject-left, `-X` as subject-right, `+Z` anterior and `+Y` superior. This corrects the **label convention**, not the clinical accuracy of the 3D meshes.
+- **Broken release-resource risk:** The live viewer previously linked to `SOURCES.md`, which the Vite multi-page build does not explicitly publish. Added a dedicated `about.html` Vite entry with evidence and limitations, and tests loading that page from the production `dist/` output. Scientific reference links are external and may require Internet; short study notes remain accessible without opening them.
+- **Accessibility:** Repeated isolate buttons now have distinct accessible names. A mid-session WebGL context-loss event exposes a text-first status; notes, reference links, and recall remain usable. Renderer recovery is browser/driver dependent; no physical-device recovery certification is claimed.
+- **Reference check:** Verified titles and links for OpenStax *Anatomy and Physiology 2e* §22.1 and NCBI Bookshelf `NBK538202` and `NBK545265`. These support contextual written descriptions, not the geometry; StatPearls text is paraphrased, not redistributed as an article. Source and provenance review for actual 3D meshes remains unfinished.
+- **Automated acceptance:** Unit tests assert the coordinate convention and published source-page configuration; browser tests open the compiled evidence page and exercise mid-session context loss. Release requires green **final-commit** CI, real phone/assistive-technology checks and independent anatomy review.
+
+Reference context for anatomical sidedness: [DICOM human orientation](https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html) and [anatomical position explanation](https://med.libretexts.org/Bookshelves/Anatomy_and_Physiology/Human_Anatomy_Laboratory_Manual/01%3A_Overview_and_the_Microscope/1.02%3A_Anatomical_Position_and_Planes).
+
 ## Findings and risk controls
 
 1. **High scientific risk:** the current meshes are placeholders with arbitrary units; users could mistake them for accurate representations. Keep a prominently visible caution, disabled phonation button, and note next to every referenced explanation.
