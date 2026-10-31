@@ -4,6 +4,7 @@ import {readFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {neuralParts,neuralLessons,teachingStepId,verifyNeuralManifest} from '../ANATOMY/SLP/neural-manifest.js';
 import {validNeuralAsset} from '../scripts/prepare-slp-neural.mjs';
+import {neuralPracticeQuestions,practiceChoices} from '../ANATOMY/SLP/neural-practice.js';
 
 const engine=process.env.BROWSER_ENGINE==='webkit'?webkit:chromium;
 const name=process.env.BROWSER_ENGINE==='webkit'?'webkit':'chromium';
@@ -113,6 +114,49 @@ try{
  assert.equal(await page.locator('#neural-select').inputValue(),String(teachingStepId(neuralLessons[0])));
  await page.locator('#neural-lesson-close').click();
  assert.equal(await page.locator('#neural-lesson-active').isHidden(),true);
+
+ // Evidence-based, session-only retrieval practice; no 3D hint before answering.
+ await page.locator('#neural-practice-start').click();
+ assert.equal(await page.locator('#neural-practice-active').isVisible(),true);
+ const missed=new Set([1,3]);
+ for(const [i,q] of neuralPracticeQuestions.entries()){
+  assert.equal(await page.locator('#neural-select').inputValue(),'','Answer mesh must stay undisclosed until response');
+  assert.equal(await page.locator('#neural-practice-next').isDisabled(),true);
+  assert.equal(await page.locator('#neural-practice-options button').count(),4);
+  assert.match(await page.locator('#neural-practice-question').textContent(),new RegExp(q.prompt.replace(/[.*+?^$()|[\\]{}]/g,'\\ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);')));
+  const answer=missed.has(i)?practiceChoices(q).find(x=>x.id!==q.correct).id:q.correct;
+  await page.locator('#neural-practice-options button[data-answer="'+answer+'"]').click();
+  assert.equal(await page.locator('#neural-practice-next').isEnabled(),true);
+  const feedback=await page.locator('#neural-practice-feedback').textContent();
+  assert.match(feedback,missed.has(i)?/Not quite/:/Correct/);
+  if(i===3){
+   assert.match(feedback,/No original 3D mesh is available for this nerve/);
+   assert.equal(await page.locator('#neural-select').inputValue(),'');
+  }else assert.equal(await page.locator('#neural-select').inputValue(),
+    String(teachingStepId(neuralLessons[q.correct])));
+  const before=feedback;
+  await page.locator('#neural-practice-options button').first().evaluate(b=>b.click());
+  assert.equal(await page.locator('#neural-practice-feedback').textContent(),before,'Repeat click cannot change score');
+  await page.locator('#neural-practice-next').click();
+ }
+ assert.match(await page.locator('#neural-practice-summary').textContent(),/First attempt: 5 of 7 correct/);
+ assert.equal(await page.locator('#neural-practice-missed').isVisible(),true);
+ await page.locator('#neural-practice-missed').click();
+ for(const i of [1,3]){
+  const q=neuralPracticeQuestions[i];
+  assert.match(await page.locator('#neural-practice-progress').textContent(),/Review missed/);
+  await page.locator('#neural-practice-options button[data-answer="'+q.correct+'"]').click();
+  await page.locator('#neural-practice-next').click();
+ }
+ assert.match(await page.locator('#neural-practice-summary').textContent(),/0 of 2 missed again/);
+ await page.locator('#neural-practice-start').click();
+ await page.locator('#neural-practice-exit').click();
+ assert.match(await page.locator('#neural-practice-summary').textContent(),/No answers or scores were saved/);
+ // Guided lesson and quiz must not overlap visually or reveal stale quiz answers.
+ await page.locator('#neural-lesson-start').click();
+ await page.locator('#neural-practice-start').click();
+ assert.equal(await page.locator('#neural-lesson-active').isHidden(),true);
+ await page.locator('#neural-practice-exit').click();
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  await mkdir('test-results',{recursive:true});
  await page.screenshot({path:'test-results/slp-neural-'+name+'-iphone.png',fullPage:true});
