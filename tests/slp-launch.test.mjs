@@ -45,5 +45,5 @@ test('no merger of individually transformed anatomy geometry is falsely claimed'
  assert.match(html,/independently sourced 3D anatomy models/i);
  assert.match(license,/CC BY-SA 2\.1 Japan/);
  assert.match(license,/CC BY-SA 4\.0/);
- assert.match(license,/not one spatially aligned whole-body model/i);
+ assert.match(license,/seven source-model coordinate spaces have not been registered/i);
 });
