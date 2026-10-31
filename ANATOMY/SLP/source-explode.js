@@ -4,12 +4,11 @@
 export function createSourceExplosion({THREE,model,groups}){
  if(!model||!Array.isArray(groups)||groups.length<2)throw Error('Explosion needs multiple verified source groups');
  model.updateMatrixWorld(true);
- const bounds=new THREE.Box3().setFromObject(model);
- if(bounds.isEmpty())throw Error('Source-model bounds unavailable');
- const center=bounds.getCenter(new THREE.Vector3());
- const size=bounds.getSize(new THREE.Vector3());
- const span=Math.max(size.x,size.y,size.z,0.0001);
- const seen=new Set(),records=[];
+ // Only verified study meshes determine the explosion scale and center.
+ // The neural source includes hundreds of unrelated, hidden meshes; using the
+ // full GLB's bounds can throw its visible nerves far off-screen.
+ const seen=new Set(),usedMeshes=new Set(),parts=[];
+ const studyBounds=new THREE.Box3();
  for(let i=0;i<groups.length;i++){
   const {id,meshes}=groups[i];
   if(!id||seen.has(id)||!Array.isArray(meshes)||meshes.length===0)
@@ -17,22 +16,34 @@ export function createSourceExplosion({THREE,model,groups}){
   seen.add(id);
   const partBounds=new THREE.Box3();
   for(const mesh of meshes){
-   if(!mesh.isMesh||!mesh.parent||records.some(r=>r.mesh===mesh))
+   if(!mesh?.isMesh||!mesh.parent||usedMeshes.has(mesh))
     throw Error('Explosion only supports distinct source meshes in a live model');
+   let ancestor=mesh;
+   while(ancestor&&ancestor!==model)ancestor=ancestor.parent;
+   if(ancestor!==model)throw Error('Source group mesh is outside the loaded model: '+id);
+   usedMeshes.add(mesh);
    partBounds.expandByObject(mesh);
   }
   if(partBounds.isEmpty())throw Error('Source group bounds empty: '+id);
+  studyBounds.union(partBounds);
+  parts.push({id,meshes,partBounds});
+ }
+ if(studyBounds.isEmpty())throw Error('Study-source mesh bounds unavailable');
+ const center=studyBounds.getCenter(new THREE.Vector3());
+ const size=studyBounds.getSize(new THREE.Vector3());
+ const span=Math.max(size.x,size.y,size.z,0.0001);
+ const records=[];
+ for(let i=0;i<parts.length;i++){
+  const {id,meshes,partBounds}=parts[i];
   const radial=partBounds.getCenter(new THREE.Vector3()).sub(center);
-  // Distribute centrally overlapping groups in distinct reproducible directions,
-  // rather than stacking them all on one another.
-  const y=1-2*(i+0.5)/groups.length;
+  // Distinct, reproducible directions keep overlapping parts distinguishable.
+  const y=1-2*(i+0.5)/parts.length;
   const phi=i*Math.PI*(3-Math.sqrt(5));
   const seed=new THREE.Vector3(Math.cos(phi)*Math.sqrt(1-y*y),y,
    Math.sin(phi)*Math.sqrt(1-y*y));
   const direction=radial.length()>span*.035
    ?radial.normalize().multiplyScalar(.75).addScaledVector(seed,.55).normalize():seed;
   const centerDistance=partBounds.getSize(new THREE.Vector3()).length();
-  // Larger pieces travel a little farther; no claims about natural separation.
   const displacement=span*(.43+Math.min(.27,centerDistance/span*.16));
   for(const mesh of meshes)records.push({
    mesh,id,original:mesh.position.clone(),
