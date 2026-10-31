@@ -1,4 +1,4 @@
-import {createJoint, setJointValue} from './joints.js';
+import {createJoint, setJointValue, validateJointTravel} from './joints.js';
 
 // The panel owns controls; joint definitions and poses live in the saved scene.
 export function jointPanel({root, selected, mutate, checkpoint, resetPreview, changed, poseChanged, invalidate, status, run, dialog, field, button, paragraph}) {
@@ -66,7 +66,22 @@ export function jointPanel({root, selected, mutate, checkpoint, resetPreview, ch
   }
   $('joint-create').onclick = () => run(create);
   $('joint-list').onchange = () => { stop(); values(); };
-  const apply = value => { const id = current()?.id; mutate(() => setJointValue(root(), id, Number(value))); values(); status('Joint travel applied.'); };
+  const apply = value => {
+    const id = current()?.id, next = Number(value);
+    // A validation failure must not call mutate(): its rollback reconstitutes
+    // the scene and may disrupt a subsequent animation on mobile WebKit.
+    try { validateJointTravel(root(), id, next); }
+    catch (error) {
+      const j = current();
+      if (j) {
+        $('joint-value').value = String(Number(j.value.toFixed(3)));
+        $('joint-range').value = String(Number(j.value.toFixed(3)));
+      }
+      throw error;
+    }
+    mutate(() => setJointValue(root(), id, next));
+    values(); status('Joint travel applied.');
+  };
   $('joint-apply').onclick = () => run(() => apply($('joint-value').value));
   // One history entry per completed slider gesture, including touch and keyboard.
   $('joint-range').onchange = e => run(() => apply(e.target.value));
@@ -83,6 +98,7 @@ export function jointPanel({root, selected, mutate, checkpoint, resetPreview, ch
     // immediate feedback while the regular render loop continues animation.
     // This is a transient preview pose, not an extra undo/save checkpoint.
     tick(animation.start + 48);
+    if(animation)status('Joint animation running; use Pause joint to hold this pose.');
     invalidate();
   });
   function tick(t) {
