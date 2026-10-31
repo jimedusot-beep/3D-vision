@@ -86,8 +86,15 @@ $('tour-previous').addEventListener('click',()=>{tourStep=Math.max(0,tourStep-1)
 $('tour-next').addEventListener('click',()=>{tourStep=Math.min(guidedLarynxTour.length-1,tourStep+1);showTourStep();});
 $('tour-reveal').addEventListener('click',()=>{$('tour-answer').hidden=false;});
 $('tour-view').addEventListener('click',()=>{
+  const id=guidedLarynxTour[tourStep].id;
+  if(!renderer||graphicsLost){
+    selectSourcePart(id);
+    openMobilePanel('panel-details',true);
+    $('status').textContent='3D graphics unavailable: showing source-backed text notes instead.';
+    return;
+  }
   setPresentation('three');
-  selectSourcePart(guidedLarynxTour[tourStep].id);
+  selectSourcePart(id);
   if(window.matchMedia('(max-width:760px)').matches)stage.scrollIntoView({block:'start',behavior:'auto'});
 });
 showTourStep();
