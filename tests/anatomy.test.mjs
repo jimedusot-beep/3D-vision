@@ -2,14 +2,35 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseCommand} from '../ANATOMY/SLP/contract.js';
+import {sideX, SUBJECT_X} from '../ANATOMY/SLP/orientation.js';
 const root=new URL('../',import.meta.url);
 const catalog=JSON.parse(readFileSync(new URL('ANATOMY/SLP/structures.json',root),'utf8'));
 const html=readFileSync(new URL('ANATOMY/SLP/index.html',root),'utf8');
+const evidenceHtml=readFileSync(new URL('ANATOMY/SLP/about.html',root),'utf8');
 const viewer=readFileSync(new URL('ANATOMY/SLP/viewer.js',root),'utf8');
 const discover=readFileSync(new URL('scripts/discover.mjs',root),'utf8');
 const vite=readFileSync(new URL('vite.config.js',root),'utf8');
 const ids=new Set(catalog.structures.map(x=>x.id));
 const message=(action,more={})=>({source:'herbie',version:1,action,...more});
+test('anatomical sides use patient coordinates in anterior view',()=>{
+ assert.deepEqual(SUBJECT_X,{left:1,right:-1});
+ assert.equal(sideX('left',.38),.38);
+ assert.equal(sideX('right',.38),-.38);
+ assert.throws(()=>sideX('up',.5),RangeError);
+ assert.throws(()=>sideX('left',-1),RangeError);
+ const sideNames=['left','right'];
+ for(const side of sideNames)for(const name of ['arytenoid','vocal-fold','posterior-cricoarytenoid','lateral-cricoarytenoid'])
+   assert.match(viewer,new RegExp("sideX\\('"+side+"',"));
+ assert.match(html,/id="orientation-note"/);
+ assert.match(evidenceHtml,/subject's left appears to the viewer's right/);
+});
+test('anatomy evidence notes are published as a dedicated HTML page',()=>{
+ assert.match(vite,/anatomyEvidence:'ANATOMY\\/SLP\\/about\\.html'/);
+ assert.match(html,/href="\\.\\/about\\.html"/);
+ assert.doesNotMatch(html,/href="\\.\\/SOURCES\\.md"/);
+ assert.match(evidenceHtml,/Illustrative geometry, not validated medical anatomy/);
+ for(const ref of catalog.references)assert.ok(evidenceHtml.includes(ref.url));
+});
 test('anatomy catalog has stable distinct IDs and descriptive provenance',()=>{
  assert.equal(catalog.schema_version,1);
  assert.equal(ids.size,catalog.structures.length);
