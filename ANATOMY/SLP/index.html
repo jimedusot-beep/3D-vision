@@ -42,6 +42,8 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height
 #stage.mode-map #notice{border:1px solid #4d7b84}
 #selection-ribbon{position:absolute;left:clamp(.6rem,2vw,1.1rem);right:clamp(.6rem,2vw,1.1rem);bottom:3.6rem;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.65rem .75rem;border:1px solid #85c5c6;background:#112f3fe8;border-radius:12px;box-shadow:0 6px 20px #0005}
 #selection-ribbon[hidden]{display:none}
+#model-structure{position:absolute;top:6.4rem;left:.6rem;right:.6rem;z-index:3;font-size:.8rem;line-height:1.35;border:1px solid #85c5c6;background:#112f3fee;border-radius:10px;padding:.55rem .65rem;max-height:6.5rem;overflow:auto}
+#model-structure[hidden]{display:none}
 #selection-name{font-size:.9rem;font-weight:700}
 #open-details{background:#17665a;border-color:#9de8db;flex:0 1 auto}
 #mobile-tabs{display:none}
@@ -103,7 +105,7 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <section id="stage" class="mode-map" aria-label="Functional study map; select any structure to read about it">
 <div id="view-switch" role="group" aria-label="Choose anatomy presentation">
 <button type="button" id="mode-map" aria-pressed="true">Study map</button>
-<button type="button" id="mode-three" aria-pressed="false">3D sketch</button>
+<button type="button" id="mode-three" aria-pressed="false">3D anatomy</button>
 </div>
 <div id="selection-ribbon" hidden>
 <span id="selection-name" role="status" aria-live="polite"></span>
@@ -120,6 +122,7 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <div id="three-view-controls" role="group" aria-label="3D camera presets" hidden>
 <button id="camera-front" type="button">Front</button><button id="camera-back" type="button">Back</button>
 </div>
+<p id="model-structure" hidden role="status" aria-live="polite"></p>
 <div id="overlay" aria-hidden="true"></div>
 <div id="notice">Learning map only: groups represent functions, not physical position. No anatomy measurements or clinical claims.</div>
 </section>
