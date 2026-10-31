@@ -33,6 +33,11 @@ try {
   assert.equal(await page.locator('button[data-id]').count(),10);
   await page.locator('button[data-id="left-vocal-fold"]').click();
   assert.match(await page.locator('#detail').textContent(),/Left vocal fold/);
+  assert.match(await page.locator('#detail').textContent(),/NOT the approximate 3D shape/);
+  const evidence=page.locator('#detail .evidence-links a');
+  assert.equal(await evidence.count(),2);
+  assert.ok((await evidence.first().getAttribute('href')).startsWith('https://'));
+  assert.equal(await evidence.first().getAttribute('rel'),'noopener noreferrer');
   await page.locator('button[data-isolate="left-vocal-fold"]').click();
   assert.equal(await page.locator('button[data-isolate="left-vocal-fold"]').getAttribute('aria-pressed'),'true');
   await page.locator('#show-all').click();
@@ -64,6 +69,22 @@ try {
   assert.equal(response.ok,true);
   assert.equal(response.selected,'left-vocal-fold');
   console.log('PASS: '+name+' same-origin H.E.R.B.I.E. command contract');
+  // A different parent origin cannot control the viewer without explicit embedOrigin opt-in.
+  const outsider=await desktop.newPage();
+  await outsider.route('https://untrusted.test/**',route=>route.fulfill({
+    contentType:'text/html',
+    body:'<html><body><iframe title="anatomy" src="https://3dvision.test/ANATOMY/SLP/index.html"></iframe></body></html>'
+  }));
+  await outsider.goto('https://untrusted.test/test.html');
+  const restricted=outsider.frameLocator('iframe');
+  await restricted.locator('button[data-id="left-vocal-fold"]').waitFor();
+  await outsider.evaluate(()=>document.querySelector('iframe').contentWindow.postMessage(
+    {source:'herbie',version:1,action:'select',structureId:'left-vocal-fold',requestId:'untrusted-1'},
+    'https://3dvision.test'
+  ));
+  await outsider.waitForTimeout(250);
+  assert.equal(await restricted.locator('button[data-id="left-vocal-fold"]').getAttribute('aria-pressed'),'false');
+  console.log('PASS: '+name+' rejects commands from unapproved parent origins');
 
   const mobile=await browser.newContext({...devices['iPhone 13']});
   await routeAssets(mobile);
@@ -73,6 +94,7 @@ try {
   await touch.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   await touch.locator('button[data-id="right-vocal-fold"]').click();
   assert.match(await touch.locator('#detail').textContent(),/Right vocal fold/);
+  assert.equal(await touch.locator('#detail .evidence-links a').count(),2);
   assert.equal(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);
   await mkdir('test-results',{recursive:true});
