@@ -134,7 +134,10 @@
       "source_ids": [
         "openstax-ap22-1",
         "ncbi-larynx"
-      ]
+      ],
+      "objective_id": "larynx-cartilages",
+      "explanation": "The thyroid cartilage is the largest laryngeal cartilage; the drawing does not reproduce its anatomy.",
+      "level": "recall"
     },
     {
       "id": "complete-ring",
@@ -144,7 +147,10 @@
       "source_ids": [
         "openstax-ap22-1",
         "ncbi-larynx"
-      ]
+      ],
+      "objective_id": "larynx-cartilages",
+      "explanation": "Cricoid is a complete cartilaginous ring inferior to thyroid; the schematic torus is not a verified shape.",
+      "level": "recall"
     },
     {
       "id": "arytenoid-attachment",
@@ -153,7 +159,10 @@
       "answer": "The arytenoid cartilages.",
       "source_ids": [
         "ncbi-larynx"
-      ]
+      ],
+      "objective_id": "larynx-cartilages",
+      "explanation": "Arytenoid vocal processes provide the posterior ligament attachment. Their depicted location remains approximate.",
+      "level": "recall"
     },
     {
       "id": "voice-source",
@@ -162,7 +171,10 @@
       "answer": "The true vocal folds.",
       "source_ids": [
         "openstax-ap22-1"
-      ]
+      ],
+      "objective_id": "true-folds",
+      "explanation": "The true vocal folds provide a vibratory sound source during voiced phonation; the static shapes do not simulate vibration.",
+      "level": "recall"
     },
     {
       "id": "only-abductor",
@@ -171,7 +183,10 @@
       "answer": "Posterior cricoarytenoid.",
       "source_ids": [
         "ncbi-muscles"
-      ]
+      ],
+      "objective_id": "larynx-muscles",
+      "explanation": "Posterior cricoarytenoid abducts the vocal folds, opening the glottis. No valid motion is simulated.",
+      "level": "recall"
     },
     {
       "id": "adductor",
@@ -179,6 +194,86 @@
       "question": "Which cricoarytenoid muscle adducts the true vocal folds?",
       "answer": "Lateral cricoarytenoid.",
       "source_ids": [
+        "ncbi-muscles"
+      ],
+      "objective_id": "larynx-muscles",
+      "explanation": "Lateral cricoarytenoid adducts the folds by rotating arytenoid cartilage; the picture does not show that real muscle path.",
+      "level": "recall"
+    },
+    {
+      "id": "arytenoid-joint",
+      "structure_id": "right-arytenoid",
+      "objective_id": "larynx-cartilages",
+      "level": "recall",
+      "question": "Which cartilage provides the joint surface beneath the paired arytenoid cartilages?",
+      "answer": "The posterior part of the cricoid cartilage.",
+      "explanation": "Each arytenoid articulates with the superior/posterior cricoid region. Their precise positions are not represented here.",
+      "source_ids": [
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "fold-attachments",
+      "structure_id": "right-vocal-fold",
+      "objective_id": "true-folds",
+      "level": "compare",
+      "question": "Where do the true vocal folds attach at the front and back of the larynx?",
+      "answer": "Anteriorly at the thyroid cartilage and posteriorly at the arytenoid cartilages.",
+      "explanation": "These paired attachment relationships matter for phonation; the schematic rods cannot be used to measure them.",
+      "source_ids": [
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "true-versus-vestibular",
+      "structure_id": "left-vocal-fold",
+      "objective_id": "true-folds",
+      "level": "compare",
+      "question": "Which folds are the primary vibratory source in normal voiced speech: true vocal folds or vestibular (false) folds?",
+      "answer": "The true vocal folds.",
+      "explanation": "The vestibular folds are a different pair and are intentionally not modeled in this scene.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx"
+      ]
+    },
+    {
+      "id": "muscle-opposition",
+      "structure_id": "right-posterior-cricoarytenoid",
+      "objective_id": "larynx-muscles",
+      "level": "compare",
+      "question": "How do the posterior and lateral cricoarytenoid muscles act differently on the true vocal folds?",
+      "answer": "Posterior cricoarytenoid abducts them; lateral cricoarytenoid adducts them.",
+      "explanation": "Abduction increases the glottal opening, while adduction brings the folds closer. No mechanical animation is validated.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "cricothyroid-exception",
+      "structure_id": "thyroid-cartilage",
+      "objective_id": "larynx-innervation",
+      "level": "application",
+      "question": "Which intrinsic laryngeal muscle is the main exception to recurrent laryngeal nerve motor innervation?",
+      "answer": "The cricothyroid muscle.",
+      "explanation": "Its motor supply usually comes from the external branch of the superior laryngeal nerve; the cricothyroid is not shown in this viewer.",
+      "source_ids": [
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "motor-supply",
+      "structure_id": "left-lateral-cricoarytenoid",
+      "objective_id": "larynx-innervation",
+      "level": "application",
+      "question": "Which nerve generally provides motor innervation to the intrinsic laryngeal muscles other than cricothyroid?",
+      "answer": "The recurrent laryngeal nerve, via its inferior laryngeal branch.",
+      "explanation": "This is an anatomy-learning statement, not a test of nerve injury or diagnosis; the nerves are not modeled.",
+      "source_ids": [
+        "ncbi-larynx",
         "ncbi-muscles"
       ]
     }
@@ -204,5 +299,50 @@
     "subject_left": "+X",
     "subject_right": "-X",
     "units": "arbitrary_visual_units_not_anatomical_measurements"
-  }
+  },
+  "course": {
+    "title": "Foundations of Laryngeal Structure and Function",
+    "audience": "Undergraduate speech-language pathology and anatomy introduction",
+    "status": "draft_unreviewed_formative_material",
+    "assessment": "Source-linked text-only self-assessment, not clinical competency or accredited credit",
+    "model_notice": "All 3D geometry is schematic and scientifically unvalidated"
+  },
+  "learning_objectives": [
+    {
+      "id": "larynx-cartilages",
+      "label": "Distinguish major laryngeal cartilages",
+      "statement": "Identify the thyroid, cricoid and paired arytenoid cartilages and explain one key anatomical relationship for each.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx"
+      ]
+    },
+    {
+      "id": "true-folds",
+      "label": "Explain true vocal-fold function",
+      "statement": "Identify the true vocal folds, their main attachment sites, and their role in phonation; distinguish them from unmodeled vestibular folds.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "larynx-muscles",
+      "label": "Compare intrinsic laryngeal muscle actions",
+      "statement": "Contrast posterior cricoarytenoid abduction with lateral cricoarytenoid adduction, and connect those actions to changes in the glottal opening.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "larynx-innervation",
+      "label": "Describe principal motor innervation",
+      "statement": "State the usual recurrent-laryngeal-nerve motor supply of intrinsic laryngeal muscles and its cricothyroid exception.",
+      "source_ids": [
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
+    }
+  ]
 }
