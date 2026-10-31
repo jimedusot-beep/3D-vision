@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self';font-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
+<meta name="description" content="Licensed 3D anatomy of salivary glands, ducts, tongue, mandible and hyoid for speech-language pathology study.">
+<title>H.E.R.B.I.E. · Oral Anatomy 3D Lab</title>
+<style>
+:root{font:16px/1.5 system-ui,sans-serif;background:#0d1c27;color:#eaf5f6}*{box-sizing:border-box}
+body{margin:0}a{color:#9fe9dc}button,select{font:inherit;min-height:44px;border-radius:8px;border:1px solid #8badb4;background:#264957;color:#f0fbfc;padding:.55rem .75rem}
+button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #a5edcf;outline-offset:2px}
+header{background:#173442;border-bottom:1px solid #456779;padding:1rem clamp(.75rem,3vw,2rem)}
+header h1{font-size:1.45rem;margin:0}header p{margin:.4rem 0}
+nav{display:flex;flex-wrap:wrap;gap:.8rem;padding-top:.4rem}
+main{max-width:1250px;margin:auto;padding:1rem}
+.intro,.warning{border-left:4px solid #a2d7c6;background:#1e3c49;border-radius:6px;padding:.8rem;line-height:1.5}
+.warning{border-left-color:#e2c49e}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(285px,.85fr);gap:1rem}
+#oral-stage{position:relative;height:clamp(380px,62dvh,680px);border:1px solid #507d87;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse,#275262,#122d3b 70%,#0f1d29)}
+#oral-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
+#oral-status{position:absolute;bottom:.5rem;left:.5rem;right:.5rem;z-index:2;background:#0d2a38e8;padding:.6rem;border-radius:8px;border:1px solid #658d9d;font-size:.82rem}
+#oral-fallback{padding:1rem;position:relative;z-index:1}
+#oral-stage[data-fallback="true"]{height:auto;min-height:220px}
+#oral-stage[data-fallback="true"] #oral-status{position:relative}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0}
+.controls button[aria-pressed="true"]{background:#166c58;border-color:#a6eed4}
+.panel{border:1px solid #4a7886;border-radius:12px;padding:.9rem;background:#1b3542;min-width:0}
+.panel h2{font-size:1.1rem;margin:.1rem 0 .5rem}
+#oral-select{width:100%;margin:.4rem 0}
+#oral-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+#oral-filters label{display:flex;gap:.4rem;align-items:center;padding:.5rem;background:#214553;border-radius:7px;font-size:.84rem}
+#oral-filters input{width:20px;height:20px;accent-color:#85dcbf}
+#oral-note{border-radius:8px;padding:.75rem;background:#274957;margin:.9rem 0;min-height:140px}
+#oral-note h3{font-size:1rem;margin:0}
+#oral-note p{margin:.45rem 0}
+#oral-note-id{font-size:.84rem;color:#cee2e6}
+.study{margin:1rem 0;border:1px solid #5d8595;background:#173440;border-radius:12px;padding:.9rem}
+.study h2{font-size:1.1rem;margin:0 0 .4rem}
+.study p{margin:.5rem 0}
+.study li{margin:.4rem 0}
+footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
+[hidden]{display:none!important}
+@media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#oral-stage{height:clamp(340px,52dvh,540px)}#oral-filters{grid-template-columns:1fr}}
+</style></head><body>
+<header><h1>H.E.R.B.I.E. · Oral Anatomy 3D Lab</h1>
+<p>Explore 15 source-derived salivary-gland, tongue and jaw structures for articulation and oral-phase swallowing study.</p>
+<nav aria-label="SLP atlas">
+<a href="./systems.html?system=articulation">Articulation lessons</a>
+<a href="./systems.html?system=swallowing">Swallowing lessons</a>
+<a href="./lungs.html">3D lungs</a>
+<a href="./diaphragm.html">3D diaphragm</a>
+<a href="./index.html">3D larynx</a>
+<a href="./about.html">Source and license</a>
+</nav></header>
+<main>
+<p class="intro"><strong>Real geometry, limited coverage:</strong> This Z-Anatomy model includes the <strong>tongue, mandible, hyoid, eight gland surfaces, and four salivary ducts</strong>. It does not include lips, teeth, velum, pharynx, tongue-muscle layers, minor glands or complete swallowing mechanics. It is a static model, not an articulation or bolus simulation.</p>
+<section class="layout">
+<div>
+<div id="oral-stage" role="region" tabindex="0" aria-label="Three-dimensional oral and salivary anatomy; drag to rotate, tap a mesh to select">
+<p id="oral-fallback" hidden>3D graphics unavailable. Use the selector and descriptions to study all 15 source-derived structures.</p>
+<p id="oral-status" role="status" aria-live="polite">Loading licensed oral model…</p>
+</div>
+<div class="controls" role="group" aria-label="3D camera directions">
+<button type="button" data-oral-view="front">Front</button>
+<button type="button" data-oral-view="back">Back</button>
+<button type="button" data-oral-view="left">Left</button>
+<button type="button" data-oral-view="right">Right</button>
+<button type="button" data-oral-view="top">Top</button>
+</div>
+<div class="controls" role="group" aria-label="Structure selection tools">
+<button type="button" id="oral-focus" disabled>Focus selected</button>
+<button type="button" id="oral-isolate" disabled aria-pressed="false">Isolate selected</button>
+<button type="button" id="oral-all">Show all</button>
+<button type="button" id="oral-reset">Reset view</button>
+</div>
+<p class="warning"><strong>Source limitation:</strong> The 15 objects are derived from Z-Anatomy FBX scene data and were transformed by OrganUI into a GLB. Illustrative color and source shape are not clinical measurements. The salivary duct surfaces do not model fluid motion, and the static tongue cannot show speech movements.</p>
+</div>
+<aside class="panel" aria-label="Oral anatomy structures and written notes">
+<h2>Explore all 15 structures</h2>
+<label for="oral-select">Choose source structure</label>
+<select id="oral-select"><option value="">Select an anatomical group</option></select>
+<fieldset><legend>Display categories</legend><div id="oral-filters"></div></fieldset>
+<div id="oral-note" aria-live="polite">
+<h3 id="oral-note-name">Select a structure</h3>
+<p id="oral-note-text">Choose any salivary gland, duct, tongue, mandible or hyoid source group.</p>
+<p id="oral-note-id"></p>
+</div>
+<p><strong>Study references:</strong> <a href="https://www.nidcr.nih.gov/health-info/saliva-salivary-gland-disorders" target="_blank" rel="noopener noreferrer">NIH NIDCR: Salivary glands</a> · <a href="https://www.ncbi.nlm.nih.gov/books/NBK538325/" target="_blank" rel="noopener noreferrer">NCBI: Salivary gland anatomy</a> · <a href="https://www.nidcd.nih.gov/health/dysphagia" target="_blank" rel="noopener noreferrer">NIDCD: Swallowing</a>.</p>
+<p><strong>Source model:</strong> <a href="https://github.com/organui/organui/blob/21439ee45a2efb8cd9d970e9b56405b294e3744d/apps/web/public/models/salivary-glands.ATTRIBUTION.md" target="_blank" rel="noopener noreferrer">OrganUI pinned source and modifications</a>.</p>
+<p><strong>Attribution and license:</strong> <a href="https://github.com/LluisV/Z-Anatomy" target="_blank" rel="noopener noreferrer">Z-Anatomy</a> — Gauthier Kervyn, Lluís Vinent Juanico and contributors; partly based on BodyParts3D / Anatomography © DBCLS; adapted by OrganUI. Mesh redistribution: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>. This is separate from the code's MIT license. Neither Z-Anatomy nor DBCLS endorses this project.</p>
+</aside></section>
+<section class="study" aria-labelledby="oral-lesson">
+<h2 id="oral-lesson">Connect the oral structures to speech and swallowing</h2>
+<ol>
+<li><strong>Articulation:</strong> The tongue and mandible help change oral shape and constrictions for many speech sounds. Tongue shape and positions during individual phonemes are not modeled.</li>
+<li><strong>Oral preparation:</strong> Saliva moistens food, supporting chewing and the oral stage of swallowing. Saliva travels through ducts that open into the mouth.</li>
+<li><strong>Upper neck:</strong> The hyoid helps anchor muscles involved in tongue, jaw, and laryngeal movement. Do not infer actual muscle trajectories from this simplified surface model.</li>
+</ol>
+<p>Study activity: Find both parotid glands and ducts, both submandibular glands and ducts, both sublingual glands, then identify the tongue, mandible and hyoid. Switch to <strong>Isolate selected</strong> to compare them.</p>
+<p><a href="./systems.html?system=articulation">Return to articulation</a> · <a href="./systems.html?system=swallowing">Return to swallowing</a></p>
+</section>
+</main><footer>H.E.R.B.I.E. SLP Atlas · Personal study only · 15 licensed Z-Anatomy mesh groups · no patient data · no anatomical movement or clinical diagnostics.</footer>
+<script type="module" src="./oral.js"></script>
+</body></html>
