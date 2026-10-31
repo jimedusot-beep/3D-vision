@@ -47,6 +47,7 @@ renderer?.domElement.addEventListener('webglcontextlost',event=>{
 renderer?.domElement.addEventListener('webglcontextrestored',()=>{
   graphicsLost=false;
   renderState();
+  scheduleFrame();
 });
 scene.add(new THREE.HemisphereLight(0xffffff,0x435266,2.4));
 const directional=new THREE.DirectionalLight(0xffffff,2.2);
@@ -390,7 +391,9 @@ function fit(){
   camera.aspect=w/h;camera.updateProjectionMatrix();
   renderer.setSize(w,h,false);
 }
-new ResizeObserver(fit).observe(stage);
+// ResizeObserver is absent in some recovered-phone browsers.
+if(typeof ResizeObserver==='function')new ResizeObserver(fit).observe(stage);
+else window.addEventListener('resize',fit);
 function drawLabels(){
   for(const [id,label] of labels) {
     const m=meshes.get(id);
@@ -402,13 +405,23 @@ function drawLabels(){
     label.style.top=((1-point.y)*.5*stage.clientHeight)+'px';
   }
 }
-function animate(){
-  if(!renderer)return;
+// A hidden tab must not continually consume GPU/CPU or burn phone battery.
+let frameScheduled=false;
+function scheduleFrame(){
+  if(!renderer||graphicsLost||document.hidden||frameScheduled)return;
+  frameScheduled=true;
   requestAnimationFrame(animate);
-  if(graphicsLost)return;
+}
+function animate(){
+  frameScheduled=false;
+  if(!renderer||graphicsLost||document.hidden)return;
   orbit?.update();
   root.updateMatrixWorld(true);
   drawLabels();
   renderer.render(scene,camera);
+  scheduleFrame();
 }
-fit();animate();
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){fit();scheduleFrame();}
+});
+fit();scheduleFrame();
