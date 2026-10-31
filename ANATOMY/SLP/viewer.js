@@ -302,8 +302,10 @@ function setExplosionAmount(value){
 }
 $('explode-amount').addEventListener('input',e=>setExplosionAmount(Number(e.target.value)));
 $('explode-assemble').addEventListener('click',()=>{
-  setExplosionAmount(0);
-  $('status').textContent='Sourced anatomical groups restored to original relative positions.';
+  // Assembled means the actual source 3D model, not the map or a 0% explode label.
+  setPresentation('three');
+  setExplosionAmount(65); // Preselect useful separation for the next explosion.
+  $('status').textContent='3D source meshes restored to original relative positions.';
 });
 const expectedReference=['thyroid-cartilage','cricoid-cartilage','arytenoid-cartilages',
   'vocal-ligaments','posterior-crico-arytenoid','lateral-crico-arytenoid','epiglottis','trachea'];
@@ -894,7 +896,9 @@ function setPresentation(mode){
   $('notice').textContent=mode==='map'
     ?'Concepts grouped by function, NOT anatomical position. No measurements or clinical use.'
     :explodedMode
-      ?'EXPLODED STUDY LAYOUT: parts moved for visibility, NOT in anatomical positions. Source shapes unchanged. CC BY-SA 2.1 JP; not clinically reviewed.'
+      ?referenceState!=='ready'
+        ?'Loading the licensed 3D source meshes before separating them. The 3D parts will appear automatically; no schematic text substitute is being used.'
+        :'EXPLODED 3D SOURCE MESHES: parts moved for visibility, NOT in anatomical positions. Original shapes unchanged. CC BY-SA 2.1 JP; not clinically reviewed.'
       :referenceState==='ready'
         ?'BodyParts3D 4.3 surfaces, CC BY-SA 2.1 JP. Not clinically reviewed. Vocal ligaments are not complete folds.'
         :'Loading source anatomy. Not for clinical use.';
