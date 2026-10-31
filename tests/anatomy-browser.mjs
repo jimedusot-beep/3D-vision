@@ -42,6 +42,10 @@ try {
   assert.equal(await page.locator('button[data-concept-id="left-arytenoid"]').getAttribute('aria-pressed'),'false');
   if(await page.locator('#mode-three').isEnabled()){
     await page.locator('#mode-three').click();
+    await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('Licensed 3D source geometry loaded')||
+      document.getElementById('status')?.textContent?.includes('BodyParts3D 4.3 anatomy surfaces loaded'),null,{timeout:30000});
+    assert.match(await page.locator('#notice').textContent(),/BodyParts3D 4.3/);
+    assert.equal(await page.locator('#model-structure').isHidden(),true);
     assert.equal(await page.locator('#mode-three').getAttribute('aria-pressed'),'true');
     assert.equal(await page.locator('#concept-map').isHidden(),true);
     assert.equal(await page.locator('#stage canvas').isVisible(),true);
@@ -274,6 +278,9 @@ try {
   // rendered canvas must occupy exactly ONE stage, not a clipped 2x stage.
   if(await touch.locator('#mode-three').isEnabled()){
     await touch.locator('#mode-three').click();
+    await touch.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('BodyParts3D 4.3 anatomy surfaces loaded')||
+      document.getElementById('status')?.textContent?.includes('Licensed 3D source geometry loaded'),null,{timeout:35000});
+    assert.match(await touch.locator('#notice').textContent(),/BodyParts3D 4.3/);
     await touch.waitForFunction(()=>[...document.querySelectorAll('.part-label')].every(el=>el.hidden),null,{timeout:5000});
     const geometry=await touch.evaluate(()=>{
       const stage=document.querySelector('#stage');
