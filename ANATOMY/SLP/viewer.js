@@ -3,6 +3,8 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {modelIdForLesson,lessonForModelId,modelStructureNames,modelSelectionNote} from './reference-mapping.js';
 import {explosionOffset,assertExplosionCoverage} from './exploded-study.js';
+import {sourceStudy,sourceCategories,getSourceStudy} from './source-study.js';
+import {guidedLarynxTour} from './guided-tour.js';
 import catalog from './structures.json';
 import {parseCommand, resolveEmbedOrigin, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
@@ -12,6 +14,83 @@ const $=id=>document.getElementById(id);
 const ids=new Set(catalog.structures.map(s=>s.id));
 const byId=new Map(catalog.structures.map(s=>[s.id,s]));
 const references=new Map(catalog.references.map(s=>[s.id,s]));
+const shownCategories=new Set(Object.keys(sourceCategories));
+function selectSourcePart(id){
+  if(!getSourceStudy(id))return;
+  view.selected=null;view.isolated=null;
+  updateReferenceSelection(id);
+  renderState();
+}
+function renderSourceNote(){
+  const id=referenceSelected||modelIdForLesson(view.selected);
+  const note=id?getSourceStudy(id):null;
+  $('source-note').hidden=!note;
+  if(!note)return;
+  $('source-note-name').textContent=modelStructureNames[id];
+  $('source-note-pronunciation').textContent='Say it (approximate): '+note.pronunciation;
+  $('source-note-function').textContent=note.function;
+  $('source-note-limitation').textContent='Model limitation: '+note.limitation;
+  $('source-note-links').replaceChildren();
+  for(const reference of note.sources){
+    const link=document.createElement('a');
+    link.href=reference.url;
+    link.rel='noopener noreferrer';
+    link.target='_blank';
+    link.textContent=reference.label;
+    $('source-note-links').append(link);
+  }
+  $('source-select').value=id;
+}
+for(const item of sourceStudy){
+  const option=document.createElement('option');
+  option.value=item.id;
+  option.textContent=modelStructureNames[item.id];
+  $('source-select').append(option);
+}
+$('source-select').addEventListener('change',e=>selectSourcePart(e.target.value));
+for(const [category,title] of Object.entries(sourceCategories)){
+  const label=document.createElement('label'),box=document.createElement('input');
+  box.type='checkbox';box.checked=true;box.value=category;box.dataset.layer=category;
+  label.append(box,document.createTextNode(title));
+  $('layer-options').append(label);
+  box.addEventListener('change',()=>{
+    if(box.checked)shownCategories.add(category);
+    else shownCategories.delete(category);
+    applyReferenceState();updateLayerCount();
+  });
+}
+function updateLayerCount(){
+  const count=sourceStudy.filter(s=>shownCategories.has(s.category)).length;
+  $('layer-count').textContent=count+' of 20 source groups enabled (some are paired).';
+}
+$('source-show-all').addEventListener('click',()=>{
+  for(const box of $('layer-options').querySelectorAll('input')){
+    box.checked=true;shownCategories.add(box.value);
+  }
+  applyReferenceState();updateLayerCount();
+});
+updateLayerCount();
+let tourStep=0;
+function showTourStep(){
+  const t=guidedLarynxTour[tourStep];
+  $('tour-progress').textContent='Step '+(tourStep+1)+' of '+guidedLarynxTour.length;
+  $('tour-heading').textContent=t.title;
+  $('tour-explanation').textContent=t.summary;
+  $('tour-question').textContent='Check yourself: '+t.question;
+  $('tour-answer').textContent=t.answer;
+  $('tour-answer').hidden=true;
+  $('tour-previous').disabled=tourStep===0;
+  $('tour-next').disabled=tourStep===guidedLarynxTour.length-1;
+}
+$('tour-previous').addEventListener('click',()=>{tourStep=Math.max(0,tourStep-1);showTourStep();});
+$('tour-next').addEventListener('click',()=>{tourStep=Math.min(guidedLarynxTour.length-1,tourStep+1);showTourStep();});
+$('tour-reveal').addEventListener('click',()=>{$('tour-answer').hidden=false;});
+$('tour-view').addEventListener('click',()=>{
+  setPresentation('three');
+  selectSourcePart(guidedLarynxTour[tourStep].id);
+  if(window.matchMedia('(max-width:760px)').matches)stage.scrollIntoView({block:'start',behavior:'auto'});
+});
+showTourStep();
 const meshes=new Map();
 const stage=$('stage'), overlay=$('overlay');
 let stageMode='map'; // An explanatory concept map is the honest default.
@@ -141,7 +220,7 @@ function applyReferenceState(){
   const isolated=modelIdForLesson(view.isolated);
   for(const mesh of referenceMeshes){
     const id=mesh.userData.structureId||mesh.name;
-    mesh.visible=!view.isolated||id===isolated;
+    mesh.visible=shownCategories.has(getSourceStudy(id)?.category)&&(!view.isolated||id===isolated);
     const faded=(selected&&id!==selected)||(view.transparent&&id!==selected);
     const material=mesh.material;
     const materials=Array.isArray(material)?material:[material];
@@ -164,10 +243,16 @@ function frameRealModel(direction='front'){
   const d=Math.min(60,distance);
   const viewVector=direction==='current'&&orbit
     ?camera.position.clone().sub(orbit.target).normalize()
+    :direction==='left'?new THREE.Vector3(1,0,0)
+    :direction==='right'?new THREE.Vector3(-1,0,0)
+    :direction==='top'?new THREE.Vector3(0,1,0)
     :new THREE.Vector3(0,0,direction==='back'?-1:1);
   if(viewVector.lengthSq()<.1)viewVector.set(0,0,1);
+  camera.up.set(0,0,direction==='top'?-1:0);
+  if(direction!=='top')camera.up.set(0,1,0);
   orbit?.target.copy(center);
   camera.position.copy(center).addScaledVector(viewVector,d);
+  camera.lookAt(center);
   camera.lookAt(center);
   if(orbit){
     orbit.minDistance=Math.max(.65,size.length()*.3);
@@ -227,7 +312,7 @@ async function ensureReferenceModel(){
     root.visible=false;
     overlay.hidden=true;
     referenceState='ready';
-    updateReferenceSelection(null);
+    // Preserve a study-tour selection made while the geometry was loading.
     applyReferenceState();
     frameRealModel('front');
     if(stageMode==='three'&&!explodedMode)$('notice').textContent='BodyParts3D 4.3 meshes (CC BY-SA 2.1 JP), NOT clinically reviewed. Vocal ligaments are NOT complete folds. See credits under Notes.';
@@ -466,14 +551,17 @@ function renderState() {
   $('labels').checked=view.labels;
   const info=byId.get(view.selected);
   const related=info?questionsForStructure(catalog.review_prompts,info.id):[];
-  $('selection-ribbon').hidden=!info;
-  $('selection-name').textContent=info?'Selected: '+info.label:'';
+  const selectedSource=referenceSelected||modelIdForLesson(view.selected);
+  $('selection-ribbon').hidden=!info&&!selectedSource;
+  $('selection-name').textContent=info?'Selected: '+info.label
+    :selectedSource?'Selected: '+modelStructureNames[selectedSource]:'';
   $('practice-from-detail').disabled=related.length===0;
   $('study-selected').disabled=related.length===0;
   $('study-selected').title=info
     ?related.length+' question(s) about '+info.label
     :'Select a structure to enable focused practice';
   applyReferenceState();
+  renderSourceNote();
   const detail=$('detail');
   detail.replaceChildren();
   if(info) {
@@ -693,6 +781,7 @@ function setPresentation(mode){
   $('mode-three').disabled=!renderer;
   $('mode-explode').disabled=!renderer;
   $('three-view-controls').hidden=stageMode!=='three';
+  $('source-tools').hidden=stageMode!=='three';
   $('explode-controls').hidden=!explodedMode;
   stage.dataset.explosionAmount=String(explodedMode?explosionAmount:0);
   applyExplosion();
@@ -723,5 +812,8 @@ $('mode-three').addEventListener('click',()=>setPresentation('three'));
 $('mode-explode').addEventListener('click',()=>setPresentation('explode'));
 $('camera-front').addEventListener('click',()=>presetCamera('front'));
 $('camera-back').addEventListener('click',()=>presetCamera('back'));
+$('camera-left').addEventListener('click',()=>presetCamera('left'));
+$('camera-right').addEventListener('click',()=>presetCamera('right'));
+$('camera-top').addEventListener('click',()=>presetCamera('top'));
 fit();
 setPresentation('map');
