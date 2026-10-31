@@ -63,6 +63,9 @@ try{
   assert.match(await page.locator('#module-status').textContent(),/Partial source-derived 3D/i);
   assert.equal(await page.locator('#module-open-3d').isVisible(),true);
   assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./pharynx.html');
+  await page.locator('button[data-module-id="neural"]').click();
+  assert.match(await page.locator('#module-status').textContent(),/Partial source-derived 3D/i);
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./neural.html');
   await page.locator('button[data-module-id="hearing"]').click();
   assert.match(await page.locator('#module-status').textContent(),/Partial source-derived 3D/i);
   assert.equal(await page.locator('#module-open-3d').isVisible(),true);
