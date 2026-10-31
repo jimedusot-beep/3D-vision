@@ -31,3 +31,15 @@ export function practiceSummary(session) {
     remaining:session.queue.length
   };
 }
+
+/**
+ * Text prompts refer to labeled structures, not measured 3D positions.
+ * Action/function questions may apply to both anatomical sides. We select
+ * the same concept from either side, without inventing a separate question.
+ */
+export function questionsForStructure(prompts, structureId) {
+  if(!Array.isArray(prompts)||typeof structureId!=='string'||!structureId)
+    throw new TypeError('A structure ID and question bank are required');
+  const concept=id=>id.replace(/^(left|right)-/,'');
+  return prompts.filter(p=>concept(p.structure_id)===concept(structureId));
+}
