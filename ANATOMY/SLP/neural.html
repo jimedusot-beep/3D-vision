@@ -27,23 +27,23 @@ main{max-width:1250px;margin:auto;padding:1rem}
 .controls button[aria-pressed="true"]{background:#166c58;border-color:#a6eed4}
 .panel{border:1px solid #4a7886;border-radius:12px;padding:.9rem;background:#1b3542;min-width:0}
 .panel h2{font-size:1.1rem;margin:.1rem 0 .5rem}
-#ear-select{width:100%;margin:.4rem 0}
-#ear-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
-#ear-filters label{display:flex;gap:.4rem;align-items:center;padding:.5rem;background:#214553;border-radius:7px;font-size:.84rem}
-#ear-filters input{width:20px;height:20px;accent-color:#85dcbf}
-#ear-note{border-radius:8px;padding:.75rem;background:#274957;margin:.9rem 0;min-height:140px}
-#ear-note h3{font-size:1rem;margin:0}
-#ear-note p{margin:.45rem 0}
-#ear-note-id{font-size:.84rem;color:#cee2e6}
+#neural-select{width:100%;margin:.4rem 0}
+#neural-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+#neural-filters label{display:flex;gap:.4rem;align-items:center;padding:.5rem;background:#214553;border-radius:7px;font-size:.84rem}
+#neural-filters input{width:20px;height:20px;accent-color:#85dcbf}
+#neural-note{border-radius:8px;padding:.75rem;background:#274957;margin:.9rem 0;min-height:140px}
+#neural-note h3{font-size:1rem;margin:0}
+#neural-note p{margin:.45rem 0}
+#neural-note-id{font-size:.84rem;color:#cee2e6}
 .study{margin:1rem 0;border:1px solid #5d8595;background:#173440;border-radius:12px;padding:.9rem}
 .study h2{font-size:1.1rem;margin:0 0 .4rem}
 .study p{margin:.5rem 0}
 .study li{margin:.4rem 0}
 footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 [hidden]{display:none!important}
-@media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#neural-stage{height:clamp(340px,52dvh,540px)}#ear-filters{grid-template-columns:1fr}}
+@media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#neural-stage{height:clamp(340px,52dvh,540px)}#neural-filters{grid-template-columns:1fr}}
 
-#ear-load-note{font-size:.88rem;color:#c4dce0}
+
 
 #neural-lesson{margin:1rem 0;padding:1rem;background:#193a46;border:1px solid #678c95;border-radius:12px}
 #neural-lesson h2{font-size:1.1rem;margin:.2rem 0}
@@ -59,6 +59,9 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 #neural-filters input{width:20px;height:20px}
 #neural-lesson-note{border-left:4px solid #8bd3c3;padding:.6rem;background:#234956}
 #neural-lesson-progress{font-weight:700}
+
+#neural-search,#neural-side{display:block;width:100%;box-sizing:border-box;margin:.4rem 0 .8rem;background:#264957;color:#fff;border:1px solid #93b7be;border-radius:7px;padding:.65rem;font:inherit}
+#neural-search-count,#neural-visible-count{font-size:.86rem;color:#c5e7e9;margin:.45rem 0}
 </style></head><body>
 <header><h1>H.E.R.B.I.E. · Cranial Nerves and Brainstem</h1>
 <p>Real 3D source anatomy for part of the neural control of speech, hearing and swallowing.</p>
@@ -88,16 +91,27 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <div class="controls" role="group" aria-label="Anatomy model controls">
 <button id="neural-focus" type="button" disabled>Focus structure</button>
 <button id="neural-isolate" type="button" disabled aria-pressed="false">Isolate structure</button>
-<button id="neural-all" type="button">Show selected categories</button>
+<button id="neural-all" type="button">Show all / clear filters</button>
 <button id="neural-reset" type="button">Reset 3D camera</button>
 </div>
 <p class="warning"><strong>Static educational geometry only.</strong> No patient-specific nerves, injury simulation, electrical activity, clinical testing or clinical localization. The underlying brain model contains additional cortical/subcortical geometry which is <strong>hidden by default</strong>, not displayed as a complete brain reconstruction. No unverified overlay with the separate ear, larynx, oral or pharynx models.</p>
 </div>
 <aside class="panel" aria-label="Neural anatomy labels and notes">
 <h2>74 named 3D source records</h2>
+<label for="neural-search">Find by nerve name, structure or source ID</label>
+<input id="neural-search" type="search" placeholder="Try vagus, VII, pons…" autocomplete="off" aria-describedby="neural-search-count">
+<label for="neural-side">Filter by anatomical side</label>
+<select id="neural-side">
+<option value="both">Both sides and midline</option>
+<option value="left">Left only</option>
+<option value="right">Right only</option>
+<option value="median">Midline only</option>
+</select>
+<p id="neural-search-count" role="status" aria-live="polite">74 of 74 structures available.</p>
 <label for="neural-select">Choose anatomical group</label>
 <select id="neural-select"><option value="">Select a structure</option></select>
 <fieldset><legend>Show anatomy categories</legend><div id="neural-filters"></div></fieldset>
+<p id="neural-visible-count" role="status" aria-live="polite">74 source records match the 3D display filters.</p>
 <div id="neural-note" aria-live="polite">
 <h3 id="neural-note-name">Select a structure</h3>
 <p id="neural-note-text">Source-based anatomy for 44 cranial-nerve/branch and 30 brainstem/nucleus records.</p>
