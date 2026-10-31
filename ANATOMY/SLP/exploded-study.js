@@ -32,6 +32,8 @@ export function explosionOffset(id,amount,scale){
   if(!Number.isFinite(amount)||amount<0||amount>100)
     throw new RangeError('Explosion amount must be from 0 to 100');
   if(!Number.isFinite(scale)||scale<=0)throw new RangeError('Invalid model scale');
+  // Also normalize signed zero so assembled groups recover precisely [0,0,0].
+  if(amount===0)return [0,0,0];
   const factor=amount/100*scale;
   return explosionVectors[id].map(n=>n*factor);
 }
