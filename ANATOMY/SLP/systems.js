@@ -42,7 +42,7 @@ function chooseModule(id,scroll=false){
   $('module-open-3d').hidden=!['3d','study'].includes(module.stage);
   if(module.stage==='3d'||module.stage==='study'){
     const destination=module.id==='respiration'?'./lungs.html':
-      module.id==='phonation'?'./index.html':module.id==='resonance'?'./pharynx.html':module.id==='hearing'?'./ear.html':module.id==='neural'?'./neural.html':'./oral.html';
+      module.id==='phonation'?'./index.html?view=three':module.id==='resonance'?'./pharynx.html':module.id==='hearing'?'./ear.html':module.id==='neural'?'./neural.html':'./oral.html';
     $('model-target-link').href=destination;
     $('model-target-link').textContent=module.id==='respiration'
       ?'Open 3D lung tissue segments, bronchial trees and trachea':
