@@ -36,6 +36,13 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height
 .map-parts button:hover,.map-parts button:focus-visible{outline:2px solid #8cddd4;outline-offset:2px}
 .map-parts button[aria-pressed="true"]{background:#17615b;border-color:#b3f1df}
 #stage.mode-map #notice{border:1px solid #4d7b84}
+#selection-ribbon{position:absolute;left:clamp(.6rem,2vw,1.1rem);right:clamp(.6rem,2vw,1.1rem);bottom:3.6rem;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.65rem .75rem;border:1px solid #85c5c6;background:#112f3fe8;border-radius:12px;box-shadow:0 6px 20px #0005}
+#selection-ribbon[hidden]{display:none}
+#selection-name{font-size:.9rem;font-weight:700}
+#open-details{background:#17665a;border-color:#9de8db;flex:0 1 auto}
+#mobile-tabs{display:none}
+#practice-from-detail{display:block;margin:.85rem 0 0;width:100%;background:#17665a;border-color:#9de8db;text-align:center}
+#stage.mode-map #concept-map{padding-bottom:9rem}
 
 #overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .part-label{position:absolute;transform:translate(-50%,-50%);background:#152633e6;border:1px solid #698da2;border-radius:6px;padding:2px 5px;font-size:.7rem;white-space:nowrap}
@@ -52,7 +59,31 @@ button[aria-pressed="true"]{background:#17615b;border-color:#88e1d0}button:disab
 label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 #detail{min-height:6rem;padding:.65rem;background:#203541;border-radius:8px}#detail p{margin:.5rem 0}.evidence-note{font-size:.84rem;color:#e1d9bf}.evidence-links{font-size:.85rem}.evidence-links a{display:block;margin-top:.35rem;overflow-wrap:anywhere}
 #status{color:#c5dfe6;font-size:.84rem}small{color:#b7cad5}#webgl-fallback{position:relative;z-index:1;max-width:34rem;margin:1.5rem;padding:1rem;border:1px solid #a6bdd0;border-radius:8px;background:#243745;color:#fff}.study-panel{margin-top:1rem;padding:.8rem;border:1px solid #405568;border-radius:8px;background:#1b3040}.study-panel h2{margin-top:0}.practice-rating{border:1px solid #64839a;border-radius:7px;margin-top:.65rem;padding:.5rem}.practice-rating legend{padding:0 .35rem;font-size:.88rem}.study-panel ol{margin:.5rem 0;padding-left:1.4rem}.study-panel li{margin:.6rem 0}.study-panel li p{margin:.2rem 0;font-size:.9rem}.study-panel li a{display:inline-block;margin-right:.5rem;font-size:.85rem}.study-panel p{margin:.5rem 0}.study-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.55rem 0}.study-actions button{flex:1 1 130px}.study-sources a{display:block;overflow-wrap:anywhere;margin:.3rem 0}.coverage-note{margin-top:1rem}
-@media(max-width:760px){main{height:auto;display:flex;flex-direction:column}#stage{height:62dvh;min-height:380px}aside{border-left:0;border-top:1px solid #405568}header p{width:100%}}@media(max-width:600px){.map-grid{grid-template-columns:1fr}.map-group{padding:.75rem}#concept-map{padding-top:4rem}#three-view-controls{top:3.9rem}}
+@media(max-width:760px){
+ main{height:auto;display:flex;flex-direction:column;min-height:0}
+ #stage.mode-map{height:auto;min-height:0;overflow:visible;display:flex;flex-direction:column}
+ #stage.mode-map #view-switch{position:relative;top:auto;left:auto;align-self:flex-start;margin:.8rem .8rem 0}
+ #stage.mode-map #concept-map{position:relative;inset:auto;overflow:visible;padding:1.1rem .8rem 1rem;width:100%}
+ #stage.mode-map #selection-ribbon{position:relative;inset:auto;margin:0 .8rem .6rem;box-shadow:none}
+ #stage.mode-map #notice{position:relative;inset:auto;margin:.3rem .8rem .8rem}
+ #stage.mode-three{height:53dvh;min-height:320px;overflow:hidden}
+ #stage.mode-three #view-switch{top:.6rem;left:.6rem}
+ #stage.mode-three #three-view-controls{top:3.8rem;right:.6rem}
+ #stage.mode-three #selection-ribbon{left:.5rem;right:.5rem;bottom:3.8rem}
+ #stage.mode-three #selection-ribbon button{padding:.4rem .55rem}
+ aside{overflow:visible;border-left:0;border-top:1px solid #405568;padding:.8rem;min-height:15rem}
+ #mobile-tabs{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem;margin:-.8rem -.8rem 1rem;padding:.55rem .65rem;background:#14212df5;box-shadow:0 3px 12px #0005}
+ #mobile-tabs button{min-width:0;min-height:46px;padding:.65rem .3rem;text-align:center;font-weight:700}
+ #mobile-tabs button[aria-pressed="true"]{background:#17665a;border-color:#b3f1df}
+ .mobile-panel[data-mobile-active="false"]{display:none}
+ #panel-structures,#panel-details,#panel-practice{min-width:0}
+ #concept-map .map-heading{margin-bottom:1rem}
+ #stage.mode-map #concept-map{padding-bottom:.3rem}
+ #detail{min-height:0}
+ #practice-from-detail{min-height:48px}
+ header p{width:100%}
+}
+@media(max-width:600px){.map-grid{grid-template-columns:1fr}.map-group{padding:.75rem}#three-view-controls{top:3.9rem}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 </head><body>
@@ -72,13 +103,23 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 </div>
 <div id="concept-groups" class="map-grid"></div>
 </section>
+<div id="selection-ribbon" hidden>
+<span id="selection-name" role="status" aria-live="polite"></span>
+<button id="open-details" type="button">Read structure notes</button>
+</div>
 <div id="three-view-controls" role="group" aria-label="3D camera presets" hidden>
 <button id="camera-front" type="button">Front</button><button id="camera-back" type="button">Back</button>
 </div>
 <div id="overlay" aria-hidden="true"></div>
 <div id="notice">Learning map only: groups represent functions, not physical position. No anatomy measurements or clinical claims.</div>
 </section>
-<aside aria-label="Anatomy structure controls">
+<aside id="study-sidebar" aria-label="Anatomy study and controls">
+<nav id="mobile-tabs" aria-label="Anatomy learning sections">
+<button type="button" data-mobile-target="panel-structures" aria-controls="panel-structures" aria-pressed="true">1 · Parts</button>
+<button type="button" data-mobile-target="panel-details" aria-controls="panel-details" aria-pressed="false">2 · Notes</button>
+<button type="button" data-mobile-target="panel-practice" aria-controls="panel-practice" aria-pressed="false">3 · Practice</button>
+</nav>
+<section id="panel-structures" class="mobile-panel" data-mobile-active="true" aria-label="Find and inspect anatomy structures">
 <h2>Laryngeal structures</h2><p id="orientation-note">Anatomical left and right describe the subject, not you. In the front view, the subject's left is on your right; rotating the model changes screen positions. All locations are approximate.</p><label for="structure-search">Search laryngeal structures</label>
 <input id="structure-search" type="search" aria-controls="structures" autocomplete="off" spellcheck="false" placeholder="Try cartilage, vocal fold, left…">
 <p id="structure-count" role="status" aria-live="polite">10 structures available.</p>
@@ -89,7 +130,12 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <label><input id="transparent" type="checkbox"> Make other structures transparent</label>
 <label><input id="labels" type="checkbox" checked> Show structure labels</label>
 <button type="button" disabled title="Requires validated geometry and expert anatomical review">Phonation animation unavailable</button>
+</section>
+<section id="panel-details" class="mobile-panel" data-mobile-active="false" aria-label="Selected structure and evidence">
 <h2>Selected structure — anatomy note &amp; references</h2><div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
+<button id="practice-from-detail" type="button" disabled>Practice questions about this structure</button>
+</section>
+<section id="panel-practice" class="mobile-panel" data-mobile-active="false" aria-label="Learning objectives and recall practice">
 <section class="study-panel" aria-labelledby="objectives-title">
 <h2 id="objectives-title">Undergraduate learning objectives — draft</h2>
 <p>Work through the four outcomes below. Each outcome is supported by short readings and text-based questions, but the material has not been faculty-reviewed or accredited.</p>
@@ -110,6 +156,7 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <div class="study-actions"><button type="button" id="study-again" disabled>Review again later</button><button type="button" id="study-recognized" disabled>I recalled it</button></div>
 </fieldset>
 <p id="study-progress" role="status" aria-live="polite">Practice checks: 0. No scores, accounts or answer history saved.</p>
+</section>
 </section>
 <details class="coverage-note"><summary>What this simplified scene does NOT show</summary><p id="coverage-intro"></p><ul id="coverage-list"></ul><p id="coverage-warning"></p></details>
 <p id="status" role="status" aria-live="polite">Loading model…</p>
