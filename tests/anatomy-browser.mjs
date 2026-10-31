@@ -31,6 +31,18 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  assert.match(await page.locator('#coverage-list').textContent(),/Epiglottis/);
+  assert.equal(await page.locator('#study-reveal').isDisabled(),true);
+  await page.locator('#study-next').click();
+  assert.match(await page.locator('#study-question').textContent(),/largest cartilage/);
+  assert.equal(await page.locator('#study-answer').isHidden(),true);
+  await page.locator('#study-reveal').click();
+  assert.match(await page.locator('#study-answer').textContent(),/Thyroid cartilage/);
+  assert.equal(await page.locator('#study-sources a').count(),2);
+  await page.locator('#study-next').click();
+  assert.match(await page.locator('#study-question').textContent(),/complete ring/);
+  assert.equal(await page.locator('#study-answer').isHidden(),true);
+  assert.equal(await page.locator('#study-sources').isHidden(),true);
   await page.locator('button[data-id="left-vocal-fold"]').click();
   assert.match(await page.locator('#detail').textContent(),/Left vocal fold/);
   assert.match(await page.locator('#detail').textContent(),/NOT the approximate 3D shape/);
@@ -110,6 +122,9 @@ try {
   await touch.locator('button[data-id="right-vocal-fold"]').click();
   assert.match(await touch.locator('#detail').textContent(),/Right vocal fold/);
   assert.equal(await touch.locator('#detail .evidence-links a').count(),2);
+  await touch.locator('#study-next').click();
+  await touch.locator('#study-reveal').click();
+  assert.match(await touch.locator('#study-answer').textContent(),/Thyroid cartilage/);
   assert.equal(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);
   await mkdir('test-results',{recursive:true});
