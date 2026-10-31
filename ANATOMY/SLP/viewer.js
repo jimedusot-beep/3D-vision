@@ -304,7 +304,7 @@ $('explode-amount').addEventListener('input',e=>setExplosionAmount(Number(e.targ
 $('explode-assemble').addEventListener('click',()=>{
   // Assembled means the actual source 3D model, not the map or a 0% explode label.
   setPresentation('three');
-  setExplosionAmount(65); // Preselect useful separation for the next explosion.
+  setExplosionAmount(0); // Controls now truthfully show assembled geometry at 0%.
   $('status').textContent='3D source meshes restored to original relative positions.';
 });
 const expectedReference=['thyroid-cartilage','cricoid-cartilage','arytenoid-cartilages',
@@ -873,6 +873,8 @@ function setPresentation(mode){
   if(!['map','three','explode'].includes(mode))return;
   if(mode!=='map'&&(!renderer||graphicsLost))return;
   explodedMode=mode==='explode';
+  // Re-entering explode after Reassemble starts with a visible, useful offset.
+  if(explodedMode&&explosionAmount===0)setExplosionAmount(65);
   stageMode=mode==='map'?'map':'three';
   stage.classList.toggle('mode-map',stageMode==='map');
   stage.classList.toggle('mode-three',stageMode==='three');
