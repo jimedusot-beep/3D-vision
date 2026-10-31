@@ -47,7 +47,9 @@ export function initSystems3D({stage,modules,onSelect}){
  const status=stage.querySelector('#systems-3d-status');
  const fallback=reason=>{
   stage.dataset.available='false';
-  status.textContent='3D map unavailable ('+reason+'). The ten native subject buttons below remain fully usable.';
+  stage.removeAttribute('tabindex');
+  stage.querySelector('canvas')?.style.setProperty('display','none');
+  status.textContent='3D map unavailable ('+reason+'). The ten native subject buttons below remain fully usable. Reload the page to retry 3D.';
  };
  let renderer,scene,camera,controls,resizeObserver;
  try{
@@ -66,7 +68,7 @@ export function initSystems3D({stage,modules,onSelect}){
  scene.add(new THREE.AmbientLight(0xffffff,2));
  const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(4,7,5);scene.add(light);
  const points=new Map(),targets=[];
- const selectedColor=0x86ebc2,hasModel=0x47ceae,outline=0x6f8ea2;
+ const hasModel=0x47ceae,outline=0x6f8ea2;
  for(const [a,b] of connections){
   const v1=new THREE.Vector3(...pos[a]),v2=new THREE.Vector3(...pos[b]);
   const geom=new THREE.BufferGeometry().setFromPoints([v1,v2]);
@@ -95,12 +97,18 @@ export function initSystems3D({stage,modules,onSelect}){
  }
  resizeObserver=typeof ResizeObserver==='function'?new ResizeObserver(resize):null;
  if(resizeObserver)resizeObserver.observe(stage);else window.addEventListener('resize',resize);
- renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();fallback('graphics context lost');renderer=null;});
+ renderer.domElement.addEventListener('webglcontextlost',e=>{
+  e.preventDefault();renderer=null;fallback('graphics context lost');
+ });
  let down=null;
- renderer.domElement.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];});
- renderer.domElement.addEventListener('pointerup',e=>{
-  if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>7)return;
-  const rect=renderer.domElement.getBoundingClientRect();
+ const canvas=renderer.domElement;
+ canvas.addEventListener('pointerdown',e=>{if(renderer)down=[e.clientX,e.clientY];});
+ canvas.addEventListener('pointercancel',()=>{down=null;});
+ canvas.addEventListener('pointerup',e=>{
+  const origin=down;down=null;
+  if(!renderer||!origin||Math.hypot(e.clientX-origin[0],e.clientY-origin[1])>7)return;
+  const rect=canvas.getBoundingClientRect();
+  if(!rect.width||!rect.height)return;
   const xy=new THREE.Vector2((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);
   const ray=new THREE.Raycaster();ray.setFromCamera(xy,camera);
   const hit=ray.intersectObjects(targets,false)[0];
@@ -111,12 +119,17 @@ export function initSystems3D({stage,modules,onSelect}){
    mesh.material.emissive.setHex(key===id?0x17806b:0x000000);
    mesh.scale.setScalar(key===id?1.4:1);
   }
-  status.textContent=modules.find(m=>m.id===id)?.name+
-   ': '+(modules.find(m=>m.id===id)?.stage==='3d'?'real source-derived 3D module available':'study roadmap / no anatomical mesh yet')+
-   '. Select a topic below for details.';
-  draw();
+  if(renderer){
+   const current=modules.find(m=>m.id===id);
+   status.textContent=(current?.name||'Selected topic')+
+    ': '+(current?.stage==='3d'?'source-derived anatomical 3D module available':'study roadmap / no anatomical mesh yet')+
+    '. Select a topic below for details.';
+   draw();
+  }
  }
  stage.addEventListener('keydown',e=>{
+  if(!renderer)return;
+  if(e.target!==stage)return;
   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
    e.preventDefault();const v=camera.position.clone().sub(controls.target);
    v.applyAxisAngle(new THREE.Vector3(0,1,0),e.key==='ArrowLeft'?-.14:.14);
@@ -125,5 +138,5 @@ export function initSystems3D({stage,modules,onSelect}){
  });
  stage.dataset.available='true';
  resize();
- return {select,dispose(){resizeObserver?.disconnect();controls.dispose();renderer?.dispose();}};
+ return {select,dispose(){resizeObserver?.disconnect();controls.dispose();renderer?.dispose();renderer=null;}};
 }
