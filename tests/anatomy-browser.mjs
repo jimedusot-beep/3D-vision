@@ -115,7 +115,7 @@ try {
   await page.locator('#study-reset').click();
   assert.match(await page.locator('#study-scope').textContent(),/all 12 source-linked questions/);
   assert.equal(await page.locator('#study-reveal').isDisabled(),true);
-  assert.match(await page.locator('#detail').textContent(),/NOT the approximate 3D shape/);
+  assert.match(await page.locator('#detail').textContent(),/not 3D clinical validation/);
   const evidence=page.locator('#detail .evidence-links a');
   assert.equal(await evidence.count(),2);
   assert.ok((await evidence.first().getAttribute('href')).startsWith('https://'));
