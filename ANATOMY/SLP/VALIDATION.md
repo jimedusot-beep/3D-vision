@@ -1,5 +1,16 @@
 # SLP larynx atlas — evidence and validation plan
 
+
+## Study Experience V2 — scoped evidence and known limitations (2026-10-31)
+
+- **20/20 source group identification:** `source-study.js` provides one original, short learning summary, approximate English pronunciation cue, category, limitation, and direct NCBI or ASHA reference link per actual source model ID. The labels are validated against the model's 20-name manifest, but the **summaries still require qualified anatomy/SLP review**. Pronunciation cues are editorial approximations, not IPA or recorded clinical pronunciations.
+- **Visibility filters:** cartilage/bone, ligaments/membranes, intrinsic muscles, airway and adjacent thyroid gland form **five** complete mutually exclusive labels. Filtering changes only rendering; it does not claim absent tissue. The thyroid gland is adjacent endocrine tissue rather than a laryngeal voice muscle.
+- **Larynx study cameras:** front, back, subject-left, subject-right and superior directions; these are viewing orientations, not verification of specific anatomical measurements.
+- **Guided learning:** six short optional, self-paced steps cite the same 20 source groups and use revealable, unscored questions. There are still 12 separate original recall exercises. No saved history or inferred mastery.
+- **Phonation concepts:** four authored 2D **static schematics** explain open glottis, approximate closure, airflow-driven vibratory concepts, and qualitative pitch/tension. These are not frame-by-frame vocal-fold motion, audiological measurements, glottal reconstruction, disease models or medically accurate oscillation. In particular, the GLB contains **vocal ligament geometry, not layered vocal-fold mucosa**.
+- **Scientific sources for V2 source study:** [NCBI Anatomy of the Larynx](https://www.ncbi.nlm.nih.gov/books/NBK538202/); [NCBI Laryngeal Muscles](https://www.ncbi.nlm.nih.gov/books/NBK545265/); [NCBI Thyrohyoid Membrane](https://www.ncbi.nlm.nih.gov/books/NBK532995/); [NCBI Thyroid Anatomy](https://www.ncbi.nlm.nih.gov/books/NBK470452/); [ASHA Vocal Tract Visualization](https://www.asha.org/practice-portal/clinical-topics/voice-disorders/vocal-tract-visualization-and-imaging/).
+- **Release gates:** no PR merge or replacement of the existing public robotics site without the current-head Node/build/workshop/Chromium/WebKit jobs passing; physical iPhone Safari + VoiceOver and faculty content review remain outstanding. The manually updated Render preview is isolated from production.
+
 ## Digital exploded anatomy for personal study — 2026-10-31
 
 **Intended use:** A phone-first, interactive **study tool**, not a school display, print-ready model, physical assembly, surgery simulator, or representation of actual displacement in the body.
@@ -15,7 +26,7 @@
 **Protection:** Existing robot/CAD workshop remains unmodified. Draft anatomy PR and separate opt-in Render preview remain distinct from deployed `main`.
 
 
-**Status:** engineering prototype. The ten displayed meshes are original, intentionally schematic Three.js primitives. There has been **no anatomical landmark, dimensional, spatial, or expert validation** of the meshes. Do not print, diagnose from, or assess clinical competency using these shapes.
+**Current status:** experimental digital study prototype. The **20 BodyParts3D 4.3 source-derived mesh groups** are shown in the optional 3D view; the original ten rough schematic primitives are legacy implementation details, hidden when source-derived anatomy is used. There has been **no independent landmark, dimensional, anatomical, or clinical expert validation** of the rendered meshes or lesson content. Do not print, diagnose from, or assess clinical competency using these models.
 
 ## What has actually been checked
 
