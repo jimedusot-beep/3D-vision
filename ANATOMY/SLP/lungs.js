@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {lungGroups,lungGroupById,lungRegions,verifyLungGroups} from './lungs-manifest.js';
+import {initLungTour} from './lung-tour.js';
 
 const $=id=>document.getElementById(id),stage=$('lung-stage');
 const regionColors={
@@ -14,7 +15,7 @@ const offsets={
  'left-lower':[.8,-.65,.1],'airway':[0,.24,-1.15]
 };
 const enabled=new Set(Object.keys(lungRegions)),regions=new Map(),meshNodes=[];
-let selected=null,isolate=false,amount=0,model=null,box=null,renderer=null,controls=null,camera=null,scene=null,first=0,resize=null;
+let selected=null,isolate=false,amount=0,model=null,box=null,renderer=null,controls=null,camera=null,scene=null,first=0,resize=null,lungTour=null;
 function message(text){$('model-status').textContent=text;}
 function select(id){
  if(id!==null&&!lungGroupById.has(id))return;
@@ -180,7 +181,27 @@ async function load(){
   scene.add(model);
   stage.dataset.modelStatus='ready';
   message('Licensed BodyParts3D 4.3 lung segments and airway surfaces loaded. Rotate or select a group; this is not a breathing simulation.');
-  show();view('front');size();
+  show();view('front');size();lungTour?.refresh();
  }catch(e){model=null;fallback(String(e?.message||'asset or decoder problem'));}
 }
+// Camera framing uses only the source mesh bounds; it never changes or invents anatomy.
+function focusTourStructure(id){
+ if(!model||!camera||!controls)return;
+ const selectedMesh=meshNodes.find(mesh=>mesh.name===id);
+ if(!selectedMesh)return;
+ setAmount(0);
+ const bounds=new THREE.Box3().setFromObject(selectedMesh);
+ const center=bounds.getCenter(new THREE.Vector3());
+ const length=Math.max(...bounds.getSize(new THREE.Vector3()).toArray());
+ const distance=Math.max(1.7,length/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov)/2))*1.35);
+ camera.up.set(0,1,0);
+ camera.position.copy(center).add(new THREE.Vector3(0,0,Math.min(35,distance)));
+ controls.target.copy(center);
+ camera.lookAt(center);controls.update();draw();
+}
+lungTour=initLungTour({
+ selectStructure:select,
+ focusStructure:focusTourStructure,
+ resetScene:()=>{setAmount(0);$('lung-all').click();view('front');}
+});
 void load();
