@@ -541,7 +541,9 @@ function reset(){
   updateReferenceSelection(null);view.selected=null;view.isolated=null;
   view.transparent=false;view.labels=true;
   if(explodedMode)setPresentation('three');
-  setExplosionAmount(0);
+  // Reset restores the assembled model and defaults the NEXT study explosion
+  // to a useful separation (the active 3D view remains exactly un-exploded).
+  setExplosionAmount(65);
   root.rotation.set(0,0,0);
   if(referenceRoot)frameRealModel('front');
   else{camera.position.set(0,1.2,5.8);if(orbit){orbit.target.set(0,0,0);orbit.update();}}
