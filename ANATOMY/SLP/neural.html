@@ -116,7 +116,7 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 </div>
 <p id="neural-explode-status" class="explode-status" role="status" aria-live="polite">3D separation is available after the licensed source model loads.</p>
 
-<p class="warning"><strong>Static educational geometry only.</strong> No patient-specific nerves, injury simulation, electrical activity, clinical testing or clinical localization. The underlying brain model contains additional cortical/subcortical geometry which is <strong>hidden by default</strong>, not displayed as a complete brain reconstruction. No unverified overlay with the separate ear, larynx, oral or pharynx models.</p>
+<p class="warning"><strong>Static educational geometry only.</strong> No patient-specific nerves, injury simulation, electrical activity, clinical testing or clinical localization. The upstream brain model contains additional cortical/subcortical geometry. This faster, source-preserving study file <strong>omits those unrelated meshes entirely</strong>; the original SHA-pinned GLB is retained separately for verification. This is not a complete brain reconstruction. No unverified overlay with the separate ear, larynx, oral or pharynx models.</p>
 </div>
 <aside class="panel" aria-label="Neural anatomy labels and notes">
 <h2>74 named 3D source records</h2>
@@ -140,6 +140,7 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <p id="neural-note-id"></p>
 </div>
 <p><strong>Reference:</strong> <a href="https://www.ncbi.nlm.nih.gov/books/NBK470353/" target="_blank" rel="noopener noreferrer">NCBI — Cranial nerves</a> · <a href="https://www.asha.org/practice-portal/clinical-topics/adult-dysphagia/" target="_blank" rel="noopener noreferrer">ASHA — Dysphagia</a>.</p>
+<p><strong>Transfer and source integrity:</strong> The interactive neural viewer now fetches a 74-group subset derived from the original 437-mesh source. It preserves the original compressed surface data and coordinate transforms while reducing download size; see the <a href="../../models/slp/neural-study-provenance.json">build provenance and SHA-256 hashes</a>. No geometry was simplified or anatomically re-registered. This does not establish actual phone GPU memory savings or medical accuracy.</p>
 <p><strong>3D source:</strong> <a href="https://github.com/itayinbarr/brainproject" target="_blank" rel="noopener noreferrer">Brain Project</a> by itayinbarr; 437-node manifest and the selected nerve/brainstem meshes are Z-Anatomy / BodyParts3D-derived. Model assets: <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>. Its original viewer code is Apache-2.0 and has not been copied as a substitute application.</p>
 <p>The underlying Brain Project also contains atlas-registered derived nuclei with approximate geometry. This interface selects <strong>only 74 records marked as Z-Anatomy / BodyParts3D</strong>, not its registered nuclei. Retained transformations and source uncertainty are explained in <a href="https://github.com/itayinbarr/brainproject/blob/2929e94f521a8ddceab26bc100a98dc06b0da060/docs/registration.md" target="_blank" rel="noopener noreferrer">the original methodology</a>.</p>
 </aside>

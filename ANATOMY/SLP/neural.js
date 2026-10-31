@@ -205,10 +205,25 @@ async function loadNeural(){
   if(!manifestResponse.ok)throw Error('Pinned source manifest HTTP '+manifestResponse.status);
   const manifest=await manifestResponse.json();
   if(!verifyNeuralManifest(manifest.nodes))throw Error('Source manifest categories or IDs do not match the 74 frozen neural groups');
-  const modelResponse=await fetch(new URL('../../models/slp/neural.glb',location.href),{signal:AbortSignal.timeout(90000)});
-  if(!modelResponse.ok)throw Error('Pinned neural model HTTP '+modelResponse.status);
+  // The immutable 4.44 MiB pinned source remains published for independent
+  // verification; this source-preserving derivative retains only the 74
+  // required Draco primitives, their original transforms and node IDs.
+  const studyResponse=await fetch(new URL('../../models/slp/neural-study-provenance.json',location.href),
+   {signal:AbortSignal.timeout(30000)});
+  if(!studyResponse.ok)throw Error('Focused neural provenance HTTP '+studyResponse.status);
+  const study=await studyResponse.json();
+  if(study.kind!=='source-preserving-neural-study-subset'||study.studyMeshDefinitions!==74||
+   study.sourceSHA256!=='76a49ea4526a4880613aec7a02756bd7301b0b9d0680d7cae33e197b672c5453')
+   throw Error('Focused neural source provenance mismatch');
+  const modelResponse=await fetch(new URL('../../models/slp/neural-study.glb',location.href),
+   {signal:AbortSignal.timeout(90000)});
+  if(!modelResponse.ok)throw Error('Focused neural GLB HTTP '+modelResponse.status);
   const data=await modelResponse.arrayBuffer();
-  if(data.byteLength!==4650816)throw Error('Unexpected neural model binary size');
+  if(data.byteLength!==study.modelBytes||new DataView(data).getUint32(0,true)!==0x46546c67)
+   throw Error('Unexpected focused neural GLB size or header');
+  const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',data)),
+   byte=>byte.toString(16).padStart(2,'0')).join('');
+  if(digest!==study.modelSHA256)throw Error('Focused neural binary SHA-256 verification failed');
   draco=new DRACOLoader();
   draco.setDecoderPath(new URL('../../models/slp/draco/',location.href).href);
   draco.setDecoderConfig({type:'wasm'});
@@ -240,7 +255,7 @@ async function loadNeural(){
    // Source GLB contains 363 unrelated records: frame only visible SLP meshes.
    frame:()=>frame(available())
   });
-  stage.dataset.modelStatus='ready';retry3D.hide();status('74 source-derived nerve/brainstem groups available. Other Brain Project geometry hidden; incomplete nerve coverage is disclosed.');
+  stage.dataset.modelStatus='ready';retry3D.hide();status('74 source-derived nerve/brainstem groups loaded from the smaller, source-preserving study GLB. Other Brain Project geometry is not included; incomplete nerve coverage is disclosed.');
   refreshVisibility();resize();frame(available());
   draco.dispose();
  }catch(e){model=null;fallback(String(e?.message||'invalid source geometry'));}

@@ -4,6 +4,7 @@ import {readFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
 import {neuralParts,neuralLessons,teachingStepId,verifyNeuralManifest} from '../ANATOMY/SLP/neural-manifest.js';
 import {validNeuralAsset} from '../scripts/prepare-slp-neural.mjs';
+import {createNeuralStudySubset} from '../scripts/create-neural-study-subset.mjs';
 import {neuralPracticeQuestions,practiceChoices} from '../ANATOMY/SLP/neural-practice.js';
 
 const engine=process.env.BROWSER_ENGINE==='webkit'?webkit:chromium;
@@ -16,6 +17,23 @@ try{
  assert.equal(validNeuralAsset(binary,'model'),true,'Deployed 3D source must match Git-pinned model');
  assert.equal(validNeuralAsset(manifestData,'manifest'),true,'Deployed JSON source must match Git-pinned manifest');
  assert.equal(verifyNeuralManifest(JSON.parse(manifestData.toString('utf8')).nodes),true);
+ const focused=await readFile('dist/models/slp/neural-study.glb');
+ const provenance=JSON.parse(await readFile('dist/models/slp/neural-study-provenance.json','utf8'));
+ const deterministic=createNeuralStudySubset(binary);
+ assert.equal(focused.equals(deterministic.studyGLB),true,
+  'Shipped neural study must be an exact byte-for-byte deterministic derivative');
+ assert.deepEqual(provenance,deterministic.provenance);
+ assert.equal(provenance.studyNodeCount,74);
+ assert.equal(provenance.copiedDracoViews,74);
+ assert.ok(focused.length<binary.length*.55,
+  'Focused neural payload must remove a meaningful amount of transfer data');
+ const focusedJSON=JSON.parse(focused.toString('utf8',20,20+focused.readUInt32LE(12)));
+ assert.equal(focusedJSON.nodes.length,74);
+ assert.equal(focusedJSON.meshes.length,74);
+ assert.equal(focusedJSON.bufferViews.length,74);
+ assert.deepEqual(new Set(focusedJSON.nodes.map(n=>Number(n.extras?.bx_id))),
+  new Set(neuralParts.map(p=>Number(p.id))));
+
  for(const decoder of ['draco_decoder.js','draco_decoder.wasm','draco_wasm_wrapper.js'])
   assert.ok((await readFile('dist/models/slp/draco/'+decoder)).length>1000,'Missing local '+decoder);
  // GLB JSON extras are source IDs on the original nodes. Exclude unrelated cortex/tracts.
