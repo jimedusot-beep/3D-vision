@@ -6,6 +6,7 @@ const root=new URL('../',import.meta.url);
 const catalog=JSON.parse(readFileSync(new URL('ANATOMY/SLP/structures.json',root),'utf8'));
 const html=readFileSync(new URL('ANATOMY/SLP/index.html',root),'utf8');
 const viewer=readFileSync(new URL('ANATOMY/SLP/viewer.js',root),'utf8');
+const discover=readFileSync(new URL('scripts/discover.mjs',root),'utf8');
 const vite=readFileSync(new URL('vite.config.js',root),'utf8');
 const ids=new Set(catalog.structures.map(x=>x.id));
 const message=(action,more={})=>({source:'herbie',version:1,action,...more});
@@ -60,6 +61,10 @@ test('dedicated Vite entry and mechanical workshop preserved',()=>{
  assert.match(vite,/tripwires:'optical-tripwires\.html'/);
  assert.match(html,/Back to mechanical workshop/);
  assert.match(html,/Phonation animation unavailable/);
+});
+test('educational anatomy files cannot be auto-listed as mechanical parts or print assets',()=>{
+ assert.match(discover,/\['node_modules'[^\n]*'ANATOMY'\]/);
+ assert.doesNotMatch(vite,/anatomy.*input.*models/);
 });
 test('keyboard, touch and origin checks included',()=>{
  assert.match(viewer,/OrbitControls/);
