@@ -270,6 +270,40 @@ try {
   await touch.goto(origin+'/ANATOMY/SLP/index.html');
   await touch.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await touch.locator('#concept-map').isVisible(),true);
+  // Retina WebKit regression: the drawing buffer is 2x CSS pixels, but the
+  // rendered canvas must occupy exactly ONE stage, not a clipped 2x stage.
+  if(await touch.locator('#mode-three').isEnabled()){
+    await touch.locator('#mode-three').click();
+    const geometry=await touch.evaluate(()=>{
+      const stage=document.querySelector('#stage');
+      const canvas=stage.querySelector('canvas');
+      const s=stage.getBoundingClientRect(),r=canvas.getBoundingClientRect();
+      const visibleLabels=[...stage.querySelectorAll('.part-label')].filter(el=>!el.hidden).length;
+      return {stage:{x:s.x,y:s.y,w:s.width,h:s.height},
+        canvas:{x:r.x,y:r.y,w:r.width,h:r.height},
+        buffer:{w:canvas.width,h:canvas.height},
+        css:{w:getComputedStyle(canvas).width,h:getComputedStyle(canvas).height},
+        labels:visibleLabels,dpr:devicePixelRatio};
+    });
+    assert.ok(geometry.dpr>=2,'Regression requires a Retina high-density viewport');
+    assert.ok(Math.abs(geometry.canvas.w-geometry.stage.w)<1,
+      'Canvas CSS width must equal stage width, never the high-density buffer: '+JSON.stringify(geometry));
+    assert.ok(Math.abs(geometry.canvas.h-geometry.stage.h)<1,
+      'Canvas CSS height must equal stage height: '+JSON.stringify(geometry));
+    assert.ok(Math.abs(geometry.canvas.x-geometry.stage.x)<1,
+      'Canvas left edge must align with stage: '+JSON.stringify(geometry));
+    assert.ok(Math.abs(geometry.canvas.y-geometry.stage.y)<1,
+      'Canvas top edge must align with stage: '+JSON.stringify(geometry));
+    assert.ok(geometry.buffer.w>=geometry.canvas.w*1.5,
+      'HiDPI buffer should use device pixels without changing CSS size');
+    assert.equal(geometry.labels,0,'Overview labels must not overlap the phone canvas');
+    await touch.locator('#camera-back').click();
+    await touch.locator('#camera-front').click();
+    await touch.locator('#mode-map').click();
+    assert.equal(await touch.locator('#concept-map').isVisible(),true);
+  }else{
+    assert.equal(await touch.locator('#webgl-fallback').isVisible(),true);
+  }
   assert.equal(await touch.locator('#mobile-tabs').isVisible(),true);
   assert.equal(await touch.locator('#panel-structures').isVisible(),true);
   assert.equal(await touch.locator('#panel-details').isHidden(),true);
