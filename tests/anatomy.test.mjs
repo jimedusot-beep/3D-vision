@@ -189,6 +189,30 @@ test('3D redraw pauses in hidden tabs and provides resize fallback',()=>{
  assert.match(viewer,/typeof ResizeObserver==='function'/);
  assert.match(viewer,/window\.addEventListener\('resize',fit\)/);
 });
+test('concept map defaults to evidence-aware functional groups instead of misleading geometry',()=>{
+  assert.ok(html.includes('class="mode-map"'));
+  assert.ok(html.includes('id="mode-map" aria-pressed="true"'));
+  assert.ok(html.includes('id="mode-three" aria-pressed="false"'));
+  assert.ok(html.includes('id="concept-groups"'));
+  assert.ok(html.includes('functional map, not a spatial anatomy diagram'));
+  assert.ok(viewer.includes("let stageMode='map'"));
+  assert.ok(viewer.includes("function setPresentation(mode)"));
+  assert.ok(viewer.includes("if(stageMode!=='three'||!renderer"));
+  assert.ok(viewer.includes("new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold'])"));
+  const groups=[
+    ['thyroid-cartilage','cricoid-cartilage','left-arytenoid','right-arytenoid'],
+    ['left-vocal-fold','right-vocal-fold'],
+    ['left-posterior-cricoarytenoid','right-posterior-cricoarytenoid'],
+    ['left-lateral-cricoarytenoid','right-lateral-cricoarytenoid']
+  ];
+  const expected=new Set(catalog.structures.map(s=>s.id));
+  const covered=groups.flat();
+  assert.equal(covered.length,10);
+  assert.equal(new Set(covered).size,10);
+  for(const id of covered)assert.ok(expected.has(id));
+  for(const id of covered)assert.ok(viewer.includes("'"+id+"'"));
+  assert.ok(!viewer.includes("function animate(){\n  frameScheduled=false;\n  if(!renderer"));
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
