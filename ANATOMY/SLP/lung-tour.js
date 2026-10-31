@@ -48,7 +48,11 @@ export function initLungTour({selectStructure,focusStructure,resetScene}){
    ?'Tour complete. Continue into the separate 3D larynx lab to study where phonation occurs.'
    :'Tour closed. All lung and airway surfaces restored.';
  }
- start.addEventListener('click',()=>{index=0;present();});
+ start.addEventListener('click',()=>{
+  // Tour and quiz share the model selection. Only one can own the scene at once.
+  if(stage.dataset.practice!=='off')$('lung-practice-exit').click();
+  index=0;present();
+ });
  previous.addEventListener('click',()=>{if(index>0){index--;present();}});
  next.addEventListener('click',()=>{
   if(index<0)return;
