@@ -92,6 +92,43 @@ for(const s of catalog.structures) {
   overlay.append(label);
   labels.set(s.id,label);
 }
+// Referenced text-only study exercise: this does not evaluate anatomical geometry.
+const review={index:-1};
+const question=$('study-question'),answer=$('study-answer'),sources=$('study-sources');
+const nextReview=$('study-next'),revealReview=$('study-reveal');
+$('coverage-intro').textContent=catalog.coverage.included_meshes;
+$('coverage-warning').textContent=catalog.coverage.statement;
+for(const item of catalog.coverage.omitted_structures) {
+  const li=document.createElement('li');
+  li.textContent=item;
+  $('coverage-list').append(li);
+}
+nextReview.onclick=()=>{
+  review.index=(review.index+1)%catalog.review_prompts.length;
+  const prompt=catalog.review_prompts[review.index];
+  question.textContent='Question '+(review.index+1)+' of '+catalog.review_prompts.length+': '+prompt.question;
+  answer.hidden=true; answer.textContent='';
+  sources.hidden=true; sources.replaceChildren();
+  revealReview.disabled=false;
+};
+revealReview.onclick=()=>{
+  if(review.index<0)return;
+  const prompt=catalog.review_prompts[review.index];
+  answer.textContent=prompt.answer;
+  answer.hidden=false;
+  sources.replaceChildren();
+  const caption=document.createElement('strong');
+  caption.textContent='Read the supporting references:';
+  sources.append(caption);
+  for(const id of prompt.source_ids) {
+    const ref=references.get(id);
+    if(!ref)continue;
+    const link=document.createElement('a');
+    link.href=ref.url; link.textContent=ref.label; link.target='_blank'; link.rel='noopener noreferrer';
+    sources.append(link);
+  }
+  sources.hidden=false;
+};
 function renderState() {
   for(const [id,m] of meshes) {
     m.visible=!view.isolated || view.isolated===id;
