@@ -25,7 +25,7 @@ function renderSourceNote(){
   const id=referenceSelected||modelIdForLesson(view.selected);
   const note=id?getSourceStudy(id):null;
   $('source-note').hidden=!note;
-  if(!note)return;
+  if(!note){$('source-select').value='';return;}
   $('source-note-name').textContent=modelStructureNames[id];
   $('source-note-pronunciation').textContent='Say it (approximate): '+note.pronunciation;
   $('source-note-function').textContent=note.function;
@@ -591,14 +591,14 @@ function renderState() {
     const provenance=document.createElement('details');
     provenance.className='candidate-provenance';
     const summary=document.createElement('summary');
-    summary.textContent='Possible open-data model (NOT imported or validated)';
+    summary.textContent='Separate BodyParts3D 4.0 index crosswalk (unvalidated)';
     provenance.append(summary);
     const note=document.createElement('p');
     const candidate=info.candidate_model;
     if(candidate.status==='indexed_not_imported_unvalidated') {
       note.textContent='BodyParts3D official index lists "'+candidate.source_label+
         '" ('+candidate.concept_id+', '+candidate.representation_id+
-        '). This is an index match only: NO source mesh is loaded or scientifically reviewed.';
+        '). This is an independent 4.0 index match, not the licensed 4.3 GLB currently loaded in the 3D viewer. It has NOT been separately imported or scientifically reviewed.';
     } else {
       note.textContent='No exact complete true vocal-fold mesh has been matched in this candidate index. A vocal ligament is NOT equivalent to an entire true vocal fold.';
     }
@@ -611,13 +611,13 @@ function renderState() {
     provenance.append(indexLink);
     detail.append(provenance);
   } else {
-    detail.textContent='Select a structure to learn its name and function. All model shapes are conceptual placeholders.';
+    detail.textContent=selectedSource?'Source-derived structure details and references appear above.':'Select an anatomy structure to read its sourced function and limitations.';
   }
   $('status').textContent=!renderer
     ?'3D view unavailable; text-based anatomy study is ready.'
     :stageMode==='three'&&referenceState==='loading'?'Loading licensed BodyParts3D larynx surface geometry…'
     :stageMode==='three'&&referenceState==='error'?'Licensed model unavailable: '+referenceError+'. Use the study map and notes.'
-    :stageMode==='three'&&referenceState==='ready'?(info?'Selected '+info.label+'. Bilateral source geometry may represent both sides.':'BodyParts3D 4.3 anatomy surfaces loaded. Independent review pending.')
+    :stageMode==='three'&&referenceState==='ready'?(info?'Selected '+info.label+'. Bilateral source geometry may represent both sides.':selectedSource?'Selected '+modelStructureNames[selectedSource]+'. Source-derived surface; details under Notes.':'BodyParts3D 4.3 anatomy surfaces loaded. Independent review pending.')
     :graphicsLost?'3D graphics are temporarily unavailable; anatomy notes and recall still work.'
     :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.'
     :stageMode==='map'?'Structure-and-function study map ready. No spatial or clinical claims.':'Unvalidated 3D sketch ready.';
