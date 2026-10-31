@@ -322,7 +322,7 @@ export function validateSystems(){
   const ids=new Set(systemModules.map(s=>s.id));
   if(ids.size!==10||!ids.has('respiration')||!ids.has('phonation'))throw Error('Incomplete multi-system SLP curriculum');
   if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='respiration,phonation'|| 
-  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='resonance,articulation,hearing,swallowing')
+  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='resonance,articulation,neural,hearing,swallowing')
   throw Error('Full anatomy models and partial oral anatomy modules must be distinguished');
   if(respiratoryTerms.length!==10||respiratoryQuestions.length!==6)throw Error('Respiratory study coverage mismatch');
   const terms=new Set(respiratoryTerms.map(s=>s.id));
