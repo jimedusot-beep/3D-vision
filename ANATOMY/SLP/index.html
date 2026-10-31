@@ -95,6 +95,10 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <button type="button" id="mode-map" aria-pressed="true">Study map</button>
 <button type="button" id="mode-three" aria-pressed="false">3D sketch</button>
 </div>
+<div id="selection-ribbon" hidden>
+<span id="selection-name" role="status" aria-live="polite"></span>
+<button id="open-details" type="button">Read structure notes</button>
+</div>
 <section id="concept-map" aria-label="Interactive functional concept map">
 <div class="map-heading">
 <p class="map-kicker">LARYNX · INTRODUCTORY STUDY</p>
@@ -103,10 +107,6 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 </div>
 <div id="concept-groups" class="map-grid"></div>
 </section>
-<div id="selection-ribbon" hidden>
-<span id="selection-name" role="status" aria-live="polite"></span>
-<button id="open-details" type="button">Read structure notes</button>
-</div>
 <div id="three-view-controls" role="group" aria-label="3D camera presets" hidden>
 <button id="camera-front" type="button">Front</button><button id="camera-back" type="button">Back</button>
 </div>
