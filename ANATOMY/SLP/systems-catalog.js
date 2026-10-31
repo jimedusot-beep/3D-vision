@@ -1,12 +1,13 @@
 // Expandable SLP curriculum scaffold, not a claim of comprehensive coverage.
 // "outline" modules have NOT been supplied licensed 3D assets or validated lessons.
-// Respiration has a first-stage TEXT/SVG study module only. Larynx has 3D meshes.
+// Respiratory lungs/airways and larynx have separate source-derived 3D meshes.
+// Diaphragm, rib cage and all other eight topics still lack integrated 3D anatomy.
 export const systemModules=[
   {
     "id": "respiration",
     "name": "Respiratory system",
     "group": "Speech mechanism",
-    "stage": "study",
+    "stage": "3d",
     "overview": "Airflow and pressure supply the energy for speech and phonation. Compare quiet breathing with speech breathing.",
     "objectives": [
       "Trace the conducting airway from mouth or nose to the lungs.",
@@ -15,7 +16,7 @@ export const systemModules=[
       "Distinguish speech-breath grouping from resting ventilation."
     ],
     "next": [
-      "Sourced thorax, lungs and diaphragm meshes",
+      "Add licensed, independently reviewed diaphragm and rib cage meshes (lungs, trachea and bronchial trees are now available as source-derived 3D)",
       "Respiratory mechanics diagrams with expert review",
       "Respiration-phonation coordination practice"
     ],
@@ -320,7 +321,7 @@ export const respiratoryQuestions=[
 export function validateSystems(){
   const ids=new Set(systemModules.map(s=>s.id));
   if(ids.size!==10||!ids.has('respiration')||!ids.has('phonation'))throw Error('Incomplete multi-system SLP curriculum');
-  if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='phonation')throw Error('Do not claim other body systems have licensed 3D assets');
+  if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='respiration,phonation')throw Error('Only verified lung/airway and larynx groups have licensed 3D assets');
   if(respiratoryTerms.length!==10||respiratoryQuestions.length!==6)throw Error('Respiratory study coverage mismatch');
   const terms=new Set(respiratoryTerms.map(s=>s.id));
   if(terms.size!==10||respiratoryQuestions.some(q=>!terms.has(q.answer)||!q.choices.includes(q.answer)))throw Error('Respiratory clue mismatch');
