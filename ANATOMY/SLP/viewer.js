@@ -13,15 +13,27 @@ const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0e1a26);
 const camera=new THREE.PerspectiveCamera(45,1,.05,100);
 camera.position.set(4,3,7);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
-renderer.outputColorSpace=THREE.SRGBColorSpace;
-stage.prepend(renderer.domElement);
-const orbit=new OrbitControls(camera,renderer.domElement);
-orbit.enableDamping=true;
-orbit.minDistance=2.5;
-orbit.maxDistance=16;
-orbit.target.set(0,0,0);
+// Older devices and restricted browsers may lack WebGL; preserve the text-only study UI.
+let renderer=null,orbit=null;
+try {
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  stage.prepend(renderer.domElement);
+  orbit=new OrbitControls(camera,renderer.domElement);
+  orbit.enableDamping=true;
+  orbit.minDistance=2.5;
+  orbit.maxDistance=16;
+  orbit.target.set(0,0,0);
+} catch {
+  renderer?.dispose();
+  renderer=null;
+  const fallback=document.createElement('p');
+  fallback.id='webgl-fallback';
+  fallback.setAttribute('role','alert');
+  fallback.textContent='3D graphics are unavailable on this browser. Structure descriptions, references and study questions still work below.';
+  stage.prepend(fallback);
+}
 scene.add(new THREE.HemisphereLight(0xffffff,0x435266,2.4));
 const directional=new THREE.DirectionalLight(0xffffff,2.2);
 directional.position.set(2,5,5);
@@ -172,12 +184,14 @@ function renderState() {
   } else {
     detail.textContent='Select a structure to learn its name and function. All model shapes are conceptual placeholders.';
   }
-  $('status').textContent=info?'Selected '+info.label+'. Referenced text; unvalidated geometry.':'Illustrative larynx scene ready.';
+  $('status').textContent=!renderer
+    ?'3D view unavailable; text-based anatomy study is ready.'
+    :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.':'Illustrative larynx scene ready.';
 }
 function select(id){view.selected=id;view.isolated=null;renderState();}
 function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
 function setIsolated(id){view.selected=id;view.isolated=id;renderState();}
-function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(4,3,7);orbit.target.set(0,0,0);orbit.update();renderState();}
+function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(4,3,7);if(orbit){orbit.target.set(0,0,0);orbit.update();}renderState();}
 $('show-all').onclick=()=>{view.isolated=null;renderState();};
 $('reset').onclick=reset;
 $('transparent').onchange=e=>{view.transparent=e.target.checked;renderState();};
@@ -185,15 +199,15 @@ $('labels').onchange=e=>{view.labels=e.target.checked;renderState();};
 const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
 // An orbit drag must not also select an accidental structure when the pointer is released.
 let pointerStart=null,dragged=false;
-renderer.domElement.addEventListener('pointerdown',e=>{
+renderer?.domElement.addEventListener('pointerdown',e=>{
   pointerStart={x:e.clientX,y:e.clientY};
   dragged=false;
 });
-renderer.domElement.addEventListener('pointermove',e=>{
+renderer?.domElement.addEventListener('pointermove',e=>{
   if(pointerStart && Math.hypot(e.clientX-pointerStart.x,e.clientY-pointerStart.y)>6)dragged=true;
 });
-renderer.domElement.addEventListener('pointercancel',()=>{pointerStart=null;dragged=false;});
-renderer.domElement.addEventListener('click',e=>{
+renderer?.domElement.addEventListener('pointercancel',()=>{pointerStart=null;dragged=false;});
+renderer?.domElement.addEventListener('click',e=>{
   if(dragged){dragged=false;pointerStart=null;return;}
   pointerStart=null;
   const bounds=renderer.domElement.getBoundingClientRect();
@@ -202,11 +216,21 @@ renderer.domElement.addEventListener('click',e=>{
   const hit=raycaster.intersectObjects([...meshes.values()],false).find(x=>x.object.visible);
   if(hit) select(hit.object.userData.structureId);
 });
+function setCameraDistance(factor) {
+  // Match OrbitControls limits for keyboard zoom, preventing near-plane clipping.
+  const target=orbit?orbit.target:new THREE.Vector3();
+  const offset=camera.position.clone().sub(target);
+  const distance=THREE.MathUtils.clamp(offset.length()*factor,2.5,16);
+  if(offset.lengthSq()===0)return;
+  camera.position.copy(target).add(offset.normalize().multiplyScalar(distance));
+  camera.updateProjectionMatrix();
+  orbit?.update();
+}
 stage.addEventListener('keydown',e=>{
   const map={ArrowLeft:[0,-.12],ArrowRight:[0,.12],ArrowUp:[-.12,0],ArrowDown:[.12,0]};
   if(map[e.key]){e.preventDefault();root.rotation.x+=map[e.key][0];root.rotation.y+=map[e.key][1];}
-  else if(e.key==='+'||e.key==='='){e.preventDefault();camera.position.multiplyScalar(.9);}
-  else if(e.key==='-'){e.preventDefault();camera.position.multiplyScalar(1.1);}
+  else if(e.key==='+'||e.key==='='){e.preventDefault();setCameraDistance(.9);}
+  else if(e.key==='-'){e.preventDefault();setCameraDistance(1.1);}
   else if(e.key==='Escape'){e.preventDefault();reset();}
 });
 const query=new URLSearchParams(location.search);
@@ -234,6 +258,7 @@ function receive(event) {
 window.addEventListener('message',receive);
 if(window.parent!==window)window.parent.postMessage({source:'3d-vision-anatomy',version:VERSION,ready:true,scene:'slp-larynx-v1'},allowedOrigin);
 function fit(){
+  if(!renderer)return;
   const w=stage.clientWidth,h=stage.clientHeight;
   if(w<1||h<1)return;
   camera.aspect=w/h;camera.updateProjectionMatrix();
@@ -252,8 +277,9 @@ function drawLabels(){
   }
 }
 function animate(){
+  if(!renderer)return;
   requestAnimationFrame(animate);
-  orbit.update();
+  orbit?.update();
   root.updateMatrixWorld(true);
   drawLabels();
   renderer.render(scene,camera);
