@@ -3,6 +3,7 @@ import {initSystems3D} from './systems-network-3d.js';
 validateSystems();
 const $=id=>document.getElementById(id);
 const stages={'3d':'Source-derived 3D anatomy module available',
+  study:'Partial source-derived 3D study · Other anatomy missing',
   outline:'Curriculum outline · Models and lessons pending review'};
 const cards=new Map();
 let current='respiration',systemsNetwork=null;
@@ -38,12 +39,15 @@ function chooseModule(id,scroll=false){
   $('module-description').textContent=module.overview;
   addItems($('module-objectives'),module.objectives);
   addItems($('module-next'),module.next);
-  $('module-open-3d').hidden=module.stage!=='3d';
-  if(module.stage==='3d'){
-    $('model-target-link').href=module.id==='respiration'?'./lungs.html':'./index.html';
+  $('module-open-3d').hidden=!['3d','study'].includes(module.stage);
+  if(module.stage==='3d'||module.stage==='study'){
+    const destination=module.id==='respiration'?'./lungs.html':
+      module.id==='phonation'?'./index.html':'./oral.html';
+    $('model-target-link').href=destination;
     $('model-target-link').textContent=module.id==='respiration'
-      ?'Open 3D lung tissue segments, bronchial trees and trachea'
-      :'Open 3D larynx, muscles, cartilages and exploded study';
+      ?'Open 3D lung tissue segments, bronchial trees and trachea':
+      module.id==='phonation'?'Open 3D larynx, muscles, cartilages and exploded study':
+      'Open partial 3D oral study: tongue, jaw, hyoid, glands and ducts';
   }
   systemsNetwork?.select(id);
   $('respiratory-study').hidden=module.id!=='respiration';
