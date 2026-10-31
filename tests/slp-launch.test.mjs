@@ -16,10 +16,12 @@ test('one reachable anatomy launcher links all seven source-derived modules',()=
  const home=read('index.html');
  assert.equal((html.match(/class="anatomy-launch"/g)||[]).length,7);
  for(const lab of labs){
-  assert.ok(html.includes('class="anatomy-launch" href="./'+lab.page+'"'),'Missing '+lab.page);
+  assert.ok(html.includes('class="anatomy-launch" href="./'+lab.page+(lab.page==='index.html'?'?view=three':'')+'"'),'Missing '+lab.page);
   assert.ok(read('ANATOMY/SLP/'+lab.page).includes('type="module"'),'Not a standalone Vite page: '+lab.page);
  }
  assert.match(home,/href="\.\/ANATOMY\/SLP\/systems\.html"/);
+ assert.match(read('ANATOMY/SLP/systems.js'),/module.id==='phonation'\?'\.\/index.html\?view=three'/);
+ assert.match(read('ANATOMY/SLP/viewer.js'),/initialView/);
  assert.doesNotMatch(home,/SLP Anatomy Lab \(illustrative\)/);
  assert.match(html,/not one spatially registered human body/i);
 });
