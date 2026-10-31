@@ -47,6 +47,8 @@ try {
     assert.match(await page.locator('#notice').textContent(),/BodyParts3D 4.3/);
     assert.equal(await page.locator('#model-structure').isHidden(),true);
     assert.equal(await page.locator('#source-tools').isHidden(),false);
+    await page.locator('#source-tools summary').click();
+    assert.equal(await page.locator('#source-select').isVisible(),true);
     assert.equal(await page.locator('#source-select option').count(),21);
     assert.equal(await page.locator('#layer-options input').count(),5);
     await page.locator('#source-select').selectOption('posterior-crico-arytenoid');
