@@ -6,7 +6,7 @@
 
 | Area | Stage | Current implementation | Honest next development |
 | --- | --- | --- | --- |
-| Respiratory system | **Study starter** | 10 written concepts; original conceptual SVG; quiet inspiration / speech expiration comparison; 6 temporary questions | Licensed thorax, diaphragm and lung 3D; reviewed aerodynamic concepts |
+| Respiratory system | **Source-derived lung/airway 3D + study starter** | 20 verified source groups: 17 tissue segments, trachea, two bronchial trees. Separate viewer, lobe separation, 10 written concepts, SVG, inspiration/exhalation comparison, 6 recall questions | Licensed rib cage, intercostals, diaphragm, alveoli/microstructure and spatial/curriculum review |
 | Phonation / larynx | **Source-derived 3D** | 20 source-model groups; original study map; rigid exploded study; cited source notes; guided tour and 20-part quiz | Reviewed layered true-fold geometry, academic validation |
 | Resonance / velopharynx | Outline | learning objectives, ASHA pointer | Licensed palate/pharynx/nasal cavity surfaces |
 | Articulation / orofacial | Outline | learning objectives, ASHA pointer | Tongue, oral cavity, jaw and lip 3D; phonetics |
@@ -54,7 +54,7 @@ Course packet **topic coverage (not a verbatim transcription):**
 
 **M1 (implemented on draft)**: ten-area navigation; respiratory concept atlas + recall; larynx study preserved and directly linked both ways; tests and an opt-in preview.
 
-**M2**: add source-validated diaphragm/rib cage/lung/airway meshes; verify coordinate systems, object groups, source licenses, size and mobile performance. Only then label respiratory area **3D available**.
+**M2**: source-derived lung/airway model integrated; next add source-validated diaphragm/rib cage/intercostal meshes; verify coordinate systems, object groups, source licenses, size and mobile performance. Only label *lung/airway surfaces* as 3D available; do not label diaphragm or rib cage as imported.
 
 **M3**: add resonance and orofacial licensed models; integrate IPA sound production concepts with explanation of articulatory mechanisms. Do not simulate unvalidated tissue motion.
 
