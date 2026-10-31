@@ -124,5 +124,77 @@
       "label": "NCBI Bookshelf — Laryngeal Muscles",
       "url": "https://www.ncbi.nlm.nih.gov/books/NBK545265/"
     }
-  ]
+  ],
+  "review_prompts": [
+    {
+      "id": "largest-cartilage",
+      "structure_id": "thyroid-cartilage",
+      "question": "Which is the largest cartilage of the larynx?",
+      "answer": "Thyroid cartilage.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx"
+      ]
+    },
+    {
+      "id": "complete-ring",
+      "structure_id": "cricoid-cartilage",
+      "question": "Which laryngeal cartilage forms a complete ring around the airway?",
+      "answer": "Cricoid cartilage.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx"
+      ]
+    },
+    {
+      "id": "arytenoid-attachment",
+      "structure_id": "left-arytenoid",
+      "question": "Which paired cartilage provides the vocal process where a vocal ligament attaches posteriorly?",
+      "answer": "The arytenoid cartilages.",
+      "source_ids": [
+        "ncbi-larynx"
+      ]
+    },
+    {
+      "id": "voice-source",
+      "structure_id": "left-vocal-fold",
+      "question": "Which paired structures vibrate to help produce voiced sound?",
+      "answer": "The true vocal folds.",
+      "source_ids": [
+        "openstax-ap22-1"
+      ]
+    },
+    {
+      "id": "only-abductor",
+      "structure_id": "left-posterior-cricoarytenoid",
+      "question": "Which intrinsic laryngeal muscle is the sole abductor of the true vocal folds?",
+      "answer": "Posterior cricoarytenoid.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
+    },
+    {
+      "id": "adductor",
+      "structure_id": "left-lateral-cricoarytenoid",
+      "question": "Which cricoarytenoid muscle adducts the true vocal folds?",
+      "answer": "Lateral cricoarytenoid.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
+    }
+  ],
+  "coverage": {
+    "included_meshes": "Ten original schematic placeholders. Not anatomically validated.",
+    "omitted_structures": [
+      "Epiglottis",
+      "Vestibular (false vocal) folds",
+      "Cricothyroid muscles",
+      "Thyroarytenoid/vocalis muscles",
+      "Interarytenoid muscles",
+      "Hyoid bone",
+      "Recurrent and superior laryngeal nerves",
+      "Vocal ligament layers and detailed glottal geometry"
+    ],
+    "statement": "The scene is an intentionally incomplete larynx illustration; omitted structures are NOT absent from human anatomy."
+  }
 }
