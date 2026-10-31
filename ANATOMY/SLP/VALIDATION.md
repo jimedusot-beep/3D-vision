@@ -52,6 +52,18 @@ These references do not validate the author's simplified geometry. Source IDs in
 
 Reference context for anatomical sidedness: [DICOM human orientation](https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html) and [anatomical position explanation](https://med.libretexts.org/Bookshelves/Anatomy_and_Physiology/Human_Anatomy_Laboratory_Manual/01%3A_Overview_and_the_Microscope/1.02%3A_Anatomical_Position_and_Planes).
 
+## Visual safety audit — structure/function map (2026-10-31)
+
+**Observed usability problem:** the first-release canvas drew an assembly of arbitrary cylinders, cones and rods, using ten projected labels. That appearance was difficult to interpret and could incorrectly imply a realistic laryngeal reconstruction. Changing lighting or sculpting novel anatomy without validated source meshes would worsen scientific misrepresentation.
+
+**Remediation:** the default view is now a clearly titled, interactive **functional concept map**. Four groups use the existing ten entries and their already referenced descriptions: supporting cartilages, true vocal folds, posterior cricoarytenoids (abduction), and lateral cricoarytenoids (adduction). A conspicuous explanation says this map is **not spatial anatomy**. Selecting an item highlights the corresponding sidebar entry and opens its cited note. Existing H.E.R.B.I.E. selection messages continue to work.
+
+**3D retained by consent:** a distinct *3D sketch* toggle retains the earlier simplified model for exploring mouse/touch rotation. The sketch explicitly says it is not an anatomical reconstruction, clinical resource, or measuring tool. The original CAD workshop is separate and unmodified. Only four overview labels are shown until an item is selected; its single label remains legible. Camera front/back presets are navigational controls only, not anatomical validation.
+
+**Device and accessibility:** map buttons use native buttons and pressed state, and remain usable when WebGL initialization fails or an older browser cannot render 3D. The sketch animation loop is inactive in map mode. Browser automation checks map grouping, selection synchronization, optional 3D access, and fallback on desktop and emulated iPhone WebKit. Manual screen-reader and physical-device checks remain required.
+
+**Unresolved academic gate:** this is a structure-and-function concept **map**, not an anatomical atlas. A truly university-quality 3D larynx requires source-licensed meshes with provenance, spatial registration, landmark validation, educator review and acceptance testing. No outside assets, private lectures or diagnostic functions were imported.
+
 ## Findings and risk controls
 
 1. **High scientific risk:** the current meshes are placeholders with arbitrary units; users could mistake them for accurate representations. Keep a prominently visible caution, disabled phonation button, and note next to every referenced explanation.
