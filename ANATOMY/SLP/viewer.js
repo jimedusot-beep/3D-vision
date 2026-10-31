@@ -120,7 +120,7 @@ function applyReferenceState(){
     const materials=Array.isArray(material)?material:[material];
     for(const m of materials){
       m.transparent=!!faded;
-      m.opacity=faded?.18:1;
+      m.opacity=faded ? 0.18 : 1;
       m.depthWrite=!faded;
       if(m.emissive)m.emissive.setHex(id===selected?0x203c32:0x000000);
       m.needsUpdate=true;
