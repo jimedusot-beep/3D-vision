@@ -9,10 +9,10 @@
 | Respiratory system | **Source-derived lung/airway 3D + study starter** | 20 verified source groups: 17 tissue segments, trachea, two bronchial trees. Separate viewer, lobe separation, 10 written concepts, SVG, inspiration/exhalation comparison, 6 recall questions, 5-stop 3D tour, and 6- or 20-question region-identification practice with source-group reveal | Separate source-derived 3D diaphragm lab added (BodyParts3D 3.0, 13 nodes). Next: licensed ribs/intercostals/alveoli; cross-version coordinate registration unresolved; expert review |
 | Phonation / larynx | **Source-derived 3D** | 20 source-model groups; original study map; rigid exploded study; cited source notes; guided tour and 20-part quiz | Reviewed layered true-fold geometry, academic validation |
 | Resonance / velopharynx | Outline | learning objectives, ASHA pointer | Licensed palate/pharynx/nasal cavity surfaces |
-| Articulation / orofacial | Outline | learning objectives, ASHA pointer | Tongue, oral cavity, jaw and lip 3D; phonetics |
+| Articulation / orofacial | **Partial licensed oral 3D** | 15 Z-Anatomy nodes shared with swallowing: tongue, mandible, hyoid, salivary glands/ducts; learning objectives | Lips, teeth, soft palate, true tongue muscle layers and validated articulatory motion |
 | Neural control | Outline | learning objectives, ASHA pointer | Cranial nerves, brainstem, sensorimotor pathways |
 | Hearing / auditory | Outline | learning objectives, ASHA pointer | Outer/middle/inner ear, central hearing pathways |
-| Swallowing / feeding | Outline | learning objectives, ASHA pointer | Oral-pharyngeal-esophageal anatomy; airway protection |
+| Swallowing / feeding | **Partial licensed oral 3D** | Oral-phase tongue, jaw, hyoid and salivary anatomy; other lesson objectives remain outlines | Pharyngeal and esophageal surfaces, airway protection and clinically reviewed swallowing phases |
 | Phonetics / acoustics | Outline | learning objectives, ASHA pointer | Accessible sound physics and source-filter demonstrations |
 | Language / cognition / development | Outline | learning objectives, ASHA pointer | Study maps for non-anatomical concepts |
 | Disorders and clinical connections | Outline | learning objectives, ASHA pointer | Qualified review of clinical images and evidence |
@@ -39,6 +39,18 @@ A standalone **Diaphragm 3D Lab** is now part of this PR, not a composite full-b
 - **No overlay:** this BodyParts3D 3.0 asset has its own model-relative recentering/scale; the separate lung viewer uses BodyParts3D 4.3. There is *no verified common coordinate transform, landmark fit or anatomical registration*. Do not merge the two raw scenes or present them as aligned.
 - Evidence for introductory breathing notes: [NHLBI breathing muscles](https://www.nhlbi.nih.gov/health/lungs/body-controls-breathing) and [OpenStax A&P 2e §22.3](https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing). Neither validates every 3D geometry detail.
 - Safety and release: personal educational study only. No animated diaphragm contraction, diagnosis, clinical measurements, patient data or private course-slide replication. Physical iPhone/VoiceOver and qualified anatomy review remain outstanding.
+
+## Oral structure expansion — Z-Anatomy, CC BY-SA 4.0 (2026-10-31)
+
+**Current scope: licensed static 3D**, not full articulation/swallowing mechanics. The new [oral anatomy lab](./oral.html) shares the Atlas navigation but is an independent model with its own source, license, coordinate system, and unvalidated source geometry.
+
+- Source: [OrganUI oral/salivary model attribution](https://github.com/organui/organui/blob/21439ee45a2efb8cd9d970e9b56405b294e3744d/apps/web/public/models/salivary-glands.ATTRIBUTION.md) at immutable upstream commit `21439ee45a2efb8cd9d970e9b56405b294e3744d`. Asset `apps/web/public/models/salivary-glands.glb`: **754,496 bytes**, Git blob SHA-1 `b1e943c7fab677bff21f74e16d86830cc516f3df`. Source FBX from [Z-Anatomy](https://github.com/LluisV/Z-Anatomy) at pinned commit `6c7f9016bd5899ac8edafd31b9900c151df42ed6` with origin hashes in the upstream attribution.
+- **15 exact source-derived groups**: right/left parotid glands, accessory parotid glands, and parotid ducts (6); right/left submandibular glands and ducts (4); right/left sublingual glands (2); tongue, mandible, hyoid (3). The viewer supports named selection, source-object notes, focused/isolate camera, category filters, reset, and native text study when 3D is unavailable.
+- **Model data license: CC BY-SA 4.0** from Z-Anatomy (Gauthier Kervyn, Lluís Vinent Juanico and contributors), derived in part from BodyParts3D / Anatomography © DBCLS, adapted by OrganUI. OrganUI applied FBX transforms, welded vertices, recentred/scaled positions, recomputed normals, and colored source meshes. The model's CC license is distinct from the repository's MIT software license and other anatomy assets under CC BY-SA 2.1 Japan. Attribution and modification notice retained in-page and in [evidence notes](./about.html).
+- Partial **articulation** and **swallowing** modules link to this lab and explicitly remain incomplete: missing soft palate, lips, teeth, pharynx, interior tongue muscles, cranial nerves, and dynamic speech or bolus mechanics. The material cannot diagnose dysphagia or evaluate speech production.
+- Sources for *written* introductory functions: [NIH NIDCR salivary glands](https://www.nidcr.nih.gov/health-info/saliva-salivary-gland-disorders), [NCBI Bookshelf salivary anatomy](https://www.ncbi.nlm.nih.gov/books/NBK538325/) and [NIDCD dysphagia](https://www.nidcd.nih.gov/health/dysphagia). Written sources do **not** independently validate every 3D surface.
+- Tests verify immutable Git blob and GLB header on each build, exactly 15 documented source names, correct labeling and explicit limitations, mobile Chromium/WebKit geometry controls, fallback, iPhone-sized canvas and no patient data collection. Physical device and educator review remain separate gates.
+- **Next:** Find and audit a genuine pharynx/velopharynx model, or a more complete ear/hearing model, prior to adding static anatomy. Avoid merging unregistered anatomy datasets into a fake common body.
 
 ## Uploaded course-material analysis and provenance
 
