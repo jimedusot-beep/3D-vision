@@ -12,11 +12,11 @@ export const diaphragmModel=Object.freeze({
  path:'apps/web/public/models/diaphragm.glb',
  bytes:3649120,
  gitBlobSha1:'afbc6133a44f8f9408d8c49ceb7345c61f5f690f',
+ sha256:'2a6c8608efe4dd33b24ffa6c9cd678c0230629de4b6340ffaa72932b63d6e5ed',
  license:'CC-BY-SA-2.1-JP',
  sourceVersion:'BodyParts3D 3.0',
  expectedGroups:13,
- // Git's content-addressed blob SHA-1 and immutable upstream commit are checked.
- // Also print SHA-256 for separate provenance recording after CI downloads.
+ // Both SHA-256 and the content-addressed Git blob SHA-1 are pinned.
 });
 const sourceUrl='https://raw.githubusercontent.com/'+diaphragmModel.repo+'/'+diaphragmModel.commit+'/'+diaphragmModel.path;
 const destination=path.resolve('public/models/slp/diaphragm.glb');
@@ -30,7 +30,7 @@ export function validDiaphragmModel(data){
     data.readUInt32LE(8)!==diaphragmModel.bytes)return false;
  // Git's blob object identity is calculated over header + bytes, not bare bytes.
  const digest=createHash('sha1').update('blob '+data.length+'\0').update(data).digest('hex');
- return digest===diaphragmModel.gitBlobSha1;
+ return digest===diaphragmModel.gitBlobSha1 && hashDiaphragm(data)===diaphragmModel.sha256;
 }
 export async function prepareDiaphragmModel(){
  try{
@@ -44,7 +44,7 @@ export async function prepareDiaphragmModel(){
  const response=await fetch(sourceUrl,{signal:AbortSignal.timeout(60000)});
  if(!response.ok)throw Error('Pinned diaphragm source HTTP '+response.status);
  const data=Buffer.from(await response.arrayBuffer());
- if(!validDiaphragmModel(data))throw Error('Diaphragm GLB differs from pinned source byte count, v2 header, or git blob SHA-1.');
+ if(!validDiaphragmModel(data))throw Error('Diaphragm GLB differs from pinned source byte count, v2 header, Git blob SHA-1 or SHA-256.');
  await mkdir(path.dirname(destination),{recursive:true});
  const tmp=destination+'.tmp';
  try{await writeFile(tmp,data);await rename(tmp,destination);}
