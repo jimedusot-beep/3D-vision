@@ -37,10 +37,13 @@ test('anatomy views are supported, not fake full-body procedural anatomy',()=>{
  const html=readFileSync(new URL('../ANATOMY/SLP/lungs.html',import.meta.url),'utf8');
  const js=readFileSync(new URL('../ANATOMY/SLP/lungs.js',import.meta.url),'utf8');
  const packageJson=readFileSync(new URL('../package.json',import.meta.url),'utf8');
- for(const id of ['lung-stage','lung-select','lung-separate','lung-assemble','layer-choices','model-status'])
+ for(const id of ['lung-stage','lung-select','lung-focus','lung-separate','lung-assemble','layer-choices','model-status'])
   assert.ok(html.includes('id="'+id+'"'));
  assert.match(html,/omits the diaphragm, ribs, pleura, alveoli/);
  assert.match(js,/verifyLungGroups\(meshNodes\.map\(m=>m\.name\)\)/);
+ assert.match(js,/stage\.dataset\.modelStatus='unavailable'/);
+ assert.match(js,/if\(stage\.dataset\.fallback==='true'\)return/);
+ assert.match(js,/focusTourStructure\(selected,false\)/);
  assert.match(js,/\.attach\(mesh\)/);
  assert.doesNotMatch(js,/new THREE\.(SphereGeometry|CapsuleGeometry|CylinderGeometry)/);
  assert.match(packageJson,/prepare-slp-lungs\.mjs/);
