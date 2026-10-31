@@ -29,6 +29,8 @@ jobs:
         run: node tests/anatomy-browser.mjs
       - name: Verify SLP systems atlas and respiratory study navigation before publishing
         run: node tests/slp-systems-browser.mjs
+      - name: Verify licensed 3D lungs and airways model before publishing
+        run: node tests/slp-lungs-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-pages-artifact@v4
