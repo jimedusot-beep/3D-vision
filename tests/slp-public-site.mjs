@@ -2,7 +2,7 @@
 // rather than a local dev server or an intercepted file route. Not anatomy
 // validation. Models are checked for HTTP availability, GLB v2 header/size,
 // and accessible launch links, without rendering unrelated models together.
-import {chromium,devices} from 'playwright';
+import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
 const base=process.env.BASE_URL||'https://jimedusot-beep.github.io/3D-vision/';
 if(!/^https:\/\//.test(base))throw Error('Public HTTPS base URL required');
@@ -16,7 +16,8 @@ const models=[
  {page:'ear.html',asset:'ear.glb',bytes:1010340},
  {page:'neural.html',asset:'neural.glb',bytes:4650816}
 ];
-const browser=await chromium.launch({args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const engine=process.env.BROWSER_ENGINE==='webkit'?webkit:chromium;
+const browser=await engine.launch(process.env.BROWSER_ENGINE==='webkit'?{}:{args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
  const ctx=await browser.newContext({...devices['iPhone 13']});
  const page=await ctx.newPage();
