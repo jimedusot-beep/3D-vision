@@ -1,5 +1,6 @@
 // Right-ear source-derived Z-Anatomy anatomy via OrganUI, CC BY-SA 4.0.
 // No ear-canal surface, simulated hearing mechanics, cochlear microanatomy or brain pathway.
+import {create3DRetry} from './retry-3d.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -7,6 +8,7 @@ import {attachSourceExplosion} from './source-explode.js';
 import {earParts,earById,earRegions,verifyEarNodes,soundJourney} from './ear-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('ear-stage');
+const retry3D=create3DRetry({stage});
 const activeRegions=new Set(Object.keys(earRegions)),nodes=[];
 const palette={outer:0xd4b193,middle:0x86badb,inner:0x9fcbb9,nerves:0xddc585};
 let selected=null,isolate=false,renderer=null,model=null,controls=null,camera=null,scene=null;
@@ -113,6 +115,7 @@ function fallback(reason){
  stage.dataset.fallback='true';stage.dataset.modelStatus='unavailable';
  stage.removeAttribute('tabindex');stage.querySelector('canvas')?.style.setProperty('display','none');
  $('ear-fallback').hidden=false;
+ retry3D.show();
  for(const id of ['ear-explode','ear-explode-amount','ear-assemble'])$(id).disabled=true;
  $('ear-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['ear-focus','ear-isolate'])$(id).disabled=true;
@@ -192,7 +195,7 @@ async function load(){
    groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
    render:draw,frame
   });
-  stage.dataset.modelStatus='ready';
+  stage.dataset.modelStatus='ready';retry3D.hide();
   message('Licensed Z-Anatomy right-ear model loaded: 16 source-derived groups. Static surfaces; no sound propagation or hearing physiology simulation.');
   show();frame(model);resize();
  }catch(e){model=null;fallback(String(e?.message||'invalid model'));}
