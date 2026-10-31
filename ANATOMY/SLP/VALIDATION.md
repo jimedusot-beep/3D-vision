@@ -1,6 +1,16 @@
 # SLP larynx atlas — evidence and validation plan
 
 
+## Study Experience V2.1 — 20-part active recall and traceability (2026-10-31)
+
+**Intended use:** Short, personal educational retrieval practice on verified source **identities**, without storing scores or claiming anatomical competency.
+
+- Added a 20-question, four-choice structure identification exercise: **one original functional clue for each of the 20 genuine BodyParts3D source groups**, with a preference for same-category distractors where possible. Questions and choices are generated from the same ID manifest and source-note records; missing groups fail tests.
+- Every response produces immediate **correct / not yet** feedback, a short sourced explanation, clear model limitations, and a link to the relevant NCBI or ASHA page. The quiz does not store responses or generate a certification score; only a temporary in-page tally is shown.
+- A correct or incorrect response unlocks **Find the answer in 3D / notes**: when WebGL works, select the mesh and reset visibility filters so the answer cannot be accidentally hidden; otherwise open accessible source-backed notes. The answer-view action stays locked until the question is answered.
+- Tests check all twenty targets, four distinct options per question, source evidence, incorrect answer rejection, no storage APIs, desktop and emulated iPhone interaction, and the source-model highlighting path.
+- **Evidence:** [NCBI Larynx](https://www.ncbi.nlm.nih.gov/books/NBK538202/), [NCBI Laryngeal Muscles](https://www.ncbi.nlm.nih.gov/books/NBK545265/), [NCBI Thyrohyoid Membrane](https://www.ncbi.nlm.nih.gov/books/NBK532995/), [NCBI Thyroid](https://www.ncbi.nlm.nih.gov/books/NBK470452/), and [ASHA Vocal Tract Visualization and Imaging](https://www.asha.org/practice-portal/clinical-topics/voice-disorders/vocal-tract-visualization-and-imaging/). These support the general written learning concepts; faculty review of each clue and geometry remains outstanding.
+
 ## Study Experience V2 — scoped evidence and known limitations (2026-10-31)
 
 - **20/20 source group identification:** `source-study.js` provides one original, short learning summary, approximate English pronunciation cue, category, limitation, and direct NCBI or ASHA reference link per actual source model ID. The labels are validated against the model's 20-name manifest, but the **summaries still require qualified anatomy/SLP review**. Pronunciation cues are editorial approximations, not IPA or recorded clinical pronunciations.
