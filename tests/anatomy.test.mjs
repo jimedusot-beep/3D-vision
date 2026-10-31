@@ -77,7 +77,7 @@ test('every anatomy note links to explicit HTTPS educational sources, never to v
    for(const id of structure.source_ids)assert.ok(references.has(id),structure.id+' has unknown reference '+id);
  }
  assert.match(html,/references support the written anatomy note|anatomy note &amp; references/);
- assert.match(viewer,/NOT the approximate 3D shape/);
+ assert.match(viewer,/not 3D clinical validation/);
  assert.match(viewer,/noopener noreferrer/);
 });
 test('referenced study prompts are complete, unique and text-only',()=>{
@@ -271,7 +271,7 @@ test('older devices retain study mode when WebGL is unavailable',()=>{
  assert.match(viewer,/catch \{/);
  assert.match(viewer,/webgl-fallback/);
  assert.match(viewer,/text-based anatomy study is ready/);
- assert.match(viewer,/MathUtils\.clamp\(offset\.length\(\)\*factor,2\.5,16\)/);
+ assert.match(viewer,/orbit\?\.minDistance\|\|2\.5/);
 });
 test('keyboard, touch and origin checks included',()=>{
  assert.match(viewer,/OrbitControls/);
