@@ -81,9 +81,13 @@ function setAmount(value){
  $('lung-separate').value=String(amount);
  $('lung-separate-value').textContent=amount+'%';
  stage.dataset.separation=String(amount);
+ $('lung-explode').setAttribute('aria-pressed',String(amount>0));
+ $('lung-explode').textContent=amount>0?'Reassemble 3D':'Explode 3D';
+ $('lung-assemble').disabled=!model||amount===0;
  separate();
 }
-$('lung-separate').addEventListener('input',e=>setAmount(e.target.value));
+$('lung-separate').addEventListener('input',e=>{setAmount(e.target.value);if(model)view('front');});
+$('lung-explode').addEventListener('click',()=>{setAmount(amount>0?0:65);if(model)view('front');});
 $('lung-assemble').addEventListener('click',()=>setAmount(0));
 function view(direction='front'){
  if(!camera||!model)return;
@@ -115,7 +119,7 @@ function fallback(reason){
  $('fallback').hidden=false;
  message('3D graphics unavailable: '+reason+'. All 20 written source-model labels and descriptions remain available. Reload this page to retry 3D.');
  $('lung-objects').textContent='Text study available for all 20 licensed model groups; graphics unavailable.';
- for(const id of ['lung-focus','lung-isolate','lung-separate','lung-assemble'])$(id).disabled=true;
+ for(const id of ['lung-focus','lung-isolate','lung-separate','lung-assemble','lung-explode'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-view]'))button.disabled=true;
 }
 function startScene(){
@@ -195,6 +199,7 @@ async function load(){
   box=new THREE.Box3().setFromObject(model);
   scene.add(model);
   if(stage.dataset.fallback==='true')return;
+  $('lung-explode').disabled=false;$('lung-separate').disabled=false;
   stage.dataset.modelStatus='ready';
   message('Licensed BodyParts3D 4.3 lung segments and airway surfaces loaded. Rotate or select a group; this is not a breathing simulation.');
   show();view('front');size();$('lung-focus').disabled=!selected;lungTour?.refresh();
