@@ -13,6 +13,7 @@ on:
       - 'vite.config.js'
       - 'scripts/**'
       - 'tests/**'
+      - 'ANATOMY/**'
       - '.github/workflows/smoke-viewer.yml'
   pull_request:
 concurrency:
