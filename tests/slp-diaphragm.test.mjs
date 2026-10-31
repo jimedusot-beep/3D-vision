@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {readFile,readFileSync} from 'node:fs';
+import {readFileSync} from 'node:fs';
 import {diaphragmModel,validDiaphragmModel} from '../scripts/prepare-slp-diaphragm.mjs';
 import {diaphragmParts,diaphragmRegions,diaphragmLicense,verifyDiaphragmNodes} from '../ANATOMY/SLP/diaphragm-manifest.js';
 
@@ -8,6 +8,7 @@ test('diaphragm asset uses an immutable source blob, 3.0 dataset and proper lice
  assert.equal(diaphragmModel.repo,'organui/organui');
  assert.match(diaphragmModel.commit,/^[a-f0-9]{40}$/);
  assert.match(diaphragmModel.gitBlobSha1,/^[a-f0-9]{40}$/);
+ assert.equal(diaphragmModel.sha256,'2a6c8608efe4dd33b24ffa6c9cd678c0230629de4b6340ffaa72932b63d6e5ed');
  assert.equal(diaphragmModel.bytes,3649120);
  assert.equal(diaphragmModel.sourceVersion,'BodyParts3D 3.0');
  assert.equal(diaphragmModel.license,'CC-BY-SA-2.1-JP');
