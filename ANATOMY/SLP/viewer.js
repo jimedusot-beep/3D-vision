@@ -3,6 +3,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import catalog from './structures.json';
 import {parseCommand, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
+import {createPracticeSession,nextPracticeQuestion,ratePracticeQuestion,practiceSummary} from './practice-session.js';
 
 const $=id=>document.getElementById(id);
 const ids=new Set(catalog.structures.map(s=>s.id));
@@ -119,10 +120,35 @@ for(const s of catalog.structures) {
   overlay.append(label);
   labels.set(s.id,label);
 }
-// Referenced text-only study exercise: this does not evaluate anatomical geometry.
-const review={index:-1};
-const question=$('study-question'),answer=$('study-answer'),sources=$('study-sources');
-const nextReview=$('study-next'),revealReview=$('study-reveal');
+// Learning objectives and original formative exercises use source-linked text only.
+const objectives=new Map(catalog.learning_objectives.map(o=>[o.id,o]));
+const prompts=new Map(catalog.review_prompts.map(p=>[p.id,p]));
+const practice=createPracticeSession(catalog.review_prompts); // Memory only; no storage.
+const question=$('study-question'),answer=$('study-answer'),explanation=$('study-explanation');
+const sources=$('study-sources'),nextReview=$('study-next'),revealReview=$('study-reveal');
+const again=$('study-again'),recognized=$('study-recognized');
+function appendReferenceLinks(container,ids) {
+  for(const id of ids) {
+    const ref=references.get(id);
+    if(!ref)continue;
+    const link=document.createElement('a');
+    link.href=ref.url;
+    link.textContent=ref.label;
+    link.target='_blank';
+    link.rel='noopener noreferrer';
+    container.append(link);
+  }
+}
+for(const objective of catalog.learning_objectives) {
+  const li=document.createElement('li');
+  const heading=document.createElement('strong');
+  heading.textContent=objective.label;
+  const details=document.createElement('p');
+  details.textContent=objective.statement;
+  li.append(heading,details);
+  appendReferenceLinks(li,objective.source_ids);
+  $('learning-objectives').append(li);
+}
 $('coverage-intro').textContent=catalog.coverage.included_meshes;
 $('coverage-warning').textContent=catalog.coverage.statement;
 for(const item of catalog.coverage.omitted_structures) {
@@ -130,32 +156,53 @@ for(const item of catalog.coverage.omitted_structures) {
   li.textContent=item;
   $('coverage-list').append(li);
 }
+function updatePracticeProgress() {
+  const s=practiceSummary(practice);
+  $('study-progress').textContent='Self-rated practice checks: '+s.checks+
+    ' (recalled: '+s.recognized+', review again: '+s.reviewAgain+
+    '). Queue remaining: '+s.remaining+'. Round '+s.round+
+    '. This is not a grade or validated mastery score; nothing is saved.';
+}
 nextReview.onclick=()=>{
-  review.index=(review.index+1)%catalog.review_prompts.length;
-  const prompt=catalog.review_prompts[review.index];
-  question.textContent='Question '+(review.index+1)+' of '+catalog.review_prompts.length+': '+prompt.question;
-  answer.hidden=true; answer.textContent='';
-  sources.hidden=true; sources.replaceChildren();
+  const id=nextPracticeQuestion(practice);
+  const prompt=prompts.get(id);
+  const objective=objectives.get(prompt.objective_id);
+  $('study-objective').textContent='Learning objective: '+objective.label+
+    ' · Question type: '+prompt.level+'.';
+  question.textContent='Question '+(catalog.review_prompts.findIndex(x=>x.id===id)+1)+
+    ' of '+catalog.review_prompts.length+': '+prompt.question;
+  answer.hidden=true;answer.textContent='';
+  explanation.hidden=true;explanation.textContent='';
+  sources.hidden=true;sources.replaceChildren();
   revealReview.disabled=false;
+  again.disabled=true;recognized.disabled=true;
+  updatePracticeProgress();
 };
 revealReview.onclick=()=>{
-  if(review.index<0)return;
-  const prompt=catalog.review_prompts[review.index];
+  if(!practice.currentId)return;
+  const prompt=prompts.get(practice.currentId);
   answer.textContent=prompt.answer;
   answer.hidden=false;
+  explanation.textContent='Why: '+prompt.explanation;
+  explanation.hidden=false;
   sources.replaceChildren();
   const caption=document.createElement('strong');
   caption.textContent='Read the supporting references:';
   sources.append(caption);
-  for(const id of prompt.source_ids) {
-    const ref=references.get(id);
-    if(!ref)continue;
-    const link=document.createElement('a');
-    link.href=ref.url; link.textContent=ref.label; link.target='_blank'; link.rel='noopener noreferrer';
-    sources.append(link);
-  }
+  appendReferenceLinks(sources,prompt.source_ids);
   sources.hidden=false;
+  if(!practice.currentRated){again.disabled=false;recognized.disabled=false;}
 };
+for(const [button,rating] of [[again,'again'],[recognized,'recognized']]) {
+  button.onclick=()=>{
+    if(!practice.currentId||answer.hidden)return;
+    if(ratePracticeQuestion(practice,practice.currentId,rating)) {
+      again.disabled=true;recognized.disabled=true;
+      updatePracticeProgress();
+    }
+  };
+}
+updatePracticeProgress();
 function renderState() {
   for(const [id,m] of meshes) {
     m.visible=!view.isolated || view.isolated===id;
