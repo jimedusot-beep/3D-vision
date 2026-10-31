@@ -40,7 +40,7 @@ test('guided tour follows sourced structures and no artificial phonation animati
   }
   assert.match(guidedLarynxTour[2].answer,/mucosa/i);
   const html=readFileSync(new URL('../ANATOMY/SLP/index.html',import.meta.url),'utf8');
-  assert.match(html,/Static concept diagrams/); // The model never pretends to vibrate.
+  assert.match(html,/static concept diagrams/i); // The model never pretends to vibrate.
   assert.match(html,/Phonation animation unavailable/);
   assert.match(html,/id="camera-top"/);
   assert.match(html,/id="source-filters"/);
