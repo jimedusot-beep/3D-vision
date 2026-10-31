@@ -2,6 +2,7 @@ import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
 import {readFile,mkdir} from 'node:fs/promises';
 import path from 'node:path';
+import {lungPracticeQuestions,lungPracticeWarmup} from '../ANATOMY/SLP/lung-practice.js';
 const browserEngine=process.env.BROWSER_ENGINE==='webkit'?webkit:chromium;
 const name=process.env.BROWSER_ENGINE==='webkit'?'webkit':'chromium';
 const browser=await browserEngine.launch(name==='chromium'
@@ -82,6 +83,50 @@ try{
  await page.locator('#lung-tour-start').click();
  await page.locator('#lung-tour-close').click();
  assert.match(await page.locator('#lung-tour-summary').textContent(),/Tour closed/);
+ // Warm-up: one source group per region, including a wrong answer and feedback.
+ await page.locator('#lung-practice-quick').click();
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-practice'),'quick');
+ assert.equal(await page.locator('#lung-practice-options button').count(),4);
+ assert.equal(await page.locator('#lung-practice-next').isDisabled(),true);
+ assert.equal(await page.locator('#lung-select').inputValue(),'',
+  'Answer must not be disclosed via model selection before response');
+ await page.locator('#lung-practice-options button:not([data-region="right-upper"])').first().click();
+ assert.match(await page.locator('#lung-practice-feedback').textContent(),/Not quite/);
+ assert.equal(await page.locator('#lung-select').inputValue(),lungPracticeWarmup[0].id);
+ assert.equal(await page.locator('#lung-practice-next').isEnabled(),true);
+ await page.locator('#lung-practice-next').click();
+ for(let i=1;i<lungPracticeWarmup.length;i++){
+  const question=lungPracticeWarmup[i];
+  assert.match(await page.locator('#lung-practice-question').textContent(),new RegExp(question.name));
+  await page.locator('#lung-practice-options button[data-region="'+question.answer+'"]').click();
+  assert.equal(await page.locator('#lung-select').inputValue(),question.id);
+  assert.match(await page.locator('#lung-practice-feedback').textContent(),/Correct/);
+  await page.locator('#lung-practice-next').click();
+ }
+ assert.match(await page.locator('#lung-practice-summary').textContent(),/5 of 6 correct/);
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-practice'),'off');
+ // Full source-model coverage: all twenty groups, including both bronchial trees and trachea.
+ await page.locator('#lung-practice-full').click();
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-practice'),'full');
+ for(const [i,question] of lungPracticeQuestions.entries()){
+  assert.match(await page.locator('#lung-practice-question').textContent(),new RegExp(question.name));
+  await page.locator('#lung-practice-options button[data-region="'+question.answer+'"]').click();
+  assert.equal(await page.locator('#lung-select').inputValue(),question.id);
+  if(!fallback)assert.equal(await page.locator('#lung-stage').getAttribute('data-focused-group'),question.id);
+  assert.match(await page.locator('#lung-practice-progress').textContent(),new RegExp((i+1)+' correct'));
+  await page.locator('#lung-practice-next').click();
+ }
+ assert.match(await page.locator('#lung-practice-summary').textContent(),/20 of 20 correct/);
+ await page.locator('#lung-practice-full').click();
+ await page.locator('#lung-tour-start').click();
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-practice'),'off');
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-tour-step'),'1');
+ await page.locator('#lung-tour-close').click();
+ await page.locator('#lung-tour-start').click();
+ await page.locator('#lung-practice-quick').click();
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-tour-step'),'off');
+ await page.locator('#lung-practice-exit').click();
+ assert.match(await page.locator('#lung-practice-summary').textContent(),/0 of 6 questions/);
  await page.locator('#lung-select').selectOption('FMA7394');
  assert.match(await page.locator('#lung-note-name').textContent(),/Trachea/);
  assert.match(await page.locator('#lung-note-text').textContent(),/conducting airway/i);
