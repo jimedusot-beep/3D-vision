@@ -45,6 +45,10 @@ try{
    });
    if(!res?.ok())throw Error('HTML HTTP '+res?.status());
    if(model.id==='larynx'){
+    // The public site may predate PR #18's ?view=three deep link. Explicitly
+    // activate the verified real-3D toggle when production still opens the map.
+    const toggle=page.locator('#mode-three');
+    if(await toggle.getAttribute('aria-pressed')!=='true')await toggle.click({timeout:30000});
     await page.waitForFunction(()=>/Licensed 3D source geometry loaded|Source anatomy unavailable/
       .test(document.querySelector('#status')?.textContent||''),null,{timeout:120000});
     const status=await page.locator('#status').textContent();
