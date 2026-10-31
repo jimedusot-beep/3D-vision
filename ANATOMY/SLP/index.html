@@ -22,6 +22,9 @@ h2{font-size:1rem;margin:.3rem 0 .65rem}#structures{display:grid;gap:.4rem}
 button{background:#223b4a;color:#f2fafb;border:1px solid #64839a;border-radius:7px;padding:.55rem .7rem;cursor:pointer;text-align:left}
 button:hover,button:focus-visible{outline:2px solid #81dcd5;outline-offset:1px}
 button[aria-pressed="true"]{background:#17615b;border-color:#88e1d0}button:disabled{opacity:.55;cursor:not-allowed}
+#structure-search{display:block;width:100%;margin:.25rem 0 .4rem;background:#203541;border:1px solid #7598aa;border-radius:7px;padding:.65rem;color:#fff;min-height:44px}
+#structure-search:focus-visible{outline:2px solid #81dcd5;outline-offset:2px}
+#structure-count{font-size:.84rem;color:#c5dfe6;margin:.2rem 0 .6rem}
 .controls{display:flex;flex-wrap:wrap;gap:.4rem;margin:.75rem 0}.controls button{flex:1 1 100px}
 label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 #detail{min-height:6rem;padding:.65rem;background:#203541;border-radius:8px}#detail p{margin:.5rem 0}.evidence-note{font-size:.84rem;color:#e1d9bf}.evidence-links{font-size:.85rem}.evidence-links a{display:block;margin-top:.35rem;overflow-wrap:anywhere}
@@ -38,7 +41,10 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <div id="notice">Illustrative geometry only. Not to scale; not for diagnosis, surgery or device design. Phonation animation unavailable pending validation.</div>
 </section>
 <aside aria-label="Anatomy structure controls">
-<h2>Laryngeal structures</h2><p id="orientation-note">Anatomical left and right describe the subject, not you. In the front view, the subject's left is on your right; rotating the model changes screen positions. All locations are approximate.</p><div id="structures"></div>
+<h2>Laryngeal structures</h2><p id="orientation-note">Anatomical left and right describe the subject, not you. In the front view, the subject's left is on your right; rotating the model changes screen positions. All locations are approximate.</p><label for="structure-search">Search laryngeal structures</label>
+<input id="structure-search" type="search" aria-controls="structures" autocomplete="off" spellcheck="false" placeholder="Try cartilage, vocal fold, left…">
+<p id="structure-count" role="status" aria-live="polite">10 structures available.</p>
+<div id="structures"></div>
 <div class="controls">
 <button id="show-all" type="button">Show all</button><button id="reset" type="button">Reset view</button>
 </div>
@@ -59,6 +65,8 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <p id="study-answer" role="status" aria-live="polite" hidden></p>
 <p id="study-explanation" hidden></p>
 <div id="study-sources" class="study-sources" hidden></div>
+<p id="study-scope">Practicing all source-linked questions.</p>
+<div class="study-actions"><button type="button" id="study-selected" disabled>Practice selected structure</button><button type="button" id="study-reset">Restart all questions</button></div>
 <div class="study-actions"><button type="button" id="study-next">Next question</button><button type="button" id="study-reveal" disabled>Reveal answer &amp; references</button></div>
 <fieldset class="practice-rating"><legend>After revealing, rate your recall (not a graded exam)</legend>
 <div class="study-actions"><button type="button" id="study-again" disabled>Review again later</button><button type="button" id="study-recognized" disabled>I recalled it</button></div>
