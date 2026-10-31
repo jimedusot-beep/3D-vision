@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {Workshop, mark, material, worldGeometry, inspect, validateProject} from '../src/core.js';
-import {createJoint, applyJoints, setJointValue, validateJointDefinitions, pruneMissingJoints} from '../src/joints.js';
+import {createJoint, applyJoints, setJointValue, validateJointTravel, validateJointDefinitions, pruneMissingJoints} from '../src/joints.js';
 import {surfaceAnchor, resolveAnnotation} from '../src/annotations.js';
 import {analyzeInterference, analyzeThickness} from '../src/analysis.js';
 const near = (a, b, eps = 1e-5) => assert.ok(Math.abs(a - b) < eps, `${a} != ${b}`);
@@ -78,4 +78,24 @@ test('thickness refuses open topology and all analysis limits are explicit',()=>
   const report=analyzeThickness([item(plane)]).results[0];assert.equal(report.closed,false);assert.equal(report.samples,0);assert.match(report.reason,/required/);
   assert.throws(()=>analyzeThickness([item(box())],{samples:9999}),/12–512/);
   assert.throws(()=>analyzeInterference(Array.from({length:41},()=>item(box()))),/1 and 40/);
+});
+
+test('prevalidating invalid joint travel leaves pose, child identity and undo history untouched',()=>{
+ const w=new Workshop(),parent=box('Parent'),child=box('Child');child.position.x=20;
+ w.add([parent,child]);const j=createJoint(w.root,parent,child,{type:'revolute'});
+ setJointValue(w.root,j.id,90);
+ const history=w.past.length,root=w.root,parts=[...w.root.children],pose=child.position.clone();
+ for(const bad of [999,-999,NaN,Infinity]){
+   assert.throws(()=>validateJointTravel(w.root,j.id,bad),/travel must be between/);
+   assert.equal(w.root,root);
+   assert.equal(w.root.children[0],parts[0]);
+   assert.equal(w.root.children[1],parts[1]);
+   assert.equal(w.past.length,history);
+   assert.equal(j.value,90);
+   near(child.position.x,pose.x);near(child.position.y,pose.y);
+ }
+ assert.equal(validateJointTravel(w.root,j.id,90),j);
+ setJointValue(w.root,j.id,95);
+ near(j.value,95);
+ assert.notEqual(child.position.y,pose.y);
 });
