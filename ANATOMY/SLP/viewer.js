@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import catalog from './structures.json';
-import {parseCommand, VERSION} from './contract.js';
+import {parseCommand, resolveEmbedOrigin, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
 import {createPracticeSession,nextPracticeQuestion,ratePracticeQuestion,practiceSummary} from './practice-session.js';
 
@@ -320,13 +320,9 @@ stage.addEventListener('keydown',e=>{
 });
 const query=new URLSearchParams(location.search);
 if(ids.has(query.get('select')))select(query.get('select'));else renderState();
-let allowedOrigin=location.origin;
-try {
-  if(query.has('embedOrigin')) {
-    const url=new URL(query.get('embedOrigin'));
-    if(url.protocol==='https:'||(url.protocol==='http:'&&url.hostname==='localhost')) allowedOrigin=url.origin;
-  }
-}catch{ /* Invalid origins keep same-origin policy */ }
+// Explicit opt-in is limited to a canonical HTTPS or loopback origin.
+// No private study data is sent across the public, read-only host contract.
+const allowedOrigin=resolveEmbedOrigin(query.get('embedOrigin'),location.origin);
 function receive(event) {
   if(event.source!==window.parent||event.origin!==allowedOrigin)return;
   const c=parseCommand(event.data,ids);
