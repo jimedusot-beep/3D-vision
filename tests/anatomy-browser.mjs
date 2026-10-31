@@ -274,6 +274,7 @@ try {
   // rendered canvas must occupy exactly ONE stage, not a clipped 2x stage.
   if(await touch.locator('#mode-three').isEnabled()){
     await touch.locator('#mode-three').click();
+    await touch.waitForFunction(()=>[...document.querySelectorAll('.part-label')].every(el=>el.hidden),null,{timeout:5000});
     const geometry=await touch.evaluate(()=>{
       const stage=document.querySelector('#stage');
       const canvas=stage.querySelector('canvas');
