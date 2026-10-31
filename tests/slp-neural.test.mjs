@@ -11,6 +11,8 @@ test('neural 3D model + source JSON are pinned to an immutable CC BY-SA source',
  assert.equal(neuralModel.manifestBytes,232455);
  assert.equal(neuralModel.modelBlob,'c80dd62202b5cf8a2a43c7a019311781bd95457c');
  assert.equal(neuralModel.manifestBlob,'ad25ab2d45b2d46a94f324143506f0fa3bc6906a');
+ assert.equal(neuralModel.modelSha256,'76a49ea4526a4880613aec7a02756bd7301b0b9d0680d7cae33e197b672c5453');
+ assert.equal(neuralModel.manifestSha256,'66c32355e02c3ba5fadf3b3bdb61b18c619162d6c5ee2083262e59bed4274d93');
  assert.equal(neuralModel.license,'CC-BY-SA-4.0');
  assert.match(neuralLicense.model,/CC BY-SA 4\.0/);
  assert.match(neuralLicense.code,/Apache/);
