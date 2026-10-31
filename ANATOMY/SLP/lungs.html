@@ -25,6 +25,19 @@ main{max-width:1250px;margin:0 auto;padding:1rem}
 #lung-tour h2{font-size:1.12rem;margin:0 0 .35rem}#lung-tour h3{font-size:1rem;margin:.25rem 0}
 #lung-tour p{margin:.4rem 0}#lung-tour-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.65rem 0}
 #lung-tour-progress{font-weight:700;color:#a7e7d8}#lung-tour-summary{font-weight:600}
+#lung-practice{background:#173744;border:1px solid #648d94;border-radius:11px;padding:.85rem;margin:.75rem 0 1rem}
+#lung-practice h2{font-size:1.12rem;margin:0 0 .35rem}
+#lung-practice p{margin:.4rem 0}
+#lung-practice-starts,#lung-practice-options,#lung-practice-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+#lung-practice-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+#lung-practice-options button{text-align:left;min-width:0;white-space:normal}
+#lung-practice-options button[data-correct="true"]{background:#185c4a;border-color:#b1e8c7}
+#lung-practice-options button[aria-pressed="true"][data-correct="false"]{background:#68433d;border-color:#f0bf9e}
+#lung-practice-progress{font-weight:700;color:#a7e7d8}
+#lung-practice-question{font-weight:650}
+#lung-practice-feedback:not([hidden]){padding:.7rem;border-left:4px solid #8ddac7;background:#264653;border-radius:7px}
+#lung-practice-summary{font-weight:650}
+@media(max-width:410px){#lung-practice-options{grid-template-columns:1fr}}
 .panel{background:#192f3e;border:1px solid #4b6d7e;padding:.8rem;border-radius:11px;min-width:0}
 .panel h2{font-size:1.14rem;margin:.3rem 0}.panel p{margin:.5rem 0}
 #lung-select{width:100%;margin:.35rem 0}
@@ -71,6 +84,26 @@ footer{padding:1rem;color:#c3d6df;font-size:.82rem;border-top:1px solid #466b7c}
 </div>
 <p id="lung-tour-summary" role="status" aria-live="polite"></p>
 <p>Follow up: <a href="./index.html">Explore the separate 3D larynx and phonation model</a>.</p>
+</section>
+<section id="lung-practice" aria-label="Respiratory structure location recall">
+<h2>Practice: Which lobe or airway?</h2>
+<p>Match each real source-model group to its anatomical region. Answer first; then the atlas highlights the corresponding 3D structure and shows its source notes. This tests source labels, not clinical skill. It also works without WebGL.</p>
+<div id="lung-practice-starts" role="group" aria-label="Choose practice length">
+<button id="lung-practice-quick" type="button">6-question warm-up</button>
+<button id="lung-practice-full" type="button">Review all 20 structures</button>
+</div>
+<div id="lung-practice-active" hidden>
+<p id="lung-practice-progress" role="status" aria-live="polite"></p>
+<p id="lung-practice-question"></p>
+<div id="lung-practice-options" role="group" aria-label="Choose the anatomical region"></div>
+<p id="lung-practice-feedback" role="status" aria-live="polite" hidden></p>
+<div id="lung-practice-actions">
+<button id="lung-practice-next" type="button" disabled>Next question</button>
+<button id="lung-practice-exit" type="button">Exit practice</button>
+</div>
+</div>
+<p id="lung-practice-summary" role="status" aria-live="polite" hidden></p>
+<p class="warning">Learning aid only. Practice answers and scores stay in this page session and are not saved or sent anywhere.</p>
 </section>
 <div class="layout">
 <section aria-label="Interactive 3D lungs and airways">
