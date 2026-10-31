@@ -38,7 +38,7 @@ try{
  assert.equal(await page.locator('#pharynx-filters input').count(),6);
  assert.equal(await page.locator('[data-pharynx-view]').count(),5);
  assert.match(await page.locator('main').textContent(),/mucosal pharyngeal lining/i);
- assert.match(await page.locator('main').textContent(),/CC BY-SA 2\\.1 Japan/);
+ assert.match(await page.locator('main').textContent(),/CC BY-SA 2\.1 Japan/);
  const fallback=await page.locator('#pharynx-stage').getAttribute('data-fallback')==='true';
  if(fallback){
   assert.match(await page.locator('#pharynx-status').textContent(),/WebGL not supported|WebGL context lost/i,
