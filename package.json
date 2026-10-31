@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 4173",
-    "build": "node scripts/prepare-anatomy-reference.mjs && node scripts/prepare-slp-lungs.mjs && node scripts/prepare-slp-diaphragm.mjs && node scripts/prepare-slp-oral.mjs && node scripts/prepare-slp-pharynx.mjs && node scripts/prepare-slp-ear.mjs && node scripts/discover.mjs && vite build && node scripts/copy-assets.mjs",
+    "build": "node scripts/prepare-anatomy-reference.mjs && node scripts/prepare-slp-lungs.mjs && node scripts/prepare-slp-diaphragm.mjs && node scripts/prepare-slp-oral.mjs && node scripts/prepare-slp-pharynx.mjs && node scripts/prepare-slp-ear.mjs && node scripts/prepare-slp-neural.mjs && node scripts/discover.mjs && vite build && node scripts/copy-assets.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/workshop.mjs && node tests/resilience.mjs && node tests/advanced-browser.mjs",
     "test:cloud": "node tests/cloud-browser.mjs",
-    "anatomy:model": "node scripts/prepare-anatomy-reference.mjs && node scripts/prepare-slp-lungs.mjs && node scripts/prepare-slp-diaphragm.mjs && node scripts/prepare-slp-oral.mjs && node scripts/prepare-slp-pharynx.mjs && node scripts/prepare-slp-ear.mjs",
-    "predev": "node scripts/prepare-anatomy-reference.mjs && node scripts/prepare-slp-lungs.mjs && node scripts/prepare-slp-diaphragm.mjs && node scripts/prepare-slp-oral.mjs && node scripts/prepare-slp-pharynx.mjs && node scripts/prepare-slp-ear.mjs"
+    "anatomy:model": "node scripts/prepare-anatomy-reference.mjs && node scripts/prepare-slp-lungs.mjs && node scripts/prepare-slp-diaphragm.mjs && node scripts/prepare-slp-oral.mjs && node scripts/prepare-slp-pharynx.mjs && node scripts/prepare-slp-ear.mjs && node scripts/prepare-slp-neural.mjs",
+    "predev": "node scripts/prepare-anatomy-reference.mjs && node scripts/prepare-slp-lungs.mjs && node scripts/prepare-slp-diaphragm.mjs && node scripts/prepare-slp-oral.mjs && node scripts/prepare-slp-pharynx.mjs && node scripts/prepare-slp-ear.mjs && node scripts/prepare-slp-neural.mjs"
   },
   "dependencies": {
     "fflate": "0.8.3",
