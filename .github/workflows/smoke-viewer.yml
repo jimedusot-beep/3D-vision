@@ -52,6 +52,8 @@ jobs:
         run: node tests/slp-diaphragm-browser.mjs
       - name: Z-Anatomy oral structure identification and mobile study
         run: node tests/slp-oral-browser.mjs
+      - name: Pinned BodyParts3D 4.3 pharynx, soft-palate and source-model mobile study
+        run: node tests/slp-pharynx-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-artifact@v4
@@ -84,6 +86,8 @@ jobs:
         run: BROWSER_ENGINE=webkit node tests/slp-diaphragm-browser.mjs
       - name: Z-Anatomy oral structures on iPhone WebKit
         run: BROWSER_ENGINE=webkit node tests/slp-oral-browser.mjs
+      - name: Pharynx and soft palate source anatomy on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-pharynx-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
