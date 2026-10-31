@@ -66,6 +66,11 @@ try {
   assert.equal(await evidence.count(),2);
   assert.ok((await evidence.first().getAttribute('href')).startsWith('https://'));
   assert.equal(await evidence.first().getAttribute('rel'),'noopener noreferrer');
+  assert.match(await page.locator('#detail .candidate-provenance').textContent(),/vocal ligament is NOT equivalent/);
+  assert.equal(await page.locator('#detail .candidate-provenance a').getAttribute('rel'),'noopener noreferrer');
+  await page.locator('button[data-id="left-arytenoid"]').click();
+  assert.match(await page.locator('#detail .candidate-provenance').textContent(),/FMA55114, BP8314/);
+  await page.locator('button[data-id="left-vocal-fold"]').click();
   await page.locator('button[data-isolate="left-vocal-fold"]').click();
   assert.equal(await page.locator('button[data-isolate="left-vocal-fold"]').getAttribute('aria-pressed'),'true');
   await page.locator('#show-all').click();
