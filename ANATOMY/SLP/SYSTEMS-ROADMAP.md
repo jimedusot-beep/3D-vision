@@ -6,7 +6,7 @@
 
 | Area | Stage | Current implementation | Honest next development |
 | --- | --- | --- | --- |
-| Respiratory system | **Source-derived lung/airway 3D + study starter** | 20 verified source groups: 17 tissue segments, trachea, two bronchial trees. Separate viewer, lobe separation, 10 written concepts, SVG, inspiration/exhalation comparison, 6 recall questions, 5-stop 3D tour, and 6- or 20-question region-identification practice with source-group reveal | Licensed rib cage, intercostals, diaphragm, alveoli/microstructure and spatial/curriculum review |
+| Respiratory system | **Source-derived lung/airway 3D + study starter** | 20 verified source groups: 17 tissue segments, trachea, two bronchial trees. Separate viewer, lobe separation, 10 written concepts, SVG, inspiration/exhalation comparison, 6 recall questions, 5-stop 3D tour, and 6- or 20-question region-identification practice with source-group reveal | Separate source-derived 3D diaphragm lab added (BodyParts3D 3.0, 13 nodes). Next: licensed ribs/intercostals/alveoli; cross-version coordinate registration unresolved; expert review |
 | Phonation / larynx | **Source-derived 3D** | 20 source-model groups; original study map; rigid exploded study; cited source notes; guided tour and 20-part quiz | Reviewed layered true-fold geometry, academic validation |
 | Resonance / velopharynx | Outline | learning objectives, ASHA pointer | Licensed palate/pharynx/nasal cavity surfaces |
 | Articulation / orofacial | Outline | learning objectives, ASHA pointer | Tongue, oral cavity, jaw and lip 3D; phonetics |
@@ -27,6 +27,18 @@ The grouping into ten areas is an **internal teaching/navigation design**, not a
 - No question scores, personally identifying data, account credentials, or analytics are persisted. The quiz is informal educational practice, **not** an exam, clinical anatomy validation, or a measure of learner competence.
 - Automated unit checks verify full FMA identity/region coverage, distractors and answer positions. Chromium/WebKit emulated iPhone tests cover wrong/right feedback, both lengths, completion, text/3D parity and tour/practice coordination. Real hardware and educator review remain separate release gates.
 - **Important limitation:** a region-recognition quiz is not a substitute for a multi-system 3D body atlas. Additional genuine geometries, beginning with separately provenance-verified diaphragm and thoracic structures, remain future work.
+
+## Diaphragm 3D — separate source dataset, not overlaid
+
+A standalone **Diaphragm 3D Lab** is now part of this PR, not a composite full-body model.
+
+- Dataset: OrganUI `organui/organui` at immutable commit `21439ee45a2efb8cd9d970e9b56405b294e3744d`, file `apps/web/public/models/diaphragm.glb`, 3,649,120 bytes, Git blob `afbc6133a44f8f9408d8c49ceb7345c61f5f690f`. Build verifies Git content-object hash and GLB v2 header before packaging. SHA-256 is printed during the build for independent recordkeeping.
+- Model provenance: **BodyParts3D 3.0 (20110915)** © DBCLS, via OrganUI, **CC BY-SA 2.1 Japan**. Original source meshes were checked by OrganUI against a separately pinned mirror and prepared with mesh simplification, splitting and trimming; original model attribution appears on the page.
+- Exact 13 named source-derived nodes: right and left hemidiaphragms plus the esophagus, inferior vena cava, descending aorta, heart wall, both lower lung lobes, liver, stomach, spleen, and both psoas major muscles. Only the first two are the diaphragm muscle; the others provide anatomical context.
+- Viewer: rotate/pan/zoom, five named camera views, mesh selection, focus, isolate, show-all, region filters, written descriptions and WebGL-loss fallback. Source geometry remains unchanged; lighting/color are for study clarity.
+- **No overlay:** this BodyParts3D 3.0 asset has its own model-relative recentering/scale; the separate lung viewer uses BodyParts3D 4.3. There is *no verified common coordinate transform, landmark fit or anatomical registration*. Do not merge the two raw scenes or present them as aligned.
+- Evidence for introductory breathing notes: [NHLBI breathing muscles](https://www.nhlbi.nih.gov/health/lungs/body-controls-breathing) and [OpenStax A&P 2e §22.3](https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing). Neither validates every 3D geometry detail.
+- Safety and release: personal educational study only. No animated diaphragm contraction, diagnosis, clinical measurements, patient data or private course-slide replication. Physical iPhone/VoiceOver and qualified anatomy review remain outstanding.
 
 ## Uploaded course-material analysis and provenance
 
