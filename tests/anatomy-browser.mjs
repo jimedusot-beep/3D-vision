@@ -86,7 +86,7 @@ try {
   assert.equal(await page.locator('#study-reveal').isDisabled(),true);
   assert.match(await page.locator('#study-progress').textContent(),/checks: 0/);
   await page.locator('#study-next').click();
-  assert.match(await page.locator('#study-question').textContent(),/vocal folds/);
+  assert.match(await page.locator('#study-question').textContent(),/paired structures vibrate/);
   await page.locator('#study-reset').click();
   assert.match(await page.locator('#study-scope').textContent(),/all 12 source-linked questions/);
   assert.equal(await page.locator('#study-reveal').isDisabled(),true);
