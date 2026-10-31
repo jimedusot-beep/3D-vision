@@ -3,7 +3,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import catalog from './structures.json';
 import {parseCommand, resolveEmbedOrigin, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
-import {createPracticeSession,nextPracticeQuestion,ratePracticeQuestion,practiceSummary} from './practice-session.js';
+import {createPracticeSession,nextPracticeQuestion,ratePracticeQuestion,practiceSummary,questionsForStructure} from './practice-session.js';
 
 const $=id=>document.getElementById(id);
 const ids=new Set(catalog.structures.map(s=>s.id));
@@ -93,6 +93,7 @@ ellipsoid('right-lateral-cricoarytenoid',[sideX('right',.72),-.32,-.25],[.15,.32
 
 const view={selected:null,isolated:null,transparent:false,labels:true};
 const labels=new Map();
+const structureRows=[];
 for(const s of catalog.structures) {
   const row=document.createElement('div');
   row.style.display='grid';
@@ -114,16 +115,32 @@ for(const s of catalog.structures) {
   iso.onclick=()=>isolate(s.id);
   row.append(button,iso);
   $('structures').append(row);
+  structureRows.push({structure:s,row});
   const label=document.createElement('span');
   label.className='part-label';
   label.textContent=s.label;
   overlay.append(label);
   labels.set(s.id,label);
 }
+// The catalog filter uses textContent only. No user-entered HTML or network requests.
+$('structure-search').addEventListener('input',event=>{
+  const term=event.target.value.trim().toLocaleLowerCase();
+  let shown=0;
+  for(const {structure,row} of structureRows) {
+    const match=structure.label.toLocaleLowerCase().includes(term)||
+      structure.id.includes(term);
+    row.hidden=!match;
+    row.style.display=match?'grid':'none'; // Existing inline grid style overrides UA [hidden].
+    if(match)shown++;
+  }
+  $('structure-count').textContent=shown===0
+    ?'No matching structures. Clear the search to show all 10.'
+    :shown+' of '+structureRows.length+' structures shown.';
+});
 // Learning objectives and original formative exercises use source-linked text only.
 const objectives=new Map(catalog.learning_objectives.map(o=>[o.id,o]));
 const prompts=new Map(catalog.review_prompts.map(p=>[p.id,p]));
-const practice=createPracticeSession(catalog.review_prompts); // Memory only; no storage.
+let practice=createPracticeSession(catalog.review_prompts); // Memory only; no storage.
 const question=$('study-question'),answer=$('study-answer'),explanation=$('study-explanation');
 const sources=$('study-sources'),nextReview=$('study-next'),revealReview=$('study-reveal');
 const again=$('study-again'),recognized=$('study-recognized');
@@ -203,6 +220,29 @@ for(const [button,rating] of [[again,'again'],[recognized,'recognized']]) {
   };
 }
 updatePracticeProgress();
+function restartPractice(items,scope) {
+  if(items.length===0)return;
+  practice=createPracticeSession(items);
+  $('study-scope').textContent=scope;
+  $('study-objective').textContent='Select “Next question” to start this set.';
+  question.textContent='Choose “Next question” to begin.';
+  answer.hidden=true;answer.textContent='';
+  explanation.hidden=true;explanation.textContent='';
+  sources.hidden=true;sources.replaceChildren();
+  revealReview.disabled=true;
+  again.disabled=true;recognized.disabled=true;
+  updatePracticeProgress();
+}
+$('study-reset').onclick=()=>restartPractice(catalog.review_prompts,
+  'Practicing all '+catalog.review_prompts.length+' source-linked questions.');
+$('study-selected').onclick=()=>{
+  const info=byId.get(view.selected);
+  if(!info)return;
+  const subset=questionsForStructure(catalog.review_prompts,info.id);
+  if(subset.length===0)return;
+  restartPractice(subset,'Practicing '+subset.length+' question(s) about '+
+    info.label+' (paired left/right structures share concepts).');
+};
 function renderState() {
   for(const [id,m] of meshes) {
     m.visible=!view.isolated || view.isolated===id;
@@ -217,6 +257,11 @@ function renderState() {
   $('transparent').checked=view.transparent;
   $('labels').checked=view.labels;
   const info=byId.get(view.selected);
+  const related=info?questionsForStructure(catalog.review_prompts,info.id):[];
+  $('study-selected').disabled=related.length===0;
+  $('study-selected').title=info
+    ?related.length+' question(s) about '+info.label
+    :'Select a structure to enable focused practice';
   const detail=$('detail');
   detail.replaceChildren();
   if(info) {
