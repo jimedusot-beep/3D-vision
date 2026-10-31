@@ -83,7 +83,7 @@ try{
  for(let i=0;i<neuralLessons.length;i++){
   const step=neuralLessons[i],id=teachingStepId(step);
   assert.match(await page.locator('#neural-lesson-progress').textContent(),new RegExp('Step '+(i+1)+' of 7'));
-  assert.match(await page.locator('#neural-lesson-note').textContent(),new RegExp(step.label.split(' · ')[0]));
+  assert.ok((await page.locator('#neural-lesson-note').textContent()).includes(step.note));
   assert.equal(await page.locator('#neural-select').inputValue(),id===null?'':String(id));
   if(id===null)assert.match(await page.locator('#neural-lesson-note').textContent(),/NO glossopharyngeal 3D nerve mesh/);
   await page.locator('#neural-lesson-next').click();
