@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {parseCommand} from '../ANATOMY/SLP/contract.js';
+import {parseCommand,resolveEmbedOrigin} from '../ANATOMY/SLP/contract.js';
 import {sideX, SUBJECT_X} from '../ANATOMY/SLP/orientation.js';
 const root=new URL('../',import.meta.url);
 const catalog=JSON.parse(readFileSync(new URL('ANATOMY/SLP/structures.json',root),'utf8'));
@@ -136,6 +136,27 @@ test('BodyParts3D source IDs are indexed candidates, not imported or clinically 
    assert.ok(s.candidate_model.source_label.includes(s.id.startsWith('left')?'left':s.id.startsWith('right')?'right':'cartilage')||s.id==='thyroid-cartilage'||s.id==='cricoid-cartilage');
  }
  for(const s of unmatched)assert.match(s.candidate_model.note,/NOT equivalent/);
+});
+test('embed parent origins permit canonical HTTPS or loopback, rejecting ambiguous URL parts',()=>{
+ const fallback='https://3dvision.test';
+ assert.equal(resolveEmbedOrigin(null,fallback),fallback);
+ assert.equal(resolveEmbedOrigin('https://companion.example',fallback),'https://companion.example');
+ assert.equal(resolveEmbedOrigin('https://companion.example:443/',fallback),'https://companion.example');
+ assert.equal(resolveEmbedOrigin('http://localhost:4173',fallback),'http://localhost:4173');
+ assert.equal(resolveEmbedOrigin('http://127.0.0.1:4173/',fallback),'http://127.0.0.1:4173');
+ assert.equal(resolveEmbedOrigin('https://example.com@evil.example/',fallback),fallback);
+ for(const raw of [
+  'http://public.example',
+  'https://companion.example/path',
+  'https://companion.example/?token=abc',
+  'https://companion.example/#fragment',
+  'https://user:secret@companion.example',
+  'javascript:alert(1)',
+  '/relative',
+  '::::',
+  'x'.repeat(2049)
+ ])assert.equal(resolveEmbedOrigin(raw,fallback),fallback,raw.slice(0,35));
+ assert.match(viewer,/resolveEmbedOrigin\(query.get\('embedOrigin'\),location.origin\)/);
 });
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
