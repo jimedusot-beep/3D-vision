@@ -196,5 +196,13 @@
       "Vocal ligament layers and detailed glottal geometry"
     ],
     "statement": "The scene is an intentionally incomplete larynx illustration; omitted structures are NOT absent from human anatomy."
+  },
+  "coordinate_frame": {
+    "description": "Subject-centered schematic frame; not a medical imaging coordinate system",
+    "superior": "+Y",
+    "anterior": "+Z",
+    "subject_left": "+X",
+    "subject_right": "-X",
+    "units": "arbitrary_visual_units_not_anatomical_measurements"
   }
 }
