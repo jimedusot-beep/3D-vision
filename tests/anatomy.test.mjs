@@ -172,6 +172,23 @@ test('embed parent origins permit canonical HTTPS or loopback, rejecting ambiguo
  ])assert.equal(resolveEmbedOrigin(raw,fallback),fallback,raw.slice(0,35));
  assert.match(viewer,/resolveEmbedOrigin\(query.get\('embedOrigin'\),location.origin\)/);
 });
+test('search and focused study remain accessible and session only',()=>{
+ assert.ok(html.includes('id="structure-search"'));
+ assert.ok(html.includes('id="structure-count" role="status"'));
+ assert.ok(html.includes('id="study-selected" disabled'));
+ assert.ok(html.includes('id="study-reset"'));
+ assert.ok(viewer.includes('questionsForStructure(catalog.review_prompts,info.id)'));
+ assert.ok(viewer.includes("row.style.display=match?'grid':'none'"));
+ assert.ok(!viewer.includes('localStorage'));
+ assert.ok(!viewer.includes('indexedDB'));
+});
+test('3D redraw pauses in hidden tabs and provides resize fallback',()=>{
+ assert.match(viewer,/document\.hidden/);
+ assert.match(viewer,/visibilitychange/);
+ assert.match(viewer,/scheduleFrame\(\)/);
+ assert.match(viewer,/typeof ResizeObserver==='function'/);
+ assert.match(viewer,/window\.addEventListener\('resize',fit\)/);
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
