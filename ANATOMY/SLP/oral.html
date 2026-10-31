@@ -42,6 +42,12 @@ main{max-width:1250px;margin:auto;padding:1rem}
 footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 [hidden]{display:none!important}
 @media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#oral-stage{height:clamp(340px,52dvh,540px)}#oral-filters{grid-template-columns:1fr}}
+.explode-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem;margin:.7rem 0 .3rem;padding:.7rem;border:1px solid #749fac;border-radius:9px;background:#173b47}
+.explode-bar label{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.explode-bar input[type="range"]{flex:1 1 160px;min-width:100px;accent-color:#88dfca;min-height:44px}
+.explode-bar button[aria-pressed="true"]{border-color:#9be9ce;background:#16664f}
+.explode-status{font-size:.85rem;color:#c7e8e6;margin:.3rem 0 .8rem;line-height:1.5}
+@media(max-width:500px){.explode-bar{display:grid;grid-template-columns:1fr 1fr}.explode-bar input{grid-column:1/-1}.explode-bar label{justify-content:center}}
 </style></head><body>
 <header><h1>H.E.R.B.I.E. · Oral Anatomy 3D Lab</h1>
 <p>Explore 15 source-derived salivary-gland, tongue and jaw structures for articulation and oral-phase swallowing study.</p>
@@ -74,6 +80,14 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <button type="button" id="oral-all">Show all</button>
 <button type="button" id="oral-reset">Reset view</button>
 </div>
+<div class="explode-bar" role="group" aria-label="Physical 3D source-mesh separation controls">
+<button type="button" id="oral-explode" aria-pressed="false" disabled>Explode 3D</button>
+<label for="oral-explode-amount">Separation <output id="oral-explode-value" for="oral-explode-amount">0%</output></label>
+<input type="range" id="oral-explode-amount" min="0" max="100" step="5" value="0" disabled>
+<button type="button" id="oral-assemble" disabled>Reassemble</button>
+</div>
+<p id="oral-explode-status" class="explode-status" role="status" aria-live="polite">3D separation is available after the licensed source model loads.</p>
+
 <p class="warning"><strong>Source limitation:</strong> The 15 objects are derived from Z-Anatomy FBX scene data and were transformed by OrganUI into a GLB. Illustrative color and source shape are not clinical measurements. The salivary duct surfaces do not model fluid motion, and the static tongue cannot show speech movements.</p>
 </div>
 <aside class="panel" aria-label="Oral anatomy structures and written notes">
