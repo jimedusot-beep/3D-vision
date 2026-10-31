@@ -46,7 +46,7 @@ function select(id){
  $('ear-select').value=id||'';
  $('ear-note-name').textContent=info?.name||'Select a structure';
  $('ear-note-text').textContent=info?.description||
-  'Select a pharyngeal constrictor, palate muscle or associated structure.';
+  'Choose an outer, middle or inner right-ear structure to study.';
  $('ear-note-id').textContent=info?'Z-Anatomy source: '+info.sourceObjectCount+' original object'+(info.sourceObjectCount===1?'':'s')+' · Group: '+info.id:'';
  $('ear-focus').disabled=!id||!model||!renderer;
  $('ear-isolate').disabled=!id||!model||!renderer;
@@ -114,7 +114,7 @@ function fallback(reason){
  $('ear-fallback').hidden=false;
  for(const id of ['ear-focus','ear-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-ear-view]'))button.disabled=true;
- message('3D graphics unavailable: '+reason+'. Read and select all 13 written source groups below. Reload to retry graphics.');
+ message('3D graphics unavailable: '+reason+'. Read and select all 16 right-ear source groups below. Reload to retry graphics.');
 }
 function initScene(){
  try{
@@ -185,7 +185,7 @@ async function load(){
   }
   model=candidate;scene.add(model);
   stage.dataset.modelStatus='ready';
-  message('Licensed BodyParts3D 4.3 pharyngeal muscle study: 20 source-defined groups loaded. Static surfaces, not velopharyngeal closure or swallowing motion.');
+  message('Licensed Z-Anatomy right-ear model loaded: 16 source-derived groups. Static surfaces; no sound propagation or hearing physiology simulation.');
   show();frame(model);resize();
  }catch(e){model=null;fallback(String(e?.message||'invalid model'));}
 }
