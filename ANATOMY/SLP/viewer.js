@@ -448,7 +448,8 @@ function receive(event) {
 window.addEventListener('message',receive);
 if(window.parent!==window)window.parent.postMessage({source:'3d-vision-anatomy',version:VERSION,ready:true,scene:'slp-larynx-v1'},allowedOrigin);
 function fit(){
-  if(!renderer)return;
+  // The hidden canvas must not resize while the mobile document-flow map is active.
+  if(stageMode!=='three'||!renderer)return;
   const w=stage.clientWidth,h=stage.clientHeight;
   if(w<1||h<1)return;
   camera.aspect=w/h;camera.updateProjectionMatrix();
