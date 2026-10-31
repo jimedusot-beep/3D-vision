@@ -6,6 +6,7 @@ import {parseCommand, VERSION} from './contract.js';
 const $=id=>document.getElementById(id);
 const ids=new Set(catalog.structures.map(s=>s.id));
 const byId=new Map(catalog.structures.map(s=>[s.id,s]));
+const references=new Map(catalog.references.map(s=>[s.id,s]));
 const meshes=new Map();
 const stage=$('stage'), overlay=$('overlay');
 const scene=new THREE.Scene();
@@ -105,8 +106,36 @@ function renderState() {
   $('transparent').checked=view.transparent;
   $('labels').checked=view.labels;
   const info=byId.get(view.selected);
-  $('detail').textContent=info?info.label+'. '+info.description:'Select a structure to learn its name and function.';
-  $('status').textContent=info?'Selected '+info.label+'. Simplified geometry: consult validated references.':'Illustrative larynx scene ready.';
+  const detail=$('detail');
+  detail.replaceChildren();
+  if(info) {
+    const heading=document.createElement('strong');
+    heading.textContent=info.label;
+    const description=document.createElement('p');
+    description.textContent=info.description;
+    const caveat=document.createElement('p');
+    caveat.className='evidence-note';
+    caveat.textContent='The references support the written anatomy note, NOT the approximate 3D shape or its relative placement.';
+    const cited=document.createElement('div');
+    cited.className='evidence-links';
+    const intro=document.createElement('strong');
+    intro.textContent='Read the references: ';
+    cited.append(intro);
+    for(const id of info.source_ids) {
+      const ref=references.get(id);
+      if(!ref)continue;
+      const link=document.createElement('a');
+      link.href=ref.url;
+      link.textContent=ref.label;
+      link.target='_blank';
+      link.rel='noopener noreferrer';
+      cited.append(link);
+    }
+    detail.append(heading,description,caveat,cited);
+  } else {
+    detail.textContent='Select a structure to learn its name and function. All model shapes are conceptual placeholders.';
+  }
+  $('status').textContent=info?'Selected '+info.label+'. Referenced text; unvalidated geometry.':'Illustrative larynx scene ready.';
 }
 function select(id){view.selected=id;view.isolated=null;renderState();}
 function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
@@ -116,7 +145,19 @@ $('reset').onclick=reset;
 $('transparent').onchange=e=>{view.transparent=e.target.checked;renderState();};
 $('labels').onchange=e=>{view.labels=e.target.checked;renderState();};
 const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2();
+// An orbit drag must not also select an accidental structure when the pointer is released.
+let pointerStart=null,dragged=false;
+renderer.domElement.addEventListener('pointerdown',e=>{
+  pointerStart={x:e.clientX,y:e.clientY};
+  dragged=false;
+});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(pointerStart && Math.hypot(e.clientX-pointerStart.x,e.clientY-pointerStart.y)>6)dragged=true;
+});
+renderer.domElement.addEventListener('pointercancel',()=>{pointerStart=null;dragged=false;});
 renderer.domElement.addEventListener('click',e=>{
+  if(dragged){dragged=false;pointerStart=null;return;}
+  pointerStart=null;
   const bounds=renderer.domElement.getBoundingClientRect();
   mouse.set((e.clientX-bounds.left)/bounds.width*2-1,-((e.clientY-bounds.top)/bounds.height*2-1));
   raycaster.setFromCamera(mouse,camera);
