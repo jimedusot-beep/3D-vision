@@ -33,7 +33,9 @@ test('anatomy evidence notes are published as a dedicated HTML page',()=>{
  assert.ok(vite.includes("anatomyEvidence:'ANATOMY/SLP/about.html'"));
  assert.ok(html.includes('href="./about.html"'));
  assert.ok(!html.includes('href="./SOURCES.md"'));
- assert.match(evidenceHtml,/Illustrative geometry, not validated medical anatomy/);
+ assert.match(evidenceHtml,/Open-source surface anatomy — not clinically validated/);
+ assert.match(evidenceHtml,/CC BY-SA 2.1 Japan/);
+ assert.match(evidenceHtml,/vocal ligaments/);
  for(const ref of catalog.references)assert.ok(evidenceHtml.includes(ref.url));
 });
 test('public anatomy documents restrict script origins and referrer leakage',()=>{
