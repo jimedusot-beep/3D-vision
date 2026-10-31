@@ -23,7 +23,7 @@ button[aria-pressed="true"]{background:#17615b;border-color:#88e1d0}button:disab
 .controls{display:flex;flex-wrap:wrap;gap:.4rem;margin:.75rem 0}.controls button{flex:1 1 100px}
 label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 #detail{min-height:6rem;padding:.65rem;background:#203541;border-radius:8px}#detail p{margin:.5rem 0}.evidence-note{font-size:.84rem;color:#e1d9bf}.evidence-links{font-size:.85rem}.evidence-links a{display:block;margin-top:.35rem;overflow-wrap:anywhere}
-#status{color:#c5dfe6;font-size:.84rem}small{color:#b7cad5}#webgl-fallback{position:relative;z-index:1;max-width:34rem;margin:1.5rem;padding:1rem;border:1px solid #a6bdd0;border-radius:8px;background:#243745;color:#fff}.study-panel{margin-top:1rem;padding:.8rem;border:1px solid #405568;border-radius:8px;background:#1b3040}.study-panel h2{margin-top:0}.study-panel p{margin:.5rem 0}.study-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.55rem 0}.study-actions button{flex:1 1 130px}.study-sources a{display:block;overflow-wrap:anywhere;margin:.3rem 0}.coverage-note{margin-top:1rem}
+#status{color:#c5dfe6;font-size:.84rem}small{color:#b7cad5}#webgl-fallback{position:relative;z-index:1;max-width:34rem;margin:1.5rem;padding:1rem;border:1px solid #a6bdd0;border-radius:8px;background:#243745;color:#fff}.study-panel{margin-top:1rem;padding:.8rem;border:1px solid #405568;border-radius:8px;background:#1b3040}.study-panel h2{margin-top:0}.practice-rating{border:1px solid #64839a;border-radius:7px;margin-top:.65rem;padding:.5rem}.practice-rating legend{padding:0 .35rem;font-size:.88rem}.study-panel ol{margin:.5rem 0;padding-left:1.4rem}.study-panel li{margin:.6rem 0}.study-panel li p{margin:.2rem 0;font-size:.9rem}.study-panel li a{display:inline-block;margin-right:.5rem;font-size:.85rem}.study-panel p{margin:.5rem 0}.study-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.55rem 0}.study-actions button{flex:1 1 130px}.study-sources a{display:block;overflow-wrap:anywhere;margin:.3rem 0}.coverage-note{margin-top:1rem}
 @media(max-width:760px){main{height:auto;display:flex;flex-direction:column}#stage{height:50dvh;min-height:300px}aside{border-left:0;border-top:1px solid #405568}header p{width:100%}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
@@ -44,13 +44,24 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <label><input id="labels" type="checkbox" checked> Show structure labels</label>
 <button type="button" disabled title="Requires validated geometry and expert anatomical review">Phonation animation unavailable</button>
 <h2>Selected structure — anatomy note &amp; references</h2><div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
+<section class="study-panel" aria-labelledby="objectives-title">
+<h2 id="objectives-title">Undergraduate learning objectives — draft</h2>
+<p>Work through the four outcomes below. Each outcome is supported by short readings and text-based questions, but the material has not been faculty-reviewed or accredited.</p>
+<ol id="learning-objectives"></ol>
+</section>
 <section class="study-panel" aria-labelledby="study-title">
 <h2 id="study-title">Evidence-based recall practice</h2>
 <p>Practice the referenced written anatomy, not the unvalidated 3D shapes. No score or personal data is stored.</p>
+<p id="study-objective">Each question is linked to a learning objective.</p>
 <p id="study-question" role="status" aria-live="polite">Choose “Next question” to begin.</p>
 <p id="study-answer" role="status" aria-live="polite" hidden></p>
+<p id="study-explanation" hidden></p>
 <div id="study-sources" class="study-sources" hidden></div>
 <div class="study-actions"><button type="button" id="study-next">Next question</button><button type="button" id="study-reveal" disabled>Reveal answer &amp; references</button></div>
+<fieldset class="practice-rating"><legend>After revealing, rate your recall (not a graded exam)</legend>
+<div class="study-actions"><button type="button" id="study-again" disabled>Review again later</button><button type="button" id="study-recognized" disabled>I recalled it</button></div>
+</fieldset>
+<p id="study-progress" role="status" aria-live="polite">Practice checks: 0. No scores, accounts or answer history saved.</p>
 </section>
 <details class="coverage-note"><summary>What this simplified scene does NOT show</summary><p id="coverage-intro"></p><ul id="coverage-list"></ul><p id="coverage-warning"></p></details>
 <p id="status" role="status" aria-live="polite">Loading model…</p>
