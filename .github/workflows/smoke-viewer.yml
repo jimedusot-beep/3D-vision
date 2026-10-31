@@ -46,6 +46,8 @@ jobs:
         run: node tests/anatomy-browser.mjs
       - name: SLP systems and respiratory iPhone study
         run: node tests/slp-systems-browser.mjs
+      - name: Licensed 3D lungs/airway browser study and mobile anatomy
+        run: node tests/slp-lungs-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-artifact@v4
@@ -72,6 +74,8 @@ jobs:
         run: BROWSER_ENGINE=webkit node tests/anatomy-browser.mjs
       - name: SLP systems and respiratory iPhone Safari coverage
         run: BROWSER_ENGINE=webkit node tests/slp-systems-browser.mjs
+      - name: Licensed lung/airway model on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-lungs-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
