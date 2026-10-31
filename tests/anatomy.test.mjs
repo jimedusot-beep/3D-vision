@@ -40,6 +40,24 @@ test('every anatomy note links to explicit HTTPS educational sources, never to v
  assert.match(viewer,/NOT the approximate 3D shape/);
  assert.match(viewer,/noopener noreferrer/);
 });
+test('referenced study prompts are complete, unique and text-only',()=>{
+ const names=new Set();
+ const sources=new Set(catalog.references.map(r=>r.id));
+ assert.ok(catalog.review_prompts.length>=6);
+ for(const prompt of catalog.review_prompts) {
+   assert.ok(!names.has(prompt.id),'Duplicate study prompt');
+   names.add(prompt.id);
+   assert.ok(ids.has(prompt.structure_id));
+   assert.ok(prompt.question.length>20 && prompt.answer.length>8);
+   assert.ok(prompt.source_ids.length>0);
+   for(const id of prompt.source_ids)assert.ok(sources.has(id));
+ }
+ assert.equal(catalog.coverage.omitted_structures.length>=8,true);
+ assert.match(catalog.coverage.statement,/NOT absent/);
+ assert.match(html,/id="study-question"/);
+ assert.match(html,/id="study-answer" hidden/);
+ assert.match(viewer,/prompt\.source_ids/);
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
