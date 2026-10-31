@@ -65,6 +65,8 @@ jobs:
       - run: npm test
       - name: Prepare source-verified 3D anatomy models
         run: npm run anatomy:model
+      - name: Inspect immutable neural source scene and Draco dependency structure
+        run: node scripts/inspect-slp-neural-source.mjs
       - name: Inspect glTF mesh, primitive, source-tag and neural-hidden geometry counts
         run: node scripts/audit-slp-model-footprints.mjs
       - run: npx playwright install --with-deps chromium
