@@ -83,8 +83,8 @@ export const systemModules=[
     "id": "neural",
     "name": "Neural control and cranial nerves",
     "group": "Control and perception",
-    "stage": "outline",
-    "overview": "Brain networks, brainstem pathways and cranial nerves contributing to speech, language, voice and swallowing.",
+    "stage": "study",
+    "overview": "Partial source-derived 3D cranial nerves/branches and brainstem (44 + 30 records). Glossopharyngeal CN IX is text-only; central pathways and all nuclei are not modeled.",
     "objectives": [
       "Orient to cortex, cerebellum and brainstem.",
       "Identify clinical roles of cranial nerves V, VII, IX, X and XII.",
@@ -92,7 +92,7 @@ export const systemModules=[
       "Explain neural coordination of breathing, speaking and swallowing."
     ],
     "next": [
-      "License-audited brainstem and cranial nerve meshes",
+      "Source-verified partial brainstem and nerve meshes added; still need a licensed CN IX mesh and validated full cranial-nerve paths",
       "Functional pathways and lesion correlations",
       "Neuroanatomy review by qualified faculty"
     ],
