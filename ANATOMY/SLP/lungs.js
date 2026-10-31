@@ -3,6 +3,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {lungGroups,lungGroupById,lungRegions,verifyLungGroups} from './lungs-manifest.js';
 import {initLungTour} from './lung-tour.js';
+import {initLungPractice} from './lung-practice.js';
 
 const $=id=>document.getElementById(id),stage=$('lung-stage');
 const regionColors={
@@ -215,9 +216,15 @@ function focusTourStructure(id,reassemble=true){
  camera.lookAt(center);controls.update();stage.dataset.focusedGroup=id;draw();
 }
 $('lung-focus').addEventListener('click',()=>{if(selected)focusTourStructure(selected,false);});
+const resetStudyScene=()=>{setAmount(0);$('lung-all').click();view('front');};
 lungTour=initLungTour({
  selectStructure:select,
  focusStructure:focusTourStructure,
- resetScene:()=>{setAmount(0);$('lung-all').click();view('front');}
+ resetScene:resetStudyScene
+});
+initLungPractice({
+ selectStructure:select,
+ focusStructure:focusTourStructure,
+ resetScene:resetStudyScene
 });
 void load();
