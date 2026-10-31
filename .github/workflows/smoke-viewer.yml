@@ -52,6 +52,28 @@ jobs:
           name: workshop-test-results
           path: test-results/
           if-no-files-found: ignore
+  anatomy-iphone:
+    # Isolate anatomy changes from unrelated CAD animation timing failures.
+    # This does not replace or weaken the existing WebKit workshop gate.
+    runs-on: macos-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install webkit
+      - name: Anatomy concept map, sourced notes and iPhone touch journey
+        run: BROWSER_ENGINE=webkit node tests/anatomy-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anatomy-iphone-results
+          path: test-results/
+          if-no-files-found: ignore
   webkit-mobile:
     runs-on: macos-latest
     timeout-minutes: 12
