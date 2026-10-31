@@ -30,7 +30,7 @@ try{
   await page.waitForFunction(()=>document.querySelectorAll('.module-card').length===10,null,{timeout:25000});
   assert.equal(await page.locator('.module-card').count(),10);
   const launchLinks=[
-    './index.html','./lungs.html','./diaphragm.html','./oral.html',
+    './index.html?view=three','./lungs.html','./diaphragm.html','./oral.html',
     './pharynx.html','./ear.html','./neural.html'
   ];
   assert.equal(await page.locator('#anatomy-launcher .anatomy-launch').count(),7);
@@ -84,12 +84,14 @@ try{
   await page.locator('button[data-module-id="phonation"]').click();
   assert.match(await page.locator('#module-status').textContent(),/3D/);
   assert.equal(await page.locator('#module-open-3d').isVisible(),true);
-  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./index.html');
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./index.html?view=three');
   await page.locator('button[data-module-id="respiration"]').click();
   assert.equal(await page.locator('#respiratory-study').isVisible(),true);
   assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./lungs.html');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-  await page.goto(origin+'/ANATOMY/SLP/index.html');
+  await page.goto(origin+'/ANATOMY/SLP/index.html?view=three');
+  assert.equal(await page.locator('#stage').getAttribute('class'),'mode-three');
+  assert.equal(await page.locator('#mode-three').getAttribute('aria-pressed'),'true');
   assert.equal(await page.locator('a[href="./systems.html"]').count(),2);
   assert.deepEqual(errors,[]);
   await mkdir('test-results',{recursive:true});
