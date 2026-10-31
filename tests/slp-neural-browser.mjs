@@ -123,7 +123,7 @@ try{
   assert.equal(await page.locator('#neural-select').inputValue(),'','Answer mesh must stay undisclosed until response');
   assert.equal(await page.locator('#neural-practice-next').isDisabled(),true);
   assert.equal(await page.locator('#neural-practice-options button').count(),4);
-  assert.match(await page.locator('#neural-practice-question').textContent(),new RegExp(q.prompt.replace(/[.*+?^$()|[\\]{}]/g,'\\ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);')));
+  assert.equal(await page.locator('#neural-practice-question').textContent(),q.prompt);
   const answer=missed.has(i)?practiceChoices(q).find(x=>x.id!==q.correct).id:q.correct;
   await page.locator('#neural-practice-options button[data-answer="'+answer+'"]').click();
   assert.equal(await page.locator('#neural-practice-next').isEnabled(),true);
