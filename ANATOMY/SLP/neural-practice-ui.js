@@ -1,6 +1,6 @@
 // Live, session-only neural practice UI. Original questions are source-linked.
 // Lessons remain accessible even when 3D or Draco decoding are unavailable.
-import {neuralAnswerLabels,practiceChoices,createNeuralPracticeSession,
+import {practiceChoices,createNeuralPracticeSession,
  currentNeuralQuestion,recordNeuralAnswer,nextNeuralQuestion,
  restartMissedNeuralQuestions} from './neural-practice.js';
 const $=id=>document.getElementById(id);
