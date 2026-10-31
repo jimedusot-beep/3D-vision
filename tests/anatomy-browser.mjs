@@ -386,8 +386,13 @@ try {
   assert.match(await touch.locator('#tour-progress').textContent(),/Step 2 of 6/);
   assert.equal(await touch.locator('#tour-answer').isHidden(),true);
   await touch.locator('#tour-view').click();
-  assert.equal(await touch.locator('#mode-three').getAttribute('aria-pressed'),'true');
   assert.match(await touch.locator('#source-note-name').textContent(),/arytenoid/i);
+  const tour3D=await touch.locator('#mode-three').getAttribute('aria-pressed')==='true';
+  if(!tour3D){
+    assert.equal(await touch.locator('#panel-details').isVisible(),true,
+      'Graphics unavailable: guided tour must open textual source notes');
+    assert.match(await touch.locator('#status').textContent(),/3D graphics unavailable/);
+  }
   await touch.locator('[data-mobile-target="panel-practice"]').click();
   assert.match(await touch.locator('#study-scope').textContent(),/3 question\(s\) about Right vocal fold/);
   await touch.locator('#study-next').click();
