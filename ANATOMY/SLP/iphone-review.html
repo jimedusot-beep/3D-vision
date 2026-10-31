@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'none';object-src 'none';base-uri 'self';form-action 'none'">
+<title>H.E.R.B.I.E. · Real iPhone Atlas Review</title>
+<meta name="description" content="A private, on-device manual iPhone Safari and VoiceOver review of seven licensed 3D anatomy labs. No results are uploaded.">
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;line-height:1.55;color:#edf8fa;background:#0f1e29;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;overflow-wrap:anywhere}
+a{color:#9fe9de}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #a6f8d8;outline-offset:3px}
+header{background:#173746;border-bottom:1px solid #638a95;padding:1rem max(1rem,env(safe-area-inset-left)) 1.1rem}
+header h1{font-size:clamp(1.35rem,5vw,1.8rem);line-height:1.24;margin:.6rem 0}
+header p{margin:.45rem 0;max-width:76ch}
+nav{display:flex;flex-wrap:wrap;gap:.65rem}
+main{max-width:900px;padding:1rem;margin:auto}
+section{margin:1.15rem 0 1.45rem}
+h2{font-size:1.25rem;margin:.6rem 0}h3{font-size:1.08rem}
+.intro{border-left:4px solid #8edecd;background:#1b3a48;padding:.7rem .95rem;border-radius:7px}
+a.open-lab{display:inline-flex;align-items:center;min-height:44px;padding:.5rem .8rem;border:1px solid #96dccc;border-radius:8px;background:#214653;text-decoration:none;font-weight:700;margin:.3rem 0}
+button,input,textarea{font:inherit}button{padding:.55rem .9rem;min-height:44px;border:1px solid #9cc0c7;border-radius:8px;background:#245466;color:#fff;cursor:pointer}
+button:disabled{opacity:.6}
+.task{background:#193543;border:1px solid #547a88;border-radius:12px;padding:clamp(.75rem,3vw,1rem);margin:.75rem 0}
+.task h3{margin:0 0 .2rem}.task p{margin:.3rem 0 .6rem;color:#d4e8ec}
+fieldset{border:0;padding:0;margin:.55rem 0 0;min-width:0}legend{font-weight:700;margin-bottom:.35rem}
+.options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem}
+.options label{display:flex;gap:.25rem;align-items:center;min-height:44px;padding:.3rem .45rem;background:#214756;border:1px solid #658794;border-radius:7px;overflow-wrap:anywhere}
+.options input{accent-color:#80e5c4;min-width:20px;min-height:20px;margin:0 .2rem 0 0}
+.options label:has(input:checked){border-color:#adf4d7;background:#1d6458}
+.summary{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.summary strong{font-variant-numeric:tabular-nums}
+dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .7rem;margin:.8rem 0}
+dt{font-weight:700}dd{margin:0;min-width:0}
+input[type=text],input[type=number],textarea{width:100%;background:#112c38;color:#fff;border:1px solid #8aa8b1;border-radius:8px;min-height:44px;padding:.55rem .7rem}
+textarea{resize:vertical;min-height:7rem}label.field{display:block;font-weight:650;margin:.6rem 0}
+label.field input,label.field textarea{display:block;margin-top:.3rem;font-weight:400}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem;margin:.7rem 0}
+#report{min-height:14rem;white-space:pre-wrap}
+#message,#diagnostics-status{min-height:1.8rem}
+.note{font-size:.9rem;color:#d1e5e6}
+footer{border-top:1px solid #507381;padding:1rem;max-width:900px;margin:auto;color:#bed8dc}
+@media(max-width:380px){.options{grid-template-columns:1fr}.options label{min-height:42px}dl{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important}}
+</style>
+</head><body>
+<header>
+<nav aria-label="Review navigation"><a href="./systems.html">Back to SLP Atlas</a><a href="./about.html">Sources and limitations</a></nav>
+<h1>Real iPhone test · H.E.R.B.I.E. Anatomy Atlas</h1>
+<p>Check the actual Safari experience, touchscreen 3D, VoiceOver, and longer sessions. This is a manual device test—not proof of anatomical or clinical accuracy.</p>
+</header>
+<main>
+<p class="intro"><strong>Privacy:</strong> Your selections and notes stay in this browser's local storage. Nothing is uploaded or sent to GitHub. Copy a report only when you decide to share it. Do not enter personal identifiers, health details, or serial numbers.</p>
+<section aria-labelledby="start-title">
+<h2 id="start-title">1. Check this iPhone</h2>
+<p>Open this page in Safari (not an in-app browser). Try the browser check; it tests basic WebGL availability, not whether an anatomy model rendered successfully.</p>
+<div class="actions"><button id="run-diagnostics" type="button">Check Safari &amp; WebGL</button></div>
+<p id="diagnostics-status" role="status" aria-live="polite">Not checked yet.</p>
+<dl id="diagnostics"><dt>WebGL</dt><dd>Not checked</dd><dt>Touch</dt><dd>Not checked</dd><dt>Viewport</dt><dd>Not checked</dd></dl>
+<label class="field" for="device-note">Phone model and iOS version (optional, no identifying numbers)
+<input id="device-note" type="text" maxlength="100" autocomplete="off" placeholder="e.g., iPhone 13, iOS 18"></label>
+</section>
+<section aria-labelledby="labs-title">
+<h2 id="labs-title">2. Test each 3D lab</h2>
+<p>Open a lab, verify that a genuine canvas model appears, rotate and pinch, select a named source structure, use Explode at 100%, then Reassemble to 0%. Return here using Safari Back. A written text fallback alone is <strong>not</strong> a successful 3D test.</p>
+<div id="lab-tasks"></div>
+</section>
+<section aria-labelledby="usability-title">
+<h2 id="usability-title">3. Test access and reliability</h2>
+<p>For VoiceOver, turn it on using iPhone Settings → Accessibility → VoiceOver or your configured Accessibility Shortcut. VoiceOver results cannot be measured automatically by this page.</p>
+<div id="device-tasks"></div>
+<label class="field" for="load-time">A model's first usable load time in seconds (optional stopwatch measurement)
+<input id="load-time" type="number" min="0" max="600" step="0.1" inputmode="decimal" placeholder="e.g., 12.5"></label>
+<label class="field" for="observations">Problems or observations (optional; no personal information)
+<textarea id="observations" rows="4" maxlength="1500" placeholder="Name the lab and describe exactly what happened, e.g., ‘Neural: rotation worked, but Explode froze after 10 seconds.’"></textarea></label>
+</section>
+<section aria-labelledby="report-title">
+<h2 id="report-title">4. Copy your results</h2>
+<p id="progress" role="status" aria-live="polite">No results recorded.</p>
+<div class="actions">
+<button id="make-report" type="button">Prepare report</button>
+<button id="copy-report" type="button">Copy report</button>
+<button id="clear-review" type="button">Clear saved results</button>
+</div>
+<label class="field" for="report">Your device review report
+<textarea id="report" rows="12" readonly spellcheck="false" placeholder="Use Prepare report to create a text report you can paste into ChatGPT or a GitHub issue."></textarea></label>
+<p id="message" role="status" aria-live="polite"></p>
+<p class="note">Copying may be blocked by Safari permissions. If so, select and copy the report text above manually. Reports include only the checks and notes you choose; no account, IP address, or hardware identifier is included.</p>
+</section>
+</main>
+<footer>H.E.R.B.I.E. SLP Atlas · Field review for a physical iPhone · No automated VoiceOver claims · For educational study only.</footer>
+<script type="module" src="./iphone-review.js"></script>
+</body></html>
