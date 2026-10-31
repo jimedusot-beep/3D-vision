@@ -4,7 +4,7 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;font-src 'self';connect-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
 <title>H.E.R.B.I.E. · SLP Body Systems Study Atlas</title>
-<meta name="description" content="A source-aware speech-language pathology body systems study atlas, currently containing larynx 3D and respiratory study modules.">
+<meta name="description" content="A source-aware speech-language pathology body systems study atlas, containing a navigable 3D study-topic layout, verified larynx and lung/airway source models, and SLP learning modules.">
 <style>
 :root{font:16px/1.48 system-ui,sans-serif;background:#0e1923;color:#ecf5f7}
 *{box-sizing:border-box}body{margin:0}button,input{font:inherit}a{color:#96e5da}
@@ -18,6 +18,12 @@ nav a{display:inline-block;border:1px solid #688a9c;border-radius:9px;padding:.5
 main{max-width:1280px;margin:auto;padding:clamp(.8rem,3vw,2rem)}
 h2{font-size:1.27rem}h3{font-size:1.02rem}p{margin:.6rem 0}
 .intro{color:#c2d6de;max-width:80ch}
+
+#systems-network{position:relative;height:clamp(330px,49vh,530px);background:radial-gradient(ellipse at center,#264c5c,#102736 78%);border:1px solid #58808b;border-radius:14px;overflow:hidden;margin:.8rem 0 .45rem}
+#systems-network canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:pan-y}
+#systems-network #systems-3d-status{position:absolute;bottom:.45rem;left:.45rem;right:.45rem;background:#0e2b39e6;border:1px solid #5c9193;border-radius:8px;padding:.5rem .6rem;font-size:.8rem;pointer-events:none}
+#systems-network:focus-visible{outline:3px solid #9cead4}
+#systems-legend{font-size:.81rem;color:#bad9df;margin:.6rem 0 1rem}
 #module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:.8rem}
 .module-card{background:#1a3342;border:1px solid #436878;border-radius:13px;padding:1rem;min-width:0}
 .module-card h3{margin:.25rem 0}.module-card p{font-size:.87rem;line-height:1.42;color:#c7d9e1}
@@ -50,24 +56,29 @@ h2{font-size:1.27rem}h3{font-size:1.02rem}p{margin:.6rem 0}
 #resp-answer:not([hidden]){padding:.8rem;background:#214352;border-left:4px solid #8cdcc0}
 #resp-next:disabled{opacity:.5;cursor:not-allowed}
 footer{border-top:1px solid #406777;margin:2rem 0 0;padding:1rem clamp(1rem,3vw,2rem);color:#c4d8dd;font-size:.82rem}
-@media(max-width:560px){header{padding:1rem}.module-card{padding:.8rem}#resp-diagram{padding:.2rem}}
+@media(max-width:560px){#systems-network{height:clamp(310px,44dvh,390px)}header{padding:1rem}.module-card{padding:.8rem}#resp-diagram{padding:.2rem}}
 </style></head><body>
 <header><h1>H.E.R.B.I.E. · SLP Systems Atlas</h1>
 <p>Learn how breathing, voice, speech, hearing, neural control and swallowing connect. Built for <strong>digital anatomy and physiology study</strong>, not a printable model or clinical decision tool.</p>
-<nav aria-label="Atlas navigation"><a href="./index.html">Existing 3D Larynx Lab</a><a href="../../index.html">Robotics workshop</a><a href="./about.html">Anatomy source and license notes</a></nav>
+<nav aria-label="Atlas navigation"><a href="./index.html">3D Larynx Lab</a><a href="./lungs.html">3D Lungs &amp; Airways</a><a href="../../index.html">Robotics workshop</a><a href="./about.html">Anatomy source and license notes</a></nav>
 </header>
 <main>
 <h2>Human systems and SLP learning domains</h2>
-<p class="intro">The atlas is organized around ten interconnected study areas. At present, the larynx has licensed source-derived 3D anatomy; respiration has a first study module with a conceptual diagram and recall questions. Other areas are <strong>curriculum outlines awaiting licensed, reviewed assets</strong>—not empty promises of 3D models.</p>
+<p class="intro">The atlas is organized around ten interconnected study areas. The existing larynx and new lung/airway modules use <strong>source-derived 3D meshes</strong>. Use the interactive 3D topic layout to navigate ten areas; it represents educational relationships, <strong>not human anatomical coordinates</strong>. Eight other subjects remain curricula awaiting appropriate anatomical assets. The respiratory module also retains its breathing lessons and quizzes.</p>
+<section id="systems-network" role="region" tabindex="0" aria-label="Three-dimensional SLP curriculum topic navigation; select a colored topic marker or use the ten native buttons below">
+<p id="systems-3d-status" role="status">Interactive topic-space overview. Source-derived 3D anatomical geometry is available in the respiratory and larynx modules only.</p>
+</section>
+<p id="systems-legend"><strong>3D topic map ≠ anatomical body:</strong> brighter markers link to available lung/airway or larynx models. Muted markers are topic outlines. Drag to rotate; tap a marker or select a card below. All content remains available without WebGL.</p>
 <div id="module-grid" aria-label="Choose a body system or study foundation"></div>
 <section id="module-detail" tabindex="-1" aria-labelledby="module-title">
 <p id="module-status" class="tag"></p><h2 id="module-title">Respiratory system</h2>
 <p id="module-description"></p>
 <h3>Learning objectives</h3><ol id="module-objectives"></ol>
-<div id="module-open-3d" hidden><a href="./index.html">Open the existing interactive 3D larynx and exploded study view</a></div>
+<div id="module-open-3d" hidden><a id="model-target-link" href="./index.html">Open the verified source-derived anatomy model</a></div>
 <section id="respiratory-study" aria-labelledby="resp-title" hidden>
 <h3 id="resp-title">Respiratory anatomy — study starter</h3>
-<p>The introductory notes emphasize a core connection from your phonation lecture: <strong>respiration provides the energy for phonation</strong>. Review the airway and respiratory muscles before returning to the larynx.</p>
+<p>The introductory notes emphasize a core connection from your phonation lecture: <strong>respiration provides the energy for phonation</strong>. Review the airway and respiratory muscles before returning to the larynx. The 3D lung model includes 17 segment groups and trachea/bronchial-tree groups, but NOT diaphragm or ribs.</p>
+<p><a href="./lungs.html">Explore the real 3D lung segments and airways</a> · <a href="./index.html">Compare with the 3D larynx</a></p>
 <div id="resp-flow" role="group" aria-label="Compare breathing phases">
 <button id="flow-inhale" type="button" aria-pressed="true">Quiet inspiration</button>
 <button id="flow-speak" type="button" aria-pressed="false">Speech exhalation</button>
