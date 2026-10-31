@@ -13,7 +13,11 @@ header h1{font-size:1.25rem;margin:0}header p{margin:0;color:#b6c9d4;font-size:.
 .workspace-nav{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.workspace-nav>*{padding:.45rem .7rem;border:1px solid #64839a;border-radius:7px}.workspace-nav [aria-current=page]{background:#17615b;color:#fff}
 main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height:calc(100dvh - 102px);min-height:450px}
 #stage{position:relative;min-height:360px;overflow:hidden;background:radial-gradient(circle,#263e4c,#0e1a26)}
-#stage canvas{display:block;touch-action:none}
+/* The drawing buffer uses device pixels, but the visible canvas must remain
+   exactly stage-sized in CSS pixels. Without this, Retina/iOS WebKit can
+   display a giant clipped lower-right fragment of the 3D scene. */
+#stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:100%;max-height:100%;touch-action:none}
+#stage.mode-three{isolation:isolate}
 #stage.mode-map canvas,#stage.mode-map #overlay{display:none}
 #stage.mode-three #concept-map{display:none}
 #stage button{min-height:40px}
@@ -66,7 +70,7 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
  #stage.mode-map #concept-map{position:relative;inset:auto;overflow:visible;padding:1.1rem .8rem 1rem;width:100%}
  #stage.mode-map #selection-ribbon{position:sticky;top:.5rem;inset-inline:auto;margin:0 .8rem .6rem;z-index:9;box-shadow:0 5px 18px #0006}
  #stage.mode-map #notice{position:relative;inset:auto;margin:.3rem .8rem .8rem}
- #stage.mode-three{height:53dvh;min-height:320px;overflow:hidden}
+ #stage.mode-three{height:clamp(340px,53dvh,520px);min-height:340px;overflow:hidden}
  #stage.mode-three #view-switch{top:.6rem;left:.6rem}
  #stage.mode-three #three-view-controls{top:3.8rem;right:.6rem}
  #stage.mode-three #selection-ribbon{left:.5rem;right:.5rem;bottom:3.8rem}
@@ -81,7 +85,13 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
  #stage.mode-map #concept-map{padding-bottom:.3rem}
  #detail{min-height:0}
  #practice-from-detail{min-height:48px}
- header p{width:100%}
+ header{padding:.7rem .85rem;gap:.45rem}
+ header h1{font-size:1.13rem}
+ header p{width:100%;font-size:.77rem}
+ .workspace-nav{gap:0}
+ .workspace-nav>a{padding:.4rem .55rem;font-size:.78rem}
+ .workspace-nav [aria-current="page"]{display:none}
+ #stage.mode-three #notice{font-size:.7rem;line-height:1.3;padding:.4rem .55rem;bottom:.45rem;left:.45rem;right:.45rem}
 }
 @media(max-width:600px){.map-grid{grid-template-columns:1fr}.map-group{padding:.75rem}#three-view-controls{top:3.9rem}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
