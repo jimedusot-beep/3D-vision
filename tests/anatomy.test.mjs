@@ -111,6 +111,32 @@ test('undergraduate draft objectives trace all recall items to educational refer
   assert.ok(!viewer.includes('sessionStorage'));
   assert.ok(!viewer.includes('indexedDB'));
 });
+test('BodyParts3D source IDs are indexed candidates, not imported or clinically validated meshes',()=>{
+ assert.equal(catalog.mesh_candidate_catalog.status,'index_entries_checked_no_mesh_files_imported');
+ assert.ok(catalog.mesh_candidate_catalog.index_url.endsWith('isa_parts_list_e.txt'));
+ assert.ok(catalog.mesh_candidate_catalog.license_url.startsWith('https://'));
+ const found=catalog.structures.filter(s=>s.candidate_model.status==='indexed_not_imported_unvalidated');
+ const unmatched=catalog.structures.filter(s=>s.candidate_model.status==='exact_structure_not_identified');
+ assert.equal(found.length,8);
+ assert.deepEqual(unmatched.map(s=>s.id).sort(),['left-vocal-fold','right-vocal-fold']);
+ const known={
+  'thyroid-cartilage':['FMA55099','BP7901'],
+  'cricoid-cartilage':['FMA9615','BP9117'],
+  'left-arytenoid':['FMA55114','BP8314'],
+  'right-arytenoid':['FMA55113','BP9249'],
+  'left-posterior-cricoarytenoid':['FMA46578','BP7822'],
+  'right-posterior-cricoarytenoid':['FMA46577','BP8360'],
+  'left-lateral-cricoarytenoid':['FMA46581','BP8828'],
+  'right-lateral-cricoarytenoid':['FMA46580','BP8618']
+ };
+ for(const s of found){
+   const expected=known[s.id];
+   assert.ok(expected,s.id+' missing official-index mapping');
+   assert.deepEqual([s.candidate_model.concept_id,s.candidate_model.representation_id],expected);
+   assert.ok(s.candidate_model.source_label.includes(s.id.startsWith('left')?'left':s.id.startsWith('right')?'right':'cartilage')||s.id==='thyroid-cartilage'||s.id==='cricoid-cartilage');
+ }
+ for(const s of unmatched)assert.match(s.candidate_model.note,/NOT equivalent/);
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
