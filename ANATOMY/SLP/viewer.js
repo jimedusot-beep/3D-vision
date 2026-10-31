@@ -479,6 +479,9 @@ function renderState() {
   }
   $('status').textContent=!renderer
     ?'3D view unavailable; text-based anatomy study is ready.'
+    :stageMode==='three'&&referenceState==='loading'?'Loading licensed BodyParts3D larynx surface geometry…'
+    :stageMode==='three'&&referenceState==='error'?'Licensed model unavailable: '+referenceError+'. Use the study map and notes.'
+    :stageMode==='three'&&referenceState==='ready'?(info?'Selected '+info.label+'. Bilateral source geometry may represent both sides.':'BodyParts3D 4.3 anatomy surfaces loaded. Independent review pending.')
     :graphicsLost?'3D graphics are temporarily unavailable; anatomy notes and recall still work.'
     :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.'
     :stageMode==='map'?'Structure-and-function study map ready. No spatial or clinical claims.':'Unvalidated 3D sketch ready.';
@@ -637,7 +640,10 @@ function setPresentation(mode){
     ?'Concepts grouped by function, NOT anatomical position. No measurements or clinical use.'
     :referenceState==='ready'?'BodyParts3D 4.3 surface meshes, CC BY-SA 2.1 JP. Not clinically reviewed. Vocal ligaments are not complete folds.'
     :'Preparing source anatomy. No clinical use; original 3D primitives are not a medical reconstruction.';
-  if(mode==='three'){fit();scheduleFrame();void ensureReferenceModel();}
+  if(mode==='three'){
+    root.visible=false;overlay.hidden=true;
+    fit();scheduleFrame();void ensureReferenceModel();
+  }
   renderState();
 }
 $('mode-map').addEventListener('click',()=>setPresentation('map'));
