@@ -15,7 +15,7 @@ const offsets={
  'left-lower':[.8,-.65,.1],'airway':[0,.24,-1.15]
 };
 const enabled=new Set(Object.keys(lungRegions)),regions=new Map(),meshNodes=[];
-let selected=null,isolate=false,amount=0,model=null,box=null,renderer=null,controls=null,camera=null,scene=null,first=0,resize=null,lungTour=null;
+let selected=null,isolate=false,amount=0,model=null,box=null,renderer=null,controls=null,camera=null,scene=null,resize=null,lungTour=null;
 function message(text){$('model-status').textContent=text;}
 function select(id){
  if(id!==null&&!lungGroupById.has(id))return;
@@ -103,10 +103,14 @@ function size(){
  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();draw();
 }
 function fallback(reason){
- stage.dataset.fallback='true';$('fallback').hidden=false;
- message('3D graphics unavailable: '+reason+'. All 20 written source-model labels and descriptions remain available.');
+ stage.dataset.fallback='true';
+ stage.dataset.modelStatus='unavailable';
+ stage.removeAttribute('tabindex');
+ stage.querySelector('canvas')?.style.setProperty('display','none');
+ $('fallback').hidden=false;
+ message('3D graphics unavailable: '+reason+'. All 20 written source-model labels and descriptions remain available. Reload this page to retry 3D.');
  $('lung-objects').textContent='Text study available for all 20 licensed model groups; graphics unavailable.';
- for(const id of ['lung-isolate','lung-separate','lung-assemble',...[]])$(id).disabled=true;
+ for(const id of ['lung-isolate','lung-separate','lung-assemble'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-view]'))button.disabled=true;
 }
 function startScene(){
@@ -116,7 +120,7 @@ function startScene(){
   renderer.setSize(1,1,false);
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   stage.prepend(renderer.domElement);
-  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();renderer=null;fallback('WebGL context lost');});
+  renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();renderer=null;model=null;fallback('WebGL context lost');});
  }catch(e){fallback('WebGL not supported');return false;}
  scene=new THREE.Scene();
  camera=new THREE.PerspectiveCamera(34,1,.05,200);
@@ -131,17 +135,21 @@ function startScene(){
  size();
  // Pointer selection is separate from dragging/orbiting.
  let down=null;
- renderer.domElement.addEventListener('pointerdown',e=>{down=[e.clientX,e.clientY];});
- renderer.domElement.addEventListener('pointerup',e=>{
-  if(!down||Math.hypot(e.clientX-down[0],e.clientY-down[1])>8||!meshNodes.length)return;
-  const r=renderer.domElement.getBoundingClientRect();
+ const canvas=renderer.domElement;
+ canvas.addEventListener('pointerdown',e=>{if(renderer)down=[e.clientX,e.clientY];});
+ canvas.addEventListener('pointercancel',()=>{down=null;});
+ canvas.addEventListener('pointerup',e=>{
+  const origin=down;down=null;
+  if(!renderer||!origin||Math.hypot(e.clientX-origin[0],e.clientY-origin[1])>8||!meshNodes.length)return;
+  const r=canvas.getBoundingClientRect();
+  if(!r.width||!r.height)return;
   const mouse=new THREE.Vector2((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);
   const ray=new THREE.Raycaster();ray.setFromCamera(mouse,camera);
   const hit=ray.intersectObjects(meshNodes.filter(m=>m.visible),false)[0];
   if(hit)select(hit.object.name);
  });
  stage.addEventListener('keydown',e=>{
-  if(!camera||!controls)return;
+  if(!renderer||!camera||!controls)return;
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
    e.preventDefault();const dir=e.key==='ArrowLeft'?-.13:e.key==='ArrowRight'?.13:0;
    const dy=e.key==='ArrowUp'?.13:e.key==='ArrowDown'?-.13:0;
@@ -162,6 +170,8 @@ async function load(){
   const bytes=await response.arrayBuffer();
   if(bytes.byteLength!==3901260)throw Error('Unexpected lung GLB size');
   const parsed=await new GLTFLoader().parseAsync(bytes,'');
+  // A delayed download must not revive the 3D UI after the graphics context was lost.
+  if(stage.dataset.fallback==='true')return;
   model=parsed.scene;
   model.updateMatrixWorld(true);
   model.traverse(o=>{if(o.isMesh)meshNodes.push(o);});
@@ -179,6 +189,7 @@ async function load(){
   }
   box=new THREE.Box3().setFromObject(model);
   scene.add(model);
+  if(stage.dataset.fallback==='true')return;
   stage.dataset.modelStatus='ready';
   message('Licensed BodyParts3D 4.3 lung segments and airway surfaces loaded. Rotate or select a group; this is not a breathing simulation.');
   show();view('front');size();lungTour?.refresh();
@@ -186,7 +197,7 @@ async function load(){
 }
 // Camera framing uses only the source mesh bounds; it never changes or invents anatomy.
 function focusTourStructure(id){
- if(!model||!camera||!controls)return;
+ if(!renderer||!model||!camera||!controls)return;
  const selectedMesh=meshNodes.find(mesh=>mesh.name===id);
  if(!selectedMesh)return;
  setAmount(0);
