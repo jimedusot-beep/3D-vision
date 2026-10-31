@@ -16,7 +16,7 @@ const definitions=[
   {id:'oral',file:'oral.html',stage:'#oral-stage',source:'oral.glb'},
   {id:'pharynx',file:'pharynx.html',stage:'#pharynx-stage',source:'pharynx.glb'},
   {id:'ear',file:'ear.html',stage:'#ear-stage',source:'ear.glb'},
-  {id:'neural',file:'neural.html',stage:'#neural-stage',source:'neural.glb'}
+  {id:'neural',file:'neural.html',stage:'#neural-stage',source:'neural-study.glb'}
 ];
 const browser=await engine.launch(engineName==='webkit'?{}:{
  args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']
