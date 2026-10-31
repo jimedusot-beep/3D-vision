@@ -69,7 +69,26 @@ try{
   await mkdir('test-results',{recursive:true});
   await page.goto(origin+'/ANATOMY/SLP/systems.html');
   await page.screenshot({path:'test-results/slp-systems-'+name+'-iphone.png',fullPage:true});
-  console.log('PASS: '+name+' iPhone SLP systems hub, respiratory learning and protected larynx route');
+  await page.waitForFunction(()=>['true','false'].includes(document.querySelector('#systems-network')?.dataset.available),null,{timeout:15000});
+  const has3d=await page.locator('#systems-network').getAttribute('data-available')==='true';
+  if(has3d){
+    await page.locator('#systems-network canvas').evaluate(canvas=>{
+      canvas.dispatchEvent(new MouseEvent('pointerdown',{clientX:80,clientY:80,bubbles:true}));
+      canvas.dispatchEvent(new Event('webglcontextlost',{cancelable:true}));
+      canvas.dispatchEvent(new MouseEvent('pointerup',{clientX:80,clientY:80,bubbles:true}));
+    });
+    assert.equal(await page.locator('#systems-network').getAttribute('data-available'),'false');
+    assert.equal(await page.locator('#systems-network').getAttribute('tabindex'),null);
+    assert.equal(await page.locator('#systems-network canvas').isVisible(),false);
+    await page.locator('button[data-module-id="hearing"]').click();
+    assert.match(await page.locator('#module-title').textContent(),/Hearing and auditory processing/);
+    assert.match(await page.locator('#systems-3d-status').textContent(),/3D map unavailable/);
+    await page.locator('button[data-module-id="respiration"]').click();
+    assert.equal(await page.locator('#respiratory-study').isVisible(),true);
+    assert.match(await page.locator('#systems-3d-status').textContent(),/3D map unavailable/);
+  }
+  assert.deepEqual(errors,[]);
+  console.log('PASS: '+name+' iPhone SLP systems hub, respiratory study and graphics-loss native navigation');
 }catch(e){
   console.error('FAIL: '+name+' SLP systems browser:',e.stack);
   process.exitCode=1;
