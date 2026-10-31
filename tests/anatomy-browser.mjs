@@ -31,6 +31,14 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  assert.match(await page.locator('#orientation-note').textContent(),/subject's left is on your right/);
+  const about=await desktop.newPage();
+  const evidenceResponse=await about.goto(origin+'/ANATOMY/SLP/about.html');
+  assert.equal(evidenceResponse.status(),200,'Published evidence page must exist in dist');
+  assert.match(await about.locator('h1').textContent(),/evidence and limitations/i);
+  await about.locator('a[href="./index.html"]').first().click();
+  await about.locator('#stage').waitFor();
+  await about.close();
   assert.match(await page.locator('#coverage-list').textContent(),/Epiglottis/);
   assert.equal(await page.locator('#study-reveal').isDisabled(),true);
   await page.locator('#study-next').click();
