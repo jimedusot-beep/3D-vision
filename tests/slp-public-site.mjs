@@ -79,6 +79,17 @@ try{
  assert.equal(catalog.status(),200,'Neural source JSON missing');
  const data=await catalog.json();
  assert.equal(data.nodes?.length,437,'Wrong neural source manifest');
+ // The physical-device review must be available in the actual published
+ // Atlas. Browser emulation tests the workflow, not physical iPhone VoiceOver.
+ const manualLink=await ctx.request.get(url('ANATOMY/SLP/iphone-review.html'),{timeout:45000});
+ assert.equal(manualLink.status(),200,'Public physical-iPhone review page missing');
+ const source=await manualLink.text();
+ assert.match(source,/no.*uploaded/i,'Privacy notice missing from iPhone review');
+ assert.match(source,/iphone-review\\.js/,'Review JavaScript is not linked');
+ await page.goto(url('ANATOMY/SLP/iphone-review.html'),{waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>document.querySelectorAll('#lab-tasks .task').length===7,null,{timeout:30000});
+ assert.equal(await page.locator('#device-tasks .task').count(),6);
+ assert.equal(await page.locator('#report').count(),1);
  assert.deepEqual(errors,[]);
- console.log('PASS public Pages: 7 source GLB binaries, local Draco decoder, 10-topic Atlas and mobile launch links');
+ console.log('PASS public Pages: 7 source GLBs, source integrity, 10-topic Atlas and private physical-iPhone review');
 }finally{await browser.close();}
