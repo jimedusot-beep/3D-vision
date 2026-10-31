@@ -84,12 +84,16 @@ try{
   await page.locator('button[data-module-id="phonation"]').click();
   assert.match(await page.locator('#module-status').textContent(),/3D/);
   assert.equal(await page.locator('#module-open-3d').isVisible(),true);
-  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./index.html');
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./index.html?view=three');
   await page.locator('button[data-module-id="respiration"]').click();
   assert.equal(await page.locator('#respiratory-study').isVisible(),true);
   assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./lungs.html');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-  await page.goto(origin+'/ANATOMY/SLP/index.html');
+  await page.goto(origin+'/ANATOMY/SLP/index.html?view=three');
+  if(await page.locator('#mode-three').isEnabled()){
+    assert.equal(await page.locator('#mode-three').getAttribute('aria-pressed'),'true',
+      'Atlas deep link should launch the real 3D model, not the concept map');
+  }
   assert.equal(await page.locator('a[href="./systems.html"]').count(),2);
   assert.deepEqual(errors,[]);
   await mkdir('test-results',{recursive:true});
