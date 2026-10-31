@@ -88,6 +88,24 @@ try {
   }else{
     assert.equal(await page.locator('#webgl-fallback').isVisible(),true);
   }
+  // Source-backed active recall: wrong answer explains why and a new
+  // question cannot be scored before the previous one is answered.
+  assert.match(await page.locator('#identify-progress').textContent(),/Question 1 of 20/);
+  assert.equal(await page.locator('#identify-options button').count(),4);
+  assert.equal(await page.locator('#identify-find').isDisabled(),true);
+  await page.locator('#identify-options button:not([data-answer-id="hyoid-bone"])').first().click();
+  assert.match(await page.locator('#identify-feedback').textContent(),/Not quite.*Hyoid bone/);
+  assert.equal(await page.locator('#identify-references a').count(),1);
+  assert.equal(await page.locator('#identify-find').isEnabled(),true);
+  assert.equal(await page.locator('#identify-next').isEnabled(),true);
+  await page.locator('#identify-next').click();
+  assert.match(await page.locator('#identify-progress').textContent(),/Question 2 of 20/);
+  await page.locator('#identify-options button[data-answer-id="thyroid-cartilage"]').click();
+  assert.match(await page.locator('#identify-feedback').textContent(),/Correct.*Thyroid cartilage/);
+  await page.locator('#identify-find').click();
+  assert.match(await page.locator('#source-note-name').textContent(),/Thyroid cartilage/);
+  await page.locator('#identify-restart').click();
+  assert.match(await page.locator('#identify-progress').textContent(),/Question 1 of 20.*0 correct/);
   await page.locator('#structure-search').fill('arytenoid cartilage');
   assert.equal(await page.locator('#structures button[data-id]:visible').count(),2);
   assert.match(await page.locator('#structure-count').textContent(),/2 of 10/);
@@ -394,6 +412,18 @@ try {
     assert.match(await touch.locator('#status').textContent(),/3D graphics unavailable/);
   }
   await touch.locator('[data-mobile-target="panel-practice"]').click();
+  assert.match(await touch.locator('#identify-progress').textContent(),/Question 1 of 20/);
+  assert.equal(await touch.locator('#identify-options button').count(),4);
+  await touch.locator('#identify-options button[data-answer-id="hyoid-bone"]').click();
+  assert.match(await touch.locator('#identify-feedback').textContent(),/Correct/);
+  await touch.locator('#identify-find').click();
+  assert.match(await touch.locator('#source-note-name').textContent(),/Hyoid bone/);
+  await touch.locator('[data-mobile-target="panel-practice"]').click();
+  await touch.locator('#identify-next').click();
+  assert.match(await touch.locator('#identify-progress').textContent(),/Question 2 of 20/);
+  assert.equal(await touch.locator('#identify-find').isDisabled(),true);
+  await touch.locator('#identify-restart').click();
+  assert.match(await touch.locator('#identify-progress').textContent(),/Question 1 of 20.*0 correct/);
   assert.match(await touch.locator('#study-scope').textContent(),/3 question\(s\) about Right vocal fold/);
   await touch.locator('#study-next').click();
   assert.match(await touch.locator('#study-question').textContent(),/paired structures vibrate/);
