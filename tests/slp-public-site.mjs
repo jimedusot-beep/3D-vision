@@ -62,6 +62,19 @@ try{
   assert.equal(res.status(),200,'Missing local Draco decoder: '+name);
   assert.ok((await res.body()).length>1000,'Invalid local decoder: '+name);
  }
+
+ // The original source GLB is deliberately still pinned and published, while
+ // the viewer fetches a smaller, independently SHA-verified study-only copy.
+ const studyRes=await ctx.request.get(url('models/slp/neural-study-provenance.json'));
+ assert.equal(studyRes.status(),200,'Focused neural provenance JSON missing');
+ const study=await studyRes.json();
+ assert.equal(study.studyMeshDefinitions,74);
+ assert.ok(study.modelBytes<study.sourceBytes*.55,'Neural transfer-size optimization absent');
+ const optimized=await ctx.request.get(url('models/slp/neural-study.glb'),{timeout:90000});
+ assert.equal(optimized.status(),200,'Focused neural GLB missing');
+ const binary=await optimized.body();
+ assert.equal(binary.length,study.modelBytes,'Focused GLB does not match size manifest');
+ assert.equal(binary.toString('ascii',0,4),'glTF');
  const catalog=await ctx.request.get(url('models/slp/neural-source-manifest.json'));
  assert.equal(catalog.status(),200,'Neural source JSON missing');
  const data=await catalog.json();
