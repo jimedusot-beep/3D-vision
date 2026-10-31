@@ -921,4 +921,7 @@ $('camera-left').addEventListener('click',()=>presetCamera('left'));
 $('camera-right').addEventListener('click',()=>presetCamera('right'));
 $('camera-top').addEventListener('click',()=>presetCamera('top'));
 fit();
-setPresentation('map');
+// An Atlas 3D link must show real source geometry, not the concept text map.
+// Direct links are opt-in: the standalone learning map remains the default.
+const initialView=new URLSearchParams(location.search).get('view');
+setPresentation(['three','explode'].includes(initialView)?initialView:'map');

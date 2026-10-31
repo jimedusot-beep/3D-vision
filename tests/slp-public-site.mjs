@@ -20,13 +20,17 @@ const engine=process.env.BROWSER_ENGINE==='webkit'?webkit:chromium;
 const browser=await engine.launch(process.env.BROWSER_ENGINE==='webkit'?{}:{args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 try{
  const ctx=await browser.newContext({...devices['iPhone 13']});
+ // The CAD workshop can asynchronously fetch independent robot assets. Do
+ // not attribute workshop errors to the Atlas after navigating away from it.
+ const workshop=await ctx.newPage();
+ const root=await workshop.goto(base,{waitUntil:'domcontentloaded',timeout:60000});
+ assert.ok(root?.ok(),'Public main workshop is not reachable');
+ assert.equal(await workshop.locator('a[href="./ANATOMY/SLP/systems.html"]').count(),1,
+  'Main workshop must launch complete Atlas instead of old larynx-only preview');
+ await workshop.close();
  const page=await ctx.newPage();
  const errors=[];
  page.on('pageerror',e=>errors.push(e.message));
- const root=await page.goto(base,{waitUntil:'domcontentloaded',timeout:60000});
- assert.ok(root?.ok(),'Public main workshop is not reachable');
- assert.equal(await page.locator('a[href="./ANATOMY/SLP/systems.html"]').count(),1,
-  'Main workshop must launch complete Atlas instead of old larynx-only preview');
  const hub=await page.goto(url('ANATOMY/SLP/systems.html'),{waitUntil:'domcontentloaded',timeout:60000});
  assert.ok(hub?.ok(),'Public SLP study hub must load');
  await page.waitForFunction(()=>document.querySelectorAll('.module-card').length===10,null,{timeout:30000});
@@ -34,11 +38,16 @@ try{
  assert.match(await page.locator('#anatomy-launcher').textContent(),/independently sourced 3D anatomy models/i);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  for(const item of models){
-  assert.equal(await page.locator('#anatomy-launcher a[href="./'+item.page+'"]').count(),1);
+  const launchHref='./'+item.page+(item.page==='index.html'?'?view=three':'');
+  assert.equal(await page.locator('#anatomy-launcher a[href="'+launchHref+'"]').count(),1);
   const resource=await ctx.request.get(url('ANATOMY/SLP/'+item.page),{timeout:45000});
   assert.equal(resource.status(),200,'Public anatomy HTML missing: '+item.page);
   const body=await resource.text();
   assert.match(body,/<script type="module"/,'Built module missing: '+item.page);
+  const explosionId=item.page==='index.html'?'mode-explode':
+   item.page==='lungs.html'?'lung-explode':item.page.replace('.html','')+'-explode';
+  assert.ok(body.includes('id="'+explosionId+'"'),
+   'Public page is missing published Explode 3D button: '+item.page);
   const mesh=await ctx.request.get(url('models/slp/'+item.asset),{timeout:90000});
   assert.equal(mesh.status(),200,'Public anatomy geometry missing: '+item.asset);
   const bytes=await mesh.body();
