@@ -33,6 +33,15 @@ These references do not validate the author's simplified geometry. Source IDs in
 - **Evidence hierarchy:** publicly cited anatomy prose and short recall answers have source support, model geometry is unvalidated, and educational effectiveness has not been evaluated.
 - Target validation: test source links, review-answer hiding, review progression, omitted-structure list, and mobile layout in automated browser runs. A teacher/SLP reviewer must still validate all ten notes and the pedagogical questions before release.
 
+## Audit pass 2 — reliability, older devices and accessibility (2026-10-30)
+
+- Identified a **hard startup failure** when the browser has no working WebGL context: the old viewer constructed a renderer unconditionally, preventing access to otherwise usable text notes.
+- Added a WebGL-failure path that retains named structures, referenced descriptions, and text-only recall. The 3D stage announces unavailable graphics; its misleading keyboard focus is removed. No 3D interactivity is claimed when the browser lacks hardware support.
+- Added camera keyboard zoom bounds consistent with the orbit controls (2.5–16 scene units). This only improves navigation; these arbitrary display units **are not anatomical dimensions**.
+- Added desktop-browser automation that deliberately disables WebGL and verifies text, citations, recall, and reset. Existing Chromium/iPhone-WebKit render tests still need to pass on the final branch.
+- Added live announcements for reveal answers. Screen-reader and actual-device manual testing still remain open acceptance gates.
+- **Release status:** code and browser tests on the draft branch do not make the atlas clinically validated. Keep both anatomy and Herbie document search integration unmerged until review.
+
 ## Findings and risk controls
 
 1. **High scientific risk:** the current meshes are placeholders with arbitrary units; users could mistake them for accurate representations. Keep a prominently visible caution, disabled phonation button, and note next to every referenced explanation.
