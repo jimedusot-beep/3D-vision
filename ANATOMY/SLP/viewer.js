@@ -5,6 +5,7 @@ import {modelIdForLesson,lessonForModelId,modelStructureNames,modelSelectionNote
 import {explosionOffset,assertExplosionCoverage} from './exploded-study.js';
 import {sourceStudy,sourceCategories,getSourceStudy} from './source-study.js';
 import {guidedLarynxTour} from './guided-tour.js';
+import {buildIdentificationDeck,checkIdentification} from './identification-challenge.js';
 import catalog from './structures.json';
 import {parseCommand, resolveEmbedOrigin, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
@@ -98,6 +99,97 @@ $('tour-view').addEventListener('click',()=>{
   if(window.matchMedia('(max-width:760px)').matches)stage.scrollIntoView({block:'start',behavior:'auto'});
 });
 showTourStep();
+// Function-to-structure retrieval practice. No personal data or progress is saved.
+const challengeDeck=buildIdentificationDeck(sourceStudy,modelStructureNames);
+let challengeIndex=0,challengeCorrect=0,challengeAnswered=false;
+function showChallenge(){
+  const q=challengeDeck[challengeIndex];
+  challengeAnswered=false;
+  $('identify-progress').textContent='Question '+(challengeIndex+1)+' of '+challengeDeck.length+
+    ' · '+challengeCorrect+' correct so far (session only)';
+  $('identify-clue').textContent=q.clue;
+  $('identify-feedback').hidden=true;
+  $('identify-feedback').textContent='';
+  $('identify-explanation').hidden=true;
+  $('identify-explanation').textContent='';
+  $('identify-references').hidden=true;
+  $('identify-references').replaceChildren();
+  $('identify-next').disabled=true;
+  $('identify-next').textContent=challengeIndex===challengeDeck.length-1?'Finish practice':'Next question';
+  $('identify-find').disabled=true;
+  $('identify-options').replaceChildren();
+  for(const id of q.options){
+    const button=document.createElement('button');
+    button.type='button';
+    button.textContent=modelStructureNames[id];
+    button.dataset.answerId=id;
+    button.setAttribute('aria-pressed','false');
+    button.addEventListener('click',()=>answerChallenge(id));
+    $('identify-options').append(button);
+  }
+}
+function answerChallenge(id){
+  if(challengeAnswered)return;
+  const q=challengeDeck[challengeIndex];
+  const correct=checkIdentification(q,id);
+  challengeAnswered=true;
+  if(correct)challengeCorrect++;
+  for(const button of $('identify-options').querySelectorAll('button')){
+    button.disabled=true;
+    button.setAttribute('aria-pressed',String(button.dataset.answerId===id));
+  }
+  $('identify-progress').textContent='Question '+(challengeIndex+1)+' of '+challengeDeck.length+
+    ' · '+challengeCorrect+' correct so far (session only)';
+  $('identify-feedback').hidden=false;
+  $('identify-feedback').textContent=correct?'Correct — '+modelStructureNames[q.id]
+    :'Not quite. The answer is '+modelStructureNames[q.id]+'.';
+  $('identify-explanation').hidden=false;
+  $('identify-explanation').textContent=q.source.function+' Model limitation: '+q.source.limitation;
+  $('identify-references').hidden=false;
+  for(const evidence of q.source.sources){
+    const link=document.createElement('a');
+    link.href=evidence.url;link.textContent='Read: '+evidence.label;
+    link.target='_blank';link.rel='noopener noreferrer';
+    $('identify-references').append(link);
+  }
+  $('identify-next').disabled=false;
+  $('identify-find').disabled=false;
+}
+$('identify-next').addEventListener('click',()=>{
+  if(!challengeAnswered)return;
+  if(challengeIndex===challengeDeck.length-1){
+    $('identify-progress').textContent='Completed '+challengeDeck.length+
+      ' questions · '+challengeCorrect+' correctly identified in this session.';
+    $('identify-clue').textContent='Use Restart all 20 to practice again, or review the cited anatomy notes.';
+    $('identify-options').replaceChildren();
+    $('identify-next').disabled=true;
+    $('identify-find').disabled=true;
+    $('identify-feedback').hidden=true;
+    $('identify-explanation').hidden=true;
+    $('identify-references').hidden=true;
+    return;
+  }
+  challengeIndex++;
+  showChallenge();
+});
+$('identify-restart').addEventListener('click',()=>{
+  challengeIndex=0;challengeCorrect=0;showChallenge();
+});
+$('identify-find').addEventListener('click',()=>{
+  if(!challengeAnswered)return; // Do not show correct anatomy before an answer.
+  const id=challengeDeck[challengeIndex].id;
+  // Existing 3D filters must never invisibly hide an answer being studied.
+  for(const input of $('layer-options').querySelectorAll('input')){
+    input.checked=true;shownCategories.add(input.value);
+  }
+  updateLayerCount();
+  if(renderer&&!graphicsLost)setPresentation('three');
+  selectSourcePart(id);
+  if(!renderer||graphicsLost)openMobilePanel('panel-details',true);
+  else if(window.matchMedia('(max-width:760px)').matches)
+    stage.scrollIntoView({block:'start',behavior:'auto'});
+});
+showChallenge();
 const meshes=new Map();
 const stage=$('stage'), overlay=$('overlay');
 let stageMode='map'; // An explanatory concept map is the honest default.
