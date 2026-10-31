@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {modelIdForLesson,lessonForModelId,modelStructureNames,modelSelectionNote} from './reference-mapping.js';
+import {explosionOffset,assertExplosionCoverage} from './exploded-study.js';
 import catalog from './structures.json';
 import {parseCommand, resolveEmbedOrigin, VERSION} from './contract.js';
 import {sideX} from './orientation.js';
@@ -100,6 +101,32 @@ ellipsoid('right-lateral-cricoarytenoid',[sideX('right',.72),-.32,-.25],[.15,.32
 // and serves this 5.3 MB GLB from our own origin. No external runtime calls.
 let referenceRoot=null, referenceMeshes=[], referenceSelected=null;
 let referenceState='idle',referenceError='';
+const referenceGroups=new Map();
+let explosionUnit=1,explodedMode=false,explosionAmount=65;
+/** Grouping meshes rigidly leaves all geometry and its original orientation unchanged. */
+function applyExplosion(){
+  if(!referenceRoot)return;
+  const amount=explodedMode?explosionAmount:0;
+  for(const [id,group] of referenceGroups){
+    const offset=explosionOffset(id,amount,explosionUnit);
+    group.position.set(...offset);
+  }
+  referenceRoot.updateMatrixWorld(true);
+}
+function setExplosionAmount(value){
+  if(!Number.isFinite(value))return;
+  explosionAmount=Math.max(0,Math.min(100,Math.round(value/5)*5));
+  $('explode-amount').value=String(explosionAmount);
+  $('explode-value').textContent=explosionAmount+'%';
+  stage.dataset.explosionAmount=String(explodedMode?explosionAmount:0);
+  applyExplosion();
+  if(referenceRoot&&stageMode==='three')frameRealModel('current');
+}
+$('explode-amount').addEventListener('input',e=>setExplosionAmount(Number(e.target.value)));
+$('explode-assemble').addEventListener('click',()=>{
+  setExplosionAmount(0);
+  $('status').textContent='Sourced anatomical groups restored to original relative positions.';
+});
 const expectedReference=['thyroid-cartilage','cricoid-cartilage','arytenoid-cartilages',
   'vocal-ligaments','posterior-crico-arytenoid','lateral-crico-arytenoid','epiglottis','trachea'];
 function updateReferenceSelection(id) {
@@ -135,8 +162,12 @@ function frameRealModel(direction='front'){
   const tan=Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5);
   const distance=Math.max(size.y/(2*tan*.72),size.x/(2*tan*aspect*.72),size.z*1.8,2.5);
   const d=Math.min(60,distance);
+  const viewVector=direction==='current'&&orbit
+    ?camera.position.clone().sub(orbit.target).normalize()
+    :new THREE.Vector3(0,0,direction==='back'?-1:1);
+  if(viewVector.lengthSq()<.1)viewVector.set(0,0,1);
   orbit?.target.copy(center);
-  camera.position.set(center.x,center.y,center.z+(direction==='back'?-d:d));
+  camera.position.copy(center).addScaledVector(viewVector,d);
   camera.lookAt(center);
   if(orbit){
     orbit.minDistance=Math.max(.65,size.length()*.3);
@@ -173,8 +204,25 @@ async function ensureReferenceModel(){
     });
     if(expectedReference.some(id=>!ids.has(id))||ids.size!==20)
       throw new Error('Source model is missing verified anatomical groups');
+    // Source GLB contains 45 meshes assigned to 20 group identities. Move
+    // all source parts in each named group by ONE rigid transform. attach()
+    // retains original world orientation, dimensions, and relative positions.
+    assertExplosionCoverage(ids);
+    gltf.scene.updateMatrixWorld(true);
+    for(const id of ids){
+      const wrapper=new THREE.Group();
+      wrapper.name='study-explode-'+id;
+      gltf.scene.add(wrapper);
+      referenceGroups.set(id,wrapper);
+    }
+    for(const node of nodes)
+      referenceGroups.get(node.userData.structureId||node.name).attach(node);
     referenceRoot=gltf.scene;
     referenceMeshes=nodes;
+    const originalBounds=new THREE.Box3().setFromObject(referenceRoot);
+    const span=originalBounds.getSize(new THREE.Vector3());
+    explosionUnit=Math.max(span.x,span.y,span.z)*.38;
+    applyExplosion();
     scene.add(referenceRoot);
     root.visible=false;
     overlay.hidden=true;
@@ -182,7 +230,7 @@ async function ensureReferenceModel(){
     updateReferenceSelection(null);
     applyReferenceState();
     frameRealModel('front');
-    if(stageMode==='three')$('notice').textContent='BodyParts3D 4.3 meshes (CC BY-SA 2.1 JP), NOT clinically reviewed. Vocal ligaments are NOT complete folds. See credits under Notes.';
+    if(stageMode==='three'&&!explodedMode)$('notice').textContent='BodyParts3D 4.3 meshes (CC BY-SA 2.1 JP), NOT clinically reviewed. Vocal ligaments are NOT complete folds. See credits under Notes.';
     $('status').textContent='Licensed 3D source geometry loaded: 20 selectable groups. Expert review pending.';
   }catch(err){
     referenceState='error';
@@ -489,7 +537,16 @@ function renderState() {
 function select(id){updateReferenceSelection(null);view.selected=id;view.isolated=null;renderState();}
 function isolate(id){updateReferenceSelection(null);view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
 function setIsolated(id){updateReferenceSelection(null);view.selected=id;view.isolated=id;renderState();}
-function reset(){updateReferenceSelection(null);view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);if(referenceRoot)frameRealModel('front');else{camera.position.set(0,1.2,5.8);if(orbit){orbit.target.set(0,0,0);orbit.update();}}renderState();}
+function reset(){
+  updateReferenceSelection(null);view.selected=null;view.isolated=null;
+  view.transparent=false;view.labels=true;
+  if(explodedMode)setPresentation('three');
+  setExplosionAmount(0);
+  root.rotation.set(0,0,0);
+  if(referenceRoot)frameRealModel('front');
+  else{camera.position.set(0,1.2,5.8);if(orbit){orbit.target.set(0,0,0);orbit.update();}}
+  renderState();
+}
 $('show-all').onclick=()=>{view.isolated=null;renderState();};
 $('reset').onclick=reset;
 $('transparent').onchange=e=>{view.transparent=e.target.checked;renderState();};
@@ -622,32 +679,46 @@ function presetCamera(direction){
   scheduleFrame();
 }
 function setPresentation(mode){
-  if(mode!=='map'&&mode!=='three')return;
-  if(mode==='three'&&(!renderer||graphicsLost))return;
-  stageMode=mode;
-  stage.classList.toggle('mode-map',mode==='map');
-  stage.classList.toggle('mode-three',mode==='three');
+  if(!['map','three','explode'].includes(mode))return;
+  if(mode!=='map'&&(!renderer||graphicsLost))return;
+  explodedMode=mode==='explode';
+  stageMode=mode==='map'?'map':'three';
+  stage.classList.toggle('mode-map',stageMode==='map');
+  stage.classList.toggle('mode-three',stageMode==='three');
   $('mode-map').setAttribute('aria-pressed',String(mode==='map'));
   $('mode-three').setAttribute('aria-pressed',String(mode==='three'));
+  $('mode-explode').setAttribute('aria-pressed',String(mode==='explode'));
   $('mode-three').disabled=!renderer;
-  $('three-view-controls').hidden=mode!=='three';
+  $('mode-explode').disabled=!renderer;
+  $('three-view-controls').hidden=stageMode!=='three';
+  $('explode-controls').hidden=!explodedMode;
+  stage.dataset.explosionAmount=String(explodedMode?explosionAmount:0);
+  applyExplosion();
   stage.setAttribute('aria-label',mode==='map'
-    ?'Interactive structure-and-function map; choose a labeled concept to read its sourced explanation'
-    :'Unvalidated 3D larynx sketch; drag to rotate, pinch or scroll to zoom');
-  if(mode==='three')stage.setAttribute('tabindex','0');
+    ?'Interactive structure-and-function study map'
+    :explodedMode
+      ?'Exploded study layout: source anatomy groups temporarily separated; not their original positions'
+      :'BodyParts3D 4.3 anatomy surface model; drag to rotate, pinch to zoom');
+  if(stageMode==='three')stage.setAttribute('tabindex','0');
   else stage.removeAttribute('tabindex');
   $('notice').textContent=mode==='map'
     ?'Concepts grouped by function, NOT anatomical position. No measurements or clinical use.'
-    :referenceState==='ready'?'BodyParts3D 4.3 surface meshes, CC BY-SA 2.1 JP. Not clinically reviewed. Vocal ligaments are not complete folds.'
-    :'Preparing source anatomy. No clinical use; original 3D primitives are not a medical reconstruction.';
-  if(mode==='three'){
-    root.visible=false;overlay.hidden=true;
-    fit();scheduleFrame();void ensureReferenceModel();
+    :explodedMode
+      ?'EXPLODED STUDY LAYOUT: parts moved for visibility, NOT in anatomical positions. Source shapes unchanged. CC BY-SA 2.1 JP; not clinically reviewed.'
+      :referenceState==='ready'
+        ?'BodyParts3D 4.3 surfaces, CC BY-SA 2.1 JP. Not clinically reviewed. Vocal ligaments are not complete folds.'
+        :'Loading source anatomy. Not for clinical use.';
+  if(stageMode==='three'){
+    fit();
+    if(referenceRoot)frameRealModel('front');
+    scheduleFrame();
+    void ensureReferenceModel();
   }
   renderState();
 }
 $('mode-map').addEventListener('click',()=>setPresentation('map'));
 $('mode-three').addEventListener('click',()=>setPresentation('three'));
+$('mode-explode').addEventListener('click',()=>setPresentation('explode'));
 $('camera-front').addEventListener('click',()=>presetCamera('front'));
 $('camera-back').addEventListener('click',()=>presetCamera('back'));
 fit();
