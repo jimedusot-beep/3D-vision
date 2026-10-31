@@ -10,6 +10,7 @@ test('oral geometry is pinned to Z-Anatomy via immutable OrganUI source, not gen
  assert.equal(oralModel.bytes,754496);
  assert.equal(oralModel.gitBlobSha1,'b1e943c7fab677bff21f74e16d86830cc516f3df');
  assert.equal(oralModel.license,'CC-BY-SA-4.0');
+ assert.equal(oralModel.sha256,'4bce66ed11d182e098dc8fecd60aa2011a0b44932a12a7ea8466059000964b92');
  assert.match(oralLicense.license,/CC BY-SA 4\.0/);
  assert.match(oralLicense.source,/DBCLS/);
  assert.equal(validOralModel(Buffer.alloc(64)),false);
