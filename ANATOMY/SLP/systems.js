@@ -1,10 +1,11 @@
 import {systemModules,respiratoryTerms,respiratoryQuestions,validateSystems} from './systems-catalog.js';
+import {initSystems3D} from './systems-network-3d.js';
 validateSystems();
 const $=id=>document.getElementById(id);
-const stages={study:'Respiratory study available · No 3D yet', '3d':'Source-derived 3D model available',
+const stages={'3d':'Source-derived 3D anatomy module available',
   outline:'Curriculum outline · Models and lessons pending review'};
 const cards=new Map();
-let current='respiration';
+let current='respiration',systemsNetwork=null;
 for(const module of systemModules){
   const article=document.createElement('article');
   article.className='module-card';article.dataset.active='false';
@@ -37,7 +38,14 @@ function chooseModule(id,scroll=false){
   $('module-description').textContent=module.overview;
   addItems($('module-objectives'),module.objectives);
   addItems($('module-next'),module.next);
-  $('module-open-3d').hidden=module.id!=='phonation';
+  $('module-open-3d').hidden=module.stage!=='3d';
+  if(module.stage==='3d'){
+    $('model-target-link').href=module.id==='respiration'?'./lungs.html':'./index.html';
+    $('model-target-link').textContent=module.id==='respiration'
+      ?'Open 3D lung tissue segments, bronchial trees and trachea'
+      :'Open 3D larynx, muscles, cartilages and exploded study';
+  }
+  systemsNetwork?.select(id);
   $('respiratory-study').hidden=module.id!=='respiration';
   $('module-source').replaceChildren();
   const link=document.createElement('a');
@@ -120,5 +128,9 @@ $('resp-next').addEventListener('click',()=>{
 });
 $('resp-restart').addEventListener('click',()=>{index=0;correct=0;showQuestion();});
 showQuestion();
+systemsNetwork=initSystems3D({
+ stage:$('systems-network'),modules:systemModules,
+ onSelect:id=>chooseModule(id,true)
+});
 const initial=new URLSearchParams(location.search).get('system');
 chooseModule(systemModules.some(s=>s.id===initial)?initial:'respiration');
