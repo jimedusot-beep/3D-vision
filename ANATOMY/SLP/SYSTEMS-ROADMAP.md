@@ -6,7 +6,7 @@
 
 | Area | Stage | Current implementation | Honest next development |
 | --- | --- | --- | --- |
-| Respiratory system | **Source-derived lung/airway 3D + study starter** | 20 verified source groups: 17 tissue segments, trachea, two bronchial trees. Separate viewer, lobe separation, 10 written concepts, SVG, inspiration/exhalation comparison, 6 recall questions | Licensed rib cage, intercostals, diaphragm, alveoli/microstructure and spatial/curriculum review |
+| Respiratory system | **Source-derived lung/airway 3D + study starter** | 20 verified source groups: 17 tissue segments, trachea, two bronchial trees. Separate viewer, lobe separation, 10 written concepts, SVG, inspiration/exhalation comparison, 6 recall questions, 5-stop 3D tour, and 6- or 20-question region-identification practice with source-group reveal | Licensed rib cage, intercostals, diaphragm, alveoli/microstructure and spatial/curriculum review |
 | Phonation / larynx | **Source-derived 3D** | 20 source-model groups; original study map; rigid exploded study; cited source notes; guided tour and 20-part quiz | Reviewed layered true-fold geometry, academic validation |
 | Resonance / velopharynx | Outline | learning objectives, ASHA pointer | Licensed palate/pharynx/nasal cavity surfaces |
 | Articulation / orofacial | Outline | learning objectives, ASHA pointer | Tongue, oral cavity, jaw and lip 3D; phonetics |
@@ -18,6 +18,15 @@
 | Disorders and clinical connections | Outline | learning objectives, ASHA pointer | Qualified review of clinical images and evidence |
 
 The grouping into ten areas is an **internal teaching/navigation design**, not a statement that ASHA mandates precisely ten body systems. SLP clinical knowledge additionally encompasses fluency, social communication, AAC, literacy, developmental and cultural/linguistic factors, which should be explicitly represented as this curriculum grows.
+
+## Current respiratory study milestone — source-model active recall
+
+- The lungs viewer now supports a **six-question warm-up**, choosing one BodyParts3D mesh group from each source-defined region, and a **full 20-question review**, one for each original pinned FMA group (17 lung tissue segments, trachea, two bronchial trees).
+- Questions ask for the model group’s **region/lobe**, not unverified pathology, unseen alveoli, airflow measurements, or diaphragm biomechanics. Four distinct answers are derived from the existing six manifest regions, and the correct answer is revealed with a short source-linked note.
+- The question does not disclose the selected source group in the model controls before the answer. After response, it selects and focuses the licensed source mesh (when WebGL is available); without graphics, original descriptions and all quiz controls remain available.
+- No question scores, personally identifying data, account credentials, or analytics are persisted. The quiz is informal educational practice, **not** an exam, clinical anatomy validation, or a measure of learner competence.
+- Automated unit checks verify full FMA identity/region coverage, distractors and answer positions. Chromium/WebKit emulated iPhone tests cover wrong/right feedback, both lengths, completion, text/3D parity and tour/practice coordination. Real hardware and educator review remain separate release gates.
+- **Important limitation:** a region-recognition quiz is not a substitute for a multi-system 3D body atlas. Additional genuine geometries, beginning with separately provenance-verified diaphragm and thoracic structures, remain future work.
 
 ## Uploaded course-material analysis and provenance
 
