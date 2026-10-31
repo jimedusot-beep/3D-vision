@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self';font-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
+<title>H.E.R.B.I.E. · 3D Respiratory Anatomy</title>
+<meta name="description" content="Licensed 3D lung segments, trachea and bronchial trees for speech-language pathology anatomy study.">
+<style>
+:root{font:16px/1.5 system-ui,sans-serif;color:#eaf4f7;background:#0e1c28}
+*{box-sizing:border-box}body{margin:0}a{color:#9ae5d8}button,select{font:inherit;color:#eaf4f7;background:#224457;border:1px solid #7ba0ae;border-radius:8px;min-height:44px;padding:.5rem .7rem}
+button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}
+button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #a1f0dc;outline-offset:2px}
+header{padding:1rem clamp(.8rem,3vw,2rem);background:#193343;border-bottom:1px solid #426879}
+header h1{font-size:1.45rem;margin:0}header p{color:#c9d9e4;margin:.4rem 0}
+nav{display:flex;gap:.75rem;flex-wrap:wrap;margin:.7rem 0 0}
+main{max-width:1250px;margin:0 auto;padding:1rem}
+.layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(285px,.85fr);gap:1rem}
+#lung-stage{position:relative;height:clamp(410px,65vh,720px);overflow:hidden;border:1px solid #4f8290;border-radius:13px;background:radial-gradient(ellipse at 46% 42%,#255264 0%,#132d3e 54%,#10212b 100%)}
+#lung-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#model-status{position:absolute;bottom:.5rem;left:.5rem;right:.5rem;z-index:3;background:#102939e8;padding:.6rem .75rem;border:1px solid #527987;border-radius:9px;font-size:.84rem}
+#study-controls{display:flex;flex-wrap:wrap;gap:.4rem;margin:.65rem 0}
+#study-controls button[aria-pressed="true"],#lung-isolate[aria-pressed="true"]{background:#166858;border-color:#a0e3d2}
+#lung-scope{padding:.6rem;border-left:4px solid #a4dec9;background:#1b3e4b;font-size:.86rem;margin:.65rem 0}
+#lung-tour{background:#193948;border:1px solid #638894;border-radius:11px;padding:.85rem;margin:.75rem 0 1rem}
+#lung-tour h2{font-size:1.12rem;margin:0 0 .35rem}#lung-tour h3{font-size:1rem;margin:.25rem 0}
+#lung-tour p{margin:.4rem 0}#lung-tour-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.65rem 0}
+#lung-tour-progress{font-weight:700;color:#a7e7d8}#lung-tour-summary{font-weight:600}
+#lung-practice{background:#173744;border:1px solid #648d94;border-radius:11px;padding:.85rem;margin:.75rem 0 1rem}
+#lung-practice h2{font-size:1.12rem;margin:0 0 .35rem}
+#lung-practice p{margin:.4rem 0}
+#lung-practice-starts,#lung-practice-options,#lung-practice-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+#lung-practice-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+#lung-practice-options button{text-align:left;min-width:0;white-space:normal}
+#lung-practice-options button[data-correct="true"]{background:#185c4a;border-color:#b1e8c7}
+#lung-practice-options button[aria-pressed="true"][data-correct="false"]{background:#68433d;border-color:#f0bf9e}
+#lung-practice-progress{font-weight:700;color:#a7e7d8}
+#lung-practice-question{font-weight:650}
+#lung-practice-feedback:not([hidden]){padding:.7rem;border-left:4px solid #8ddac7;background:#264653;border-radius:7px}
+#lung-practice-summary{font-weight:650}
+@media(max-width:410px){#lung-practice-options{grid-template-columns:1fr}}
+.panel{background:#192f3e;border:1px solid #4b6d7e;padding:.8rem;border-radius:11px;min-width:0}
+.panel h2{font-size:1.14rem;margin:.3rem 0}.panel p{margin:.5rem 0}
+#lung-select{width:100%;margin:.35rem 0}
+#lung-note{padding:.65rem;border-radius:8px;background:#224350;min-height:92px;margin:.7rem 0}
+#lung-note h3{margin:0;font-size:1.02rem}
+#layer-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}
+#layer-choices label{display:flex;gap:.4rem;align-items:center;font-size:.84rem;background:#254554;border-radius:8px;padding:.35rem;min-height:43px}
+#layer-choices input{accent-color:#84e4c9;width:20px;height:20px}
+#view-presets{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+#lung-explosion{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem}
+#lung-explosion input{flex:1;min-width:100px;accent-color:#90e6d5;min-height:40px}
+#lung-objects{font-size:.8rem;color:#b8d9df}
+.warning{border-left:4px solid #d2d89b;padding:.6rem;background:#33404b;font-size:.85rem}
+#fallback{margin:.8rem auto;max-width:600px}
+#lung-stage[data-fallback="true"]{height:auto;min-height:260px}
+#lung-stage[data-fallback="true"] #model-status{position:relative;margin:.6rem}
+footer{padding:1rem;color:#c3d6df;font-size:.82rem;border-top:1px solid #466b7c}
+[hidden]{display:none!important}
+@media(max-width:740px){main{padding:.6rem}.layout{grid-template-columns:1fr}#lung-stage{height:clamp(340px,52dvh,530px)}.panel{padding:.75rem}#study-controls button{font-size:.87rem;padding:.35rem .6rem}#layer-choices{grid-template-columns:1fr}}
+</style></head><body>
+<header><h1>Respiratory anatomy · 3D lungs and airways</h1>
+<p>Real source-derived surfaces of lung segments, bronchial trees and trachea. Educational use only; not full respiratory anatomy or a clinical model.</p>
+<nav aria-label="SLP pages"><a href="./systems.html?system=respiration">All SLP systems &amp; breathing lessons</a><a href="./diaphragm.html">3D Diaphragm Lab</a><a href="./index.html">3D Larynx Lab</a><a href="./about.html">Licensing and evidence</a></nav></header>
+<main>
+<div id="study-controls" role="group" aria-label="Anatomy study actions">
+<button id="lung-reset" type="button">Reset view</button>
+<button id="lung-focus" type="button" disabled>Focus selected</button>
+<button id="lung-isolate" type="button" aria-pressed="false">Isolate selected</button>
+<button id="lung-all" type="button">Show all</button>
+</div>
+<section id="lung-tour" aria-label="Guided respiratory anatomy tour">
+<h2>Guided study: from lung tissue to the trachea</h2>
+<p>Five source-linked 3D observations, followed by a link to the larynx. The order is for learning—not a simulation of breathing, airflow, or movement.</p>
+<button type="button" id="lung-tour-start">Start 5-stop anatomy tour</button>
+<div id="lung-tour-active" hidden>
+<p id="lung-tour-progress" role="status" aria-live="polite"></p>
+<h3 id="lung-tour-title"></h3>
+<p id="lung-tour-note"></p>
+<div id="lung-tour-actions" role="group" aria-label="Guided tour controls">
+<button id="lung-tour-prev" type="button">Previous structure</button>
+<button id="lung-tour-next" type="button">Next structure</button>
+<button id="lung-tour-close" type="button">Exit tour</button>
+</div>
+</div>
+<p id="lung-tour-summary" role="status" aria-live="polite"></p>
+<p>Follow up: <a href="./index.html">Explore the separate 3D larynx and phonation model</a>.</p>
+</section>
+<section id="lung-practice" aria-label="Respiratory structure location recall">
+<h2>Practice: Which lobe or airway?</h2>
+<p>Match each real source-model group to its lobe or conducting-airway category. Answer first; then the atlas highlights the corresponding 3D structure and shows its source notes. This tests source labels, not clinical skill. It also works without WebGL.</p>
+<div id="lung-practice-starts" role="group" aria-label="Choose practice length">
+<button id="lung-practice-quick" type="button">6-question warm-up</button>
+<button id="lung-practice-full" type="button">Review all 20 structures</button>
+</div>
+<div id="lung-practice-active" hidden>
+<p id="lung-practice-progress" role="status" aria-live="polite"></p>
+<p id="lung-practice-question"></p>
+<div id="lung-practice-options" role="group" aria-label="Choose the anatomical region"></div>
+<p id="lung-practice-feedback" role="status" aria-live="polite" hidden></p>
+<div id="lung-practice-actions">
+<button id="lung-practice-next" type="button" disabled>Next question</button>
+<button id="lung-practice-exit" type="button">Exit practice</button>
+</div>
+</div>
+<p id="lung-practice-summary" role="status" aria-live="polite" hidden></p>
+<p class="warning">Learning aid only. Practice answers and scores stay in this page session and are not saved or sent anywhere.</p>
+</section>
+<div class="layout">
+<section aria-label="Interactive 3D lungs and airways">
+<div id="lung-stage" role="region" aria-label="3D lung model; drag to rotate, pinch to zoom, tap a source structure" tabindex="0">
+<p id="fallback" hidden>3D unavailable on this device. Use the complete anatomy structure selector and descriptions below to continue studying.</p>
+<p id="model-status" role="status" aria-live="polite">Loading verified 3D respiratory geometry…</p>
+</div>
+<div id="view-presets" role="group" aria-label="Camera presets">
+<button type="button" data-view="front">Front</button><button type="button" data-view="back">Back</button>
+<button type="button" data-view="left">Left</button><button type="button" data-view="right">Right</button>
+<button type="button" data-view="top">Top</button>
+</div>
+<div id="lung-explosion">
+<label for="lung-separate">Separate lobes for study <output for="lung-separate" id="lung-separate-value">0%</output></label>
+<input id="lung-separate" type="range" min="0" max="100" step="5" value="0">
+<button id="lung-assemble" type="button">Reassemble</button>
+</div>
+<p class="warning">Exploded positions are diagrammatic. Surfaces retain their original shapes, but separated lobes are <strong>not in anatomical position</strong>. This model omits the diaphragm, ribs, pleura, alveoli and many fine airways. The diaphragm is available in a separate unregistered 3D source model.</p>
+</section>
+<aside class="panel" aria-label="Lung structures and study notes">
+<h2>Identify the structures</h2>
+<label for="lung-select">Choose a source-model group</label>
+<select id="lung-select"><option value="">Select an anatomical group</option></select>
+<p id="lung-objects" role="status">20 licensed source groups: 17 lung tissue segments, trachea, and two bronchial trees.</p>
+<fieldset><legend>Show anatomical regions</legend><div id="layer-choices"></div></fieldset>
+<div id="lung-note" aria-live="polite"><h3 id="lung-note-name">Select a structure</h3><p id="lung-note-text">Tap a segment in 3D or select it by name. Each label follows the source manifest; the model is not independently validated.</p></div>
+<p>Read: <a href="https://www.nhlbi.nih.gov/health/lungs/respiratory-system" target="_blank" rel="noopener noreferrer">NHLBI — Respiratory System</a></p>
+<p>Model: <a href="https://github.com/organui/lungs-3d/blob/5815084f43efe438ebfae3fd889ee2baf343dfbf/docs/MODEL_PROVENANCE.md" target="_blank" rel="noopener noreferrer">OrganUI provenance</a> · <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">CC BY-SA 2.1 Japan</a></p>
+<p class="warning">BodyParts3D / Anatomography © DBCLS, adapted by OrganUI. This is a simplified 4.3 source dataset; segment boundaries and airway connections may be imperfect. No disease, breathing-motion, airflow or clinical diagnostics are simulated.</p>
+</aside>
+</div>
+</main>
+<footer>H.E.R.B.I.E. SLP Atlas · Digital learning only · Source model 3,901,260 bytes, SHA-256 verified at build · No personal answers saved</footer>
+<script type="module" src="./lungs.js"></script></body></html>

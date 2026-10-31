@@ -31,6 +31,81 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  assert.equal(await page.locator('button[data-concept-id]').count(),10);
+  assert.equal(await page.locator('#concept-map').isVisible(),true);
+  assert.equal(await page.locator('#mode-map').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#concept-map').textContent(),/not a spatial anatomy diagram/);
+  await page.locator('button[data-concept-id="left-arytenoid"]').click();
+  assert.equal(await page.locator('button[data-concept-id="left-arytenoid"]').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#detail').textContent(),/Left arytenoid cartilage/);
+  await page.locator('#reset').click();
+  assert.equal(await page.locator('button[data-concept-id="left-arytenoid"]').getAttribute('aria-pressed'),'false');
+  if(await page.locator('#mode-three').isEnabled()){
+    await page.locator('#mode-three').click();
+    await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('Licensed 3D source geometry loaded')||
+      document.getElementById('status')?.textContent?.includes('BodyParts3D 4.3 anatomy surfaces loaded'),null,{timeout:30000});
+    assert.match(await page.locator('#notice').textContent(),/BodyParts3D 4.3/);
+    assert.equal(await page.locator('#model-structure').isHidden(),true);
+    assert.equal(await page.locator('#source-tools').isHidden(),false);
+    await page.locator('#source-tools summary').click();
+    assert.equal(await page.locator('#source-select').isVisible(),true);
+    assert.equal(await page.locator('#source-select option').count(),21);
+    assert.equal(await page.locator('#layer-options input').count(),5);
+    await page.locator('#source-select').selectOption('posterior-crico-arytenoid');
+    assert.match(await page.locator('#source-note-name').textContent(),/posterior cricoarytenoid/i);
+    assert.match(await page.locator('#source-note-function').textContent(),/abduct/i);
+    assert.equal(await page.locator('#source-note-links a').count(),1);
+    await page.locator('#layer-options input[value="muscle"]').uncheck();
+    assert.match(await page.locator('#layer-count').textContent(),/of 20 source groups enabled/);
+    await page.locator('#source-show-all').click();
+    assert.equal(await page.locator('#layer-options input:checked').count(),5);
+    await page.locator('#camera-left').click();
+    await page.locator('#camera-right').click();
+    await page.locator('#camera-top').click();
+    assert.equal(await page.locator('#mode-three').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#concept-map').isHidden(),true);
+    assert.equal(await page.locator('#stage canvas').isVisible(),true);
+    await page.locator('#camera-back').click();
+    await page.locator('#camera-front').click();
+    await page.locator('#mode-explode').click();
+    assert.equal(await page.locator('#mode-explode').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#explode-controls').isVisible(),true);
+    assert.match(await page.locator('#explode-warning').textContent(),/not in anatomical positions/);
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'65');
+    await page.locator('#explode-amount').evaluate(input=>{
+      input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    assert.equal(await page.locator('#explode-value').textContent(),'100%');
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'100');
+    await page.locator('#explode-assemble').click();
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'0');
+    assert.equal(await page.locator('#explode-value').textContent(),'0%');
+    await page.locator('#mode-three').click();
+    assert.equal(await page.locator('#explode-controls').isHidden(),true);
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'0');
+    await page.locator('#mode-map').click();
+    assert.equal(await page.locator('#concept-map').isVisible(),true);
+  }else{
+    assert.equal(await page.locator('#webgl-fallback').isVisible(),true);
+  }
+  // Source-backed active recall: wrong answer explains why and a new
+  // question cannot be scored before the previous one is answered.
+  assert.match(await page.locator('#identify-progress').textContent(),/Question 1 of 20/);
+  assert.equal(await page.locator('#identify-options button').count(),4);
+  assert.equal(await page.locator('#identify-find').isDisabled(),true);
+  await page.locator('#identify-options button:not([data-answer-id="hyoid-bone"])').first().click();
+  assert.match(await page.locator('#identify-feedback').textContent(),/Not quite.*Hyoid bone/);
+  assert.equal(await page.locator('#identify-references a').count(),1);
+  assert.equal(await page.locator('#identify-find').isEnabled(),true);
+  assert.equal(await page.locator('#identify-next').isEnabled(),true);
+  await page.locator('#identify-next').click();
+  assert.match(await page.locator('#identify-progress').textContent(),/Question 2 of 20/);
+  await page.locator('#identify-options button[data-answer-id="thyroid-cartilage"]').click();
+  assert.match(await page.locator('#identify-feedback').textContent(),/Correct.*Thyroid cartilage/);
+  await page.locator('#identify-find').click();
+  assert.match(await page.locator('#source-note-name').textContent(),/Thyroid cartilage/);
+  await page.locator('#identify-restart').click();
+  assert.match(await page.locator('#identify-progress').textContent(),/Question 1 of 20.*0 correct/);
   await page.locator('#structure-search').fill('arytenoid cartilage');
   assert.equal(await page.locator('#structures button[data-id]:visible').count(),2);
   assert.match(await page.locator('#structure-count').textContent(),/2 of 10/);
@@ -90,7 +165,7 @@ try {
   await page.locator('#study-reset').click();
   assert.match(await page.locator('#study-scope').textContent(),/all 12 source-linked questions/);
   assert.equal(await page.locator('#study-reveal').isDisabled(),true);
-  assert.match(await page.locator('#detail').textContent(),/NOT the approximate 3D shape/);
+  assert.match(await page.locator('#detail').textContent(),/not 3D clinical validation/);
   const evidence=page.locator('#detail .evidence-links a');
   assert.equal(await evidence.count(),2);
   assert.ok((await evidence.first().getAttribute('href')).startsWith('https://'));
@@ -109,10 +184,15 @@ try {
   await page.locator('#reset').click();
   assert.equal(await page.locator('#transparent').isChecked(),false);
   assert.equal(await page.locator('#labels').isChecked(),true);
-  await page.locator('#stage').focus();
-  await page.keyboard.press('ArrowRight');
-  await page.keyboard.press('Escape');
-  assert.equal(await page.locator('#stage canvas').count(),1);
+  if(await page.locator('#mode-three').isEnabled()){
+    await page.locator('#mode-three').click();
+    await page.locator('#stage').focus();
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#stage canvas').count(),1);
+    await page.locator('#mode-map').click();
+  }
+  assert.equal(await page.locator('#concept-map').isVisible(),true);
   assert.equal(await page.getByRole('button',{name:'Phonation animation unavailable'}).isDisabled(),true);
   assert.equal(await page.locator('#study-again').isDisabled(),true);
   console.log('PASS: '+name+' desktop anatomy controls');
@@ -160,6 +240,10 @@ try {
   await noGpu.goto(origin+'/ANATOMY/SLP/index.html');
   await noGpu.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('text-based anatomy study is ready.'));
   assert.equal(await noGpu.locator('#webgl-fallback').isVisible(),true);
+  assert.equal(await noGpu.locator('#concept-map').isVisible(),true);
+  assert.equal(await noGpu.locator('#mode-three').isDisabled(),true);
+  await noGpu.locator('button[data-concept-id="thyroid-cartilage"]').click();
+  assert.match(await noGpu.locator('#detail').textContent(),/Thyroid cartilage/);
   assert.equal(await noGpu.locator('button[data-id]').count(),10);
   await noGpu.locator('button[data-id="cricoid-cartilage"]').click();
   assert.match(await noGpu.locator('#detail').textContent(),/complete ring/);
@@ -239,22 +323,133 @@ try {
   touch.on('pageerror',e=>errors.push(e.message));
   await touch.goto(origin+'/ANATOMY/SLP/index.html');
   await touch.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
-  await touch.locator('button[data-id="right-vocal-fold"]').click();
+  assert.equal(await touch.locator('#concept-map').isVisible(),true);
+  // Retina WebKit regression: the drawing buffer is 2x CSS pixels, but the
+  // rendered canvas must occupy exactly ONE stage, not a clipped 2x stage.
+  if(await touch.locator('#mode-three').isEnabled()){
+    await touch.locator('#mode-three').click();
+    await touch.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('BodyParts3D 4.3 anatomy surfaces loaded')||
+      document.getElementById('status')?.textContent?.includes('Licensed 3D source geometry loaded'),null,{timeout:35000});
+    assert.match(await touch.locator('#notice').textContent(),/BodyParts3D 4.3/);
+    await touch.waitForFunction(()=>[...document.querySelectorAll('.part-label')].every(el=>el.hidden),null,{timeout:5000});
+    const geometry=await touch.evaluate(()=>{
+      const stage=document.querySelector('#stage');
+      const canvas=stage.querySelector('canvas');
+      const s=stage.getBoundingClientRect(),r=canvas.getBoundingClientRect();
+      const visibleLabels=[...stage.querySelectorAll('.part-label')].filter(el=>!el.hidden).length;
+      return {stage:{x:s.x,y:s.y,w:s.width,h:s.height},
+        canvas:{x:r.x,y:r.y,w:r.width,h:r.height},
+        buffer:{w:canvas.width,h:canvas.height},
+        css:{w:getComputedStyle(canvas).width,h:getComputedStyle(canvas).height},
+        labels:visibleLabels,dpr:devicePixelRatio};
+    });
+    assert.ok(geometry.dpr>=2,'Regression requires a Retina high-density viewport');
+    assert.ok(Math.abs(geometry.canvas.w-geometry.stage.w)<1,
+      'Canvas CSS width must equal stage width, never the high-density buffer: '+JSON.stringify(geometry));
+    assert.ok(Math.abs(geometry.canvas.h-geometry.stage.h)<1,
+      'Canvas CSS height must equal stage height: '+JSON.stringify(geometry));
+    assert.ok(Math.abs(geometry.canvas.x-geometry.stage.x)<1,
+      'Canvas left edge must align with stage: '+JSON.stringify(geometry));
+    assert.ok(Math.abs(geometry.canvas.y-geometry.stage.y)<1,
+      'Canvas top edge must align with stage: '+JSON.stringify(geometry));
+    assert.ok(geometry.buffer.w>=geometry.canvas.w*1.5,
+      'HiDPI buffer should use device pixels without changing CSS size');
+    assert.equal(geometry.labels,0,'Overview labels must not overlap the phone canvas');
+    await touch.locator('#camera-back').click();
+    await touch.locator('#camera-front').click();
+    await touch.locator('#mode-explode').click();
+    assert.equal(await touch.locator('#explode-controls').isVisible(),true);
+    assert.equal(await touch.locator('#stage').getAttribute('data-explosion-amount'),'65');
+    await touch.locator('#explode-amount').evaluate(input=>{
+      input.value='85';input.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    assert.equal(await touch.locator('#explode-value').textContent(),'85%');
+    await touch.locator('#explode-assemble').click();
+    assert.equal(await touch.locator('#stage').getAttribute('data-explosion-amount'),'0');
+    assert.equal(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    await touch.locator('#mode-map').click();
+    assert.equal(await touch.locator('#concept-map').isVisible(),true);
+  }else{
+    assert.equal(await touch.locator('#webgl-fallback').isVisible(),true);
+  }
+  assert.equal(await touch.locator('#mobile-tabs').isVisible(),true);
+  assert.equal(await touch.locator('#panel-structures').isVisible(),true);
+  assert.equal(await touch.locator('#panel-details').isHidden(),true);
+  assert.equal(await touch.locator('#panel-practice').isHidden(),true);
+  // On phones the concept map must scroll with the page, not in a nested pane.
+  assert.equal(await touch.locator('#concept-map').evaluate(el=>getComputedStyle(el).position),'relative');
+  assert.equal(await touch.locator('#concept-map').evaluate(el=>getComputedStyle(el).overflowY),'visible');
+  // Scroll the regular document once before a real touch click; no inner
+  // scrolling region or continuous GPU resize should move the target.
+  await touch.locator('button[data-concept-id="right-vocal-fold"]')
+    .evaluate(el=>el.scrollIntoView({block:'center',behavior:'instant'}));
+  await touch.locator('button[data-concept-id="right-vocal-fold"]').click({timeout:15000});
+  assert.equal(await touch.locator('button[data-concept-id="right-vocal-fold"]').getAttribute('aria-pressed'),'true');
+  assert.equal(await touch.locator('#selection-ribbon').isVisible(),true);
+  assert.match(await touch.locator('#selection-name').textContent(),/Right vocal fold/);
+  await touch.locator('#open-details').click();
+  assert.equal(await touch.locator('#panel-details').isVisible(),true);
+  assert.equal(await touch.locator('[data-mobile-target="panel-details"]').getAttribute('aria-pressed'),'true');
   assert.match(await touch.locator('#detail').textContent(),/Right vocal fold/);
   assert.equal(await touch.locator('#detail .evidence-links a').count(),2);
-  await touch.locator('#structure-search').fill('vocal fold');
-  assert.equal(await touch.locator('#structures button[data-id]:visible').count(),2);
-  await touch.locator('#structure-search').fill('');
+  await touch.locator('#practice-from-detail').click();
+  assert.equal(await touch.locator('#panel-practice').isVisible(),true);
+  assert.equal(await touch.locator('#phonation-panel svg[role="img"]').count(),4);
+  assert.match(await touch.locator('#phonation-panel').textContent(),/no.*simulation/i);
+  assert.equal(await touch.locator('#tour-heading').textContent(),'Start with the thyroid cartilage');
+  assert.match(await touch.locator('#tour-progress').textContent(),/Step 1 of 6/);
+  await touch.locator('#tour-reveal').click();
+  assert.match(await touch.locator('#tour-answer').textContent(),/endocrine gland/);
+  await touch.locator('#tour-next').click();
+  assert.match(await touch.locator('#tour-progress').textContent(),/Step 2 of 6/);
+  assert.equal(await touch.locator('#tour-answer').isHidden(),true);
+  await touch.locator('#tour-view').click();
+  assert.match(await touch.locator('#source-note-name').textContent(),/arytenoid/i);
+  const tour3D=await touch.locator('#mode-three').getAttribute('aria-pressed')==='true';
+  if(!tour3D){
+    assert.equal(await touch.locator('#panel-details').isVisible(),true,
+      'Graphics unavailable: guided tour must open textual source notes');
+    assert.match(await touch.locator('#status').textContent(),/3D graphics unavailable/);
+  }
+  await touch.locator('[data-mobile-target="panel-practice"]').click();
+  assert.match(await touch.locator('#identify-progress').textContent(),/Question 1 of 20/);
+  assert.equal(await touch.locator('#identify-options button').count(),4);
+  await touch.locator('#identify-options button[data-answer-id="hyoid-bone"]').click();
+  assert.match(await touch.locator('#identify-feedback').textContent(),/Correct/);
+  await touch.locator('#identify-find').click();
+  assert.match(await touch.locator('#source-note-name').textContent(),/Hyoid bone/);
+  await touch.locator('[data-mobile-target="panel-practice"]').click();
+  await touch.locator('#identify-next').click();
+  assert.match(await touch.locator('#identify-progress').textContent(),/Question 2 of 20/);
+  assert.equal(await touch.locator('#identify-find').isDisabled(),true);
+  await touch.locator('#identify-restart').click();
+  assert.match(await touch.locator('#identify-progress').textContent(),/Question 1 of 20.*0 correct/);
+  assert.match(await touch.locator('#study-scope').textContent(),/3 question\(s\) about Right vocal fold/);
+  await touch.locator('#study-next').click();
+  assert.match(await touch.locator('#study-question').textContent(),/paired structures vibrate/);
+  await touch.locator('#study-reveal').click();
+  assert.match(await touch.locator('#study-answer').textContent(),/vocal folds/i);
+  await touch.locator('#study-recognized').click();
+  assert.match(await touch.locator('#study-progress').textContent(),/recalled: 1/);
+  await touch.locator('#study-reset').click();
   await touch.locator('#study-next').click();
   await touch.locator('#study-reveal').click();
   assert.match(await touch.locator('#study-answer').textContent(),/Thyroid cartilage/);
-  await touch.locator('#study-recognized').click();
-  assert.match(await touch.locator('#study-progress').textContent(),/recalled: 1/);
+  await touch.locator('[data-mobile-target="panel-structures"]').click();
+  assert.equal(await touch.locator('#panel-structures').isVisible(),true);
+  assert.equal(await touch.locator('#panel-practice').isHidden(),true);
+  await touch.locator('#structure-search').fill('vocal fold');
+  assert.equal(await touch.locator('#structures button[data-id]:visible').count(),2);
+  await touch.locator('#structure-search').fill('');
+  await touch.locator('button[data-id="right-vocal-fold"]').click();
+  assert.equal(await touch.locator('#selection-ribbon').isVisible(),true);
+  await touch.locator('#reset').click();
+  assert.equal(await touch.locator('#selection-ribbon').isHidden(),true);
   assert.equal(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);
   await mkdir('test-results',{recursive:true});
   await touch.screenshot({path:'test-results/anatomy-'+name+'-mobile.png'});
-  console.log('PASS: '+name+' mobile anatomy selection, layout and WebGL initialization');
+  console.log('PASS: '+name+' mobile map, accessible panel navigation, notes-to-practice path and responsive layout');
 } catch(e) {
   console.error('FAIL: '+name+' anatomy browser:',e.stack);
   process.exitCode=1;

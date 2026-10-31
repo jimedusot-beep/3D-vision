@@ -76,7 +76,14 @@ export function jointPanel({root, selected, mutate, checkpoint, resetPreview, ch
     resetPreview(); const j = current(); if (!j || j.type === 'fixed') throw Error('Choose a moving joint');
     setJointValue(root(), j.id, j.value); checkpoint();
     const phase = Math.asin(Math.max(-1, Math.min(1, 2 * (j.value - j.min) / (j.max - j.min) - 1)));
-    animation = {id:j.id, start:performance.now(), phase}; values(); invalidate();
+    animation = {id:j.id, start:performance.now(), phase};
+    values();
+    // Prime one small pose update immediately. Background/throttled WebKit can
+    // delay the first RAF; moving the joint on the actual user command gives
+    // immediate feedback while the regular render loop continues animation.
+    // This is a transient preview pose, not an extra undo/save checkpoint.
+    tick(animation.start + 48);
+    invalidate();
   });
   function tick(t) {
     if (!animation) return false;

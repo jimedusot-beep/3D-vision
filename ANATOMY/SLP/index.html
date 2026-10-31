@@ -13,7 +13,81 @@ header h1{font-size:1.25rem;margin:0}header p{margin:0;color:#b6c9d4;font-size:.
 .workspace-nav{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.workspace-nav>*{padding:.45rem .7rem;border:1px solid #64839a;border-radius:7px}.workspace-nav [aria-current=page]{background:#17615b;color:#fff}
 main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height:calc(100dvh - 102px);min-height:450px}
 #stage{position:relative;min-height:360px;overflow:hidden;background:radial-gradient(circle,#263e4c,#0e1a26)}
-#stage canvas{display:block;touch-action:none}
+/* The drawing buffer uses device pixels, but the visible canvas must remain
+   exactly stage-sized in CSS pixels. Without this, Retina/iOS WebKit can
+   display a giant clipped lower-right fragment of the 3D scene. */
+#stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:100%;max-height:100%;touch-action:none}
+#stage.mode-three{isolation:isolate}
+#stage.mode-map canvas,#stage.mode-map #overlay{display:none}
+#stage.mode-three #concept-map{display:none}
+#stage button{min-height:40px}
+#view-switch{position:absolute;z-index:5;top:.75rem;left:.75rem;display:flex;gap:.3rem;padding:.25rem;border-radius:12px;background:#0d1a27e8;border:1px solid #526d7c}
+#view-switch button{padding:.45rem .8rem;text-align:center}
+#explode-controls{position:absolute;z-index:6;top:3.9rem;left:.6rem;width:min(385px,calc(100% - 1.2rem));border:1px solid #80b4bb;border-radius:12px;background:#112d3df2;padding:.6rem .75rem;box-shadow:0 4px 18px #0005}
+#explode-controls[hidden]{display:none}
+#explode-controls label{display:flex;align-items:center;justify-content:space-between;font-weight:650;gap:.5rem}
+#explode-controls input{width:100%;height:38px;accent-color:#70d5bd;touch-action:pan-y}
+#explode-controls button{padding:.4rem .75rem}
+#explode-warning{font-size:.77rem;line-height:1.32;margin:.3rem 0 0;color:#dfecf0}
+#view-switch [aria-pressed="true"]{background:#17615b;color:#fff}
+#three-view-controls{position:absolute;z-index:4;top:.85rem;right:.7rem;display:flex;gap:.3rem}
+#three-view-controls[hidden]{display:none}
+#three-view-controls button{padding:.45rem .65rem}
+#concept-map{position:absolute;inset:0;overflow:auto;padding:4.1rem clamp(.8rem,2vw,1.5rem) 5.3rem;background:radial-gradient(ellipse at 50% 15%,#244e60 0%,#112836 58%,#0c1c2a 100%);color:#edf6fb}
+.map-heading{text-align:center;max-width:44rem;margin:0 auto 1.3rem}.map-heading h2{font-size:clamp(1.5rem,2.8vw,2.2rem);margin:.2rem 0;font-weight:700;letter-spacing:-.02em}.map-heading p{margin:.25rem auto;color:#d4e1eb}.map-heading .map-kicker{color:#8fe1d4;letter-spacing:.13em;font-size:.72rem;font-weight:700}
+.map-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;max-width:55rem;margin:0 auto}
+.map-group{border:1px solid #6a899c80;border-radius:14px;background:#152e3dcc;padding:.85rem;min-width:0;box-shadow:0 8px 20px #07131d40}
+.map-group h3{font-size:1rem;margin:0 0 .2rem}.map-group p{margin:0 0 .6rem;font-size:.82rem;color:#bed0df}
+.map-parts{display:flex;flex-wrap:wrap;gap:.35rem}
+.map-parts button{text-align:left;flex:1 1 150px;padding:.5rem .65rem;background:#203b4d;border:1px solid #7794a4;border-left:4px solid #7bd4c1}
+.map-group[data-kind="fold"] .map-parts button{border-left-color:#f0b8a9}
+.map-group[data-kind="muscle-open"] .map-parts button{border-left-color:#9cb8fb}
+.map-group[data-kind="muscle-close"] .map-parts button{border-left-color:#e4b779}
+.map-parts button:hover,.map-parts button:focus-visible{outline:2px solid #8cddd4;outline-offset:2px}
+.map-parts button[aria-pressed="true"]{background:#17615b;border-color:#b3f1df}
+#stage.mode-map #notice{border:1px solid #4d7b84}
+#source-tools{margin:0 0 1.1rem;border:1px solid #6b97a1;border-radius:11px;padding:.65rem;background:#193341}
+#source-tools[hidden],#source-note[hidden]{display:none}
+#source-tools summary{font-weight:700;cursor:pointer;min-height:42px;padding:.3rem}
+#source-select{display:block;min-height:44px;width:100%;margin:.4rem 0;color:#fff;background:#213d4c;border:1px solid #80a4b5;border-radius:8px;padding:.6rem}
+#layer-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem}
+#layer-options label{display:flex;align-items:center;gap:.35rem;min-height:42px;background:#234353;border:1px solid #648d9a;border-radius:7px;padding:.35rem .45rem;font-size:.85rem}
+#layer-options input{width:19px;height:19px;accent-color:#75dac4}
+#source-note{border-left:4px solid #7ad4bd;background:#172e3b;border-radius:7px;padding:.85rem;margin:0 0 1rem}
+#source-note h3{margin:.1rem 0 .5rem}
+#source-note-links a{display:block;min-height:34px;margin:.25rem 0}
+.study-caveat{font-size:.83rem;color:#c3d9df;line-height:1.45}
+.physiology-illustrations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+.physiology-illustrations figure{margin:0;background:#203847;border:1px solid #5c8b99;padding:.5rem;border-radius:10px;min-width:0}
+.physiology-illustrations svg{width:100%;max-height:190px}
+.physiology-illustrations text{font:11px system-ui,sans-serif;fill:#d4e4ec}
+.physiology-illustrations figcaption{font-size:.82rem;line-height:1.4}
+#tour-progress{font-weight:700;color:#9be8d5}
+#identify-progress{font-weight:700;color:#9be8d5}
+#identify-clue{font-weight:650;line-height:1.55}
+.identify-choices{min-width:0;border:1px solid #688d9b;border-radius:9px;padding:.7rem}
+#identify-options{display:grid;grid-template-columns:1fr;gap:.42rem}
+#identify-options button{text-align:left;min-height:48px;white-space:normal;padding:.65rem .8rem}
+#identify-options button[aria-pressed="true"]{background:#245e66;border-color:#9cdacf}
+#identify-feedback:not([hidden]){padding:.6rem;border-left:3px solid #86d7bd;background:#213e4e;border-radius:3px}
+#identify-explanation:not([hidden]){margin:.6rem 0}
+#identify-references a{display:block;padding:.4rem 0}
+#identify-find{min-height:44px;margin:.5rem 0}
+#tour-answer:not([hidden]){padding:.55rem;border-left:3px solid #8ad8bf;background:#193643}
+#three-view-controls{max-width:calc(100% - 1rem);flex-wrap:wrap;justify-content:flex-end}
+#three-view-controls button{min-height:39px}
+@media(max-width:420px){.physiology-illustrations{grid-template-columns:1fr}#layer-options{grid-template-columns:1fr}}
+
+#selection-ribbon{position:absolute;left:clamp(.6rem,2vw,1.1rem);right:clamp(.6rem,2vw,1.1rem);bottom:3.6rem;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.65rem .75rem;border:1px solid #85c5c6;background:#112f3fe8;border-radius:12px;box-shadow:0 6px 20px #0005}
+#selection-ribbon[hidden]{display:none}
+#model-structure{position:absolute;top:6.4rem;left:.6rem;right:.6rem;z-index:3;font-size:.8rem;line-height:1.35;border:1px solid #85c5c6;background:#112f3fee;border-radius:10px;padding:.55rem .65rem;max-height:6.5rem;overflow:auto}
+#model-structure[hidden]{display:none}
+#selection-name{font-size:.9rem;font-weight:700}
+#open-details{background:#17665a;border-color:#9de8db;flex:0 1 auto}
+#mobile-tabs{display:none}
+#practice-from-detail{display:block;margin:.85rem 0 0;width:100%;background:#17665a;border-color:#9de8db;text-align:center}
+#stage.mode-map #concept-map{padding-bottom:9rem}
+
 #overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .part-label{position:absolute;transform:translate(-50%,-50%);background:#152633e6;border:1px solid #698da2;border-radius:6px;padding:2px 5px;font-size:.7rem;white-space:nowrap}
 #notice{position:absolute;left:.75rem;bottom:.75rem;right:.75rem;background:#162b3de6;padding:.55rem;border-radius:8px;font-size:.8rem}
@@ -29,18 +103,95 @@ button[aria-pressed="true"]{background:#17615b;border-color:#88e1d0}button:disab
 label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 #detail{min-height:6rem;padding:.65rem;background:#203541;border-radius:8px}#detail p{margin:.5rem 0}.evidence-note{font-size:.84rem;color:#e1d9bf}.evidence-links{font-size:.85rem}.evidence-links a{display:block;margin-top:.35rem;overflow-wrap:anywhere}
 #status{color:#c5dfe6;font-size:.84rem}small{color:#b7cad5}#webgl-fallback{position:relative;z-index:1;max-width:34rem;margin:1.5rem;padding:1rem;border:1px solid #a6bdd0;border-radius:8px;background:#243745;color:#fff}.study-panel{margin-top:1rem;padding:.8rem;border:1px solid #405568;border-radius:8px;background:#1b3040}.study-panel h2{margin-top:0}.practice-rating{border:1px solid #64839a;border-radius:7px;margin-top:.65rem;padding:.5rem}.practice-rating legend{padding:0 .35rem;font-size:.88rem}.study-panel ol{margin:.5rem 0;padding-left:1.4rem}.study-panel li{margin:.6rem 0}.study-panel li p{margin:.2rem 0;font-size:.9rem}.study-panel li a{display:inline-block;margin-right:.5rem;font-size:.85rem}.study-panel p{margin:.5rem 0}.study-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.55rem 0}.study-actions button{flex:1 1 130px}.study-sources a{display:block;overflow-wrap:anywhere;margin:.3rem 0}.coverage-note{margin-top:1rem}
-@media(max-width:760px){main{height:auto;display:flex;flex-direction:column}#stage{height:50dvh;min-height:300px}aside{border-left:0;border-top:1px solid #405568}header p{width:100%}}
+@media(max-width:760px){
+ main{height:auto;display:flex;flex-direction:column;min-height:0}
+ #stage.mode-map{height:auto;min-height:0;overflow:visible;display:flex;flex-direction:column}
+ #stage.mode-map #view-switch{position:relative;top:auto;left:auto;align-self:flex-start;margin:.8rem .8rem 0}
+ #stage.mode-map #concept-map{position:relative;inset:auto;overflow:visible;padding:1.1rem .8rem 1rem;width:100%}
+ #stage.mode-map #selection-ribbon{position:sticky;top:.5rem;inset-inline:auto;margin:0 .8rem .6rem;z-index:9;box-shadow:0 5px 18px #0006}
+ #stage.mode-map #notice{position:relative;inset:auto;margin:.3rem .8rem .8rem}
+ #stage.mode-three{height:clamp(340px,53dvh,520px);min-height:340px;overflow:hidden}
+ #stage.mode-three #view-switch{top:.6rem;left:.6rem}
+ #stage.mode-three #three-view-controls{top:3.8rem;right:.6rem}
+ #stage.mode-three #explode-controls{top:6.65rem;left:.55rem;width:calc(100% - 1.1rem);padding:.45rem .6rem}
+ #stage.mode-three:has(#explode-controls:not([hidden])){height:clamp(430px,72dvh,590px);min-height:430px}
+ #stage.mode-three:has(#explode-controls:not([hidden])) #notice{bottom:.5rem}
+ #stage.mode-three #selection-ribbon{left:.5rem;right:.5rem;bottom:3.8rem}
+ #stage.mode-three #selection-ribbon button{padding:.4rem .55rem}
+ aside{overflow:visible;border-left:0;border-top:1px solid #405568;padding:.8rem;min-height:15rem}
+ #mobile-tabs{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem;margin:-.8rem -.8rem 1rem;padding:.55rem .65rem;background:#14212df5;box-shadow:0 3px 12px #0005}
+ #mobile-tabs button{min-width:0;min-height:46px;padding:.65rem .3rem;text-align:center;font-weight:700}
+ #mobile-tabs button[aria-pressed="true"]{background:#17665a;border-color:#b3f1df}
+ .mobile-panel[data-mobile-active="false"]{display:none}
+ #panel-structures,#panel-details,#panel-practice{min-width:0}
+ #concept-map .map-heading{margin-bottom:1rem}
+ #stage.mode-map #concept-map{padding-bottom:.3rem}
+ #detail{min-height:0}
+ #practice-from-detail{min-height:48px}
+ header{padding:.7rem .85rem;gap:.45rem}
+ header h1{font-size:1.13rem}
+ header p{width:100%;font-size:.77rem}
+ .workspace-nav{gap:0}
+ .workspace-nav>a{padding:.4rem .55rem;font-size:.78rem}
+ .workspace-nav [aria-current="page"]{display:none}
+ #stage.mode-three #notice{font-size:.7rem;line-height:1.3;padding:.4rem .55rem;bottom:.45rem;left:.45rem;right:.45rem}
+}
+@media(max-width:600px){.map-grid{grid-template-columns:1fr}.map-group{padding:.75rem}#three-view-controls{top:3.9rem}#view-switch{right:.5rem}#view-switch button{font-size:.78rem;padding:.4rem .45rem}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 </head><body>
-<header><div><h1>3D Vision · SLP Anatomy Lab</h1><p>Simplified illustration, not a validated anatomical model</p></div>
-<nav class="workspace-nav" aria-label="Project workspaces"><a href="../../index.html">Robot parts &amp; printing — Back to mechanical workshop</a><strong aria-current="page">SLP anatomy study</strong></nav></header>
+<header><div><h1>H.E.R.B.I.E. · Larynx Anatomy Lab</h1><p>Source-derived surface geometry; not clinically validated. <a href="./systems.html">Explore all SLP systems</a>.</p></div>
+<nav class="workspace-nav" aria-label="Project workspaces"><a href="./systems.html">All SLP systems</a><a href="../../index.html">Robot parts &amp; printing — Back to mechanical workshop</a><strong aria-current="page">Larynx 3D lab</strong></nav></header>
 <main>
-<section id="stage" aria-label="3D anatomy scene; drag to rotate, pinch or scroll to zoom" tabindex="0">
-<div id="overlay" aria-hidden="true"></div>
-<div id="notice">Illustrative geometry only. Not to scale; not for diagnosis, surgery or device design. Phonation animation unavailable pending validation.</div>
+<section id="stage" class="mode-map" aria-label="Functional study map; select any structure to read about it">
+<div id="view-switch" role="group" aria-label="Choose anatomy presentation">
+<button type="button" id="mode-map" aria-pressed="true">Study map</button>
+<button type="button" id="mode-three" aria-pressed="false">3D anatomy</button>
+<button type="button" id="mode-explode" aria-pressed="false">Exploded study</button>
+</div>
+<div id="selection-ribbon" hidden>
+<span id="selection-name" role="status" aria-live="polite"></span>
+<button id="open-details" type="button">Read structure notes</button>
+</div>
+<section id="concept-map" aria-label="Interactive functional concept map">
+<div class="map-heading">
+<p class="map-kicker">LARYNX · INTRODUCTORY STUDY</p>
+<h2>Structure &amp; function</h2>
+<p>Explore the grouped concepts below. This is a <strong>functional map, not a spatial anatomy diagram</strong>.</p>
+</div>
+<div id="concept-groups" class="map-grid"></div>
 </section>
-<aside aria-label="Anatomy structure controls">
+<div id="explode-controls" role="group" aria-label="Separate anatomical groups for study" hidden>
+<label for="explode-amount">Separation <output for="explode-amount" id="explode-value">65%</output></label>
+<input id="explode-amount" type="range" min="0" max="100" step="5" value="65" aria-describedby="explode-warning">
+<button id="explode-assemble" type="button">Reassemble</button>
+<p id="explode-warning">Study layout only. Parts retain their shapes but are <strong>not in anatomical positions</strong>.</p>
+</div>
+<div id="three-view-controls" role="group" aria-label="3D camera presets" hidden>
+<button id="camera-front" type="button">Front</button><button id="camera-back" type="button">Back</button>
+<button id="camera-left" type="button">Left</button><button id="camera-right" type="button">Right</button>
+<button id="camera-top" type="button">Top</button>
+</div>
+<p id="model-structure" hidden role="status" aria-live="polite"></p>
+<div id="overlay" aria-hidden="true"></div>
+<div id="notice">Learning map only: groups represent functions, not physical position. No anatomy measurements or clinical claims.</div>
+</section>
+<aside id="study-sidebar" aria-label="Anatomy study and controls">
+<nav id="mobile-tabs" aria-label="Anatomy learning sections">
+<button type="button" data-mobile-target="panel-structures" aria-controls="panel-structures" aria-pressed="true">1 · Parts</button>
+<button type="button" data-mobile-target="panel-details" aria-controls="panel-details" aria-pressed="false">2 · Notes</button>
+<button type="button" data-mobile-target="panel-practice" aria-controls="panel-practice" aria-pressed="false">3 · Practice</button>
+</nav>
+<section id="panel-structures" class="mobile-panel" data-mobile-active="true" aria-label="Find and inspect anatomy structures">
+<details id="source-tools" hidden>
+<summary>Explore all 20 model structures</summary>
+<label for="source-select">Select a source-derived anatomy group</label>
+<select id="source-select"><option value="">Choose a structure</option></select>
+<fieldset id="source-filters"><legend>Show 3D anatomy layers</legend><div id="layer-options"></div></fieldset>
+<p id="layer-count" role="status" aria-live="polite">All 20 anatomy groups visible.</p>
+<button id="source-show-all" type="button">Show all layers</button>
+<p class="study-caveat">Layer filters affect visibility, not anatomical existence. Some source parts combine both sides.</p>
+</details>
 <h2>Laryngeal structures</h2><p id="orientation-note">Anatomical left and right describe the subject, not you. In the front view, the subject's left is on your right; rotating the model changes screen positions. All locations are approximate.</p><label for="structure-search">Search laryngeal structures</label>
 <input id="structure-search" type="search" aria-controls="structures" autocomplete="off" spellcheck="false" placeholder="Try cartilage, vocal fold, left…">
 <p id="structure-count" role="status" aria-live="polite">10 structures available.</p>
@@ -51,7 +202,84 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <label><input id="transparent" type="checkbox"> Make other structures transparent</label>
 <label><input id="labels" type="checkbox" checked> Show structure labels</label>
 <button type="button" disabled title="Requires validated geometry and expert anatomical review">Phonation animation unavailable</button>
-<h2>Selected structure — anatomy note &amp; references</h2><div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
+</section>
+<section id="panel-details" class="mobile-panel" data-mobile-active="false" aria-label="Selected structure and evidence">
+<h2>Selected structure — anatomy note &amp; references</h2>
+<section id="source-note" aria-label="Source model anatomy identification" hidden>
+<h3 id="source-note-name"></h3>
+<p id="source-note-pronunciation"></p>
+<p id="source-note-function"></p>
+<p id="source-note-limitation" class="evidence-note"></p>
+<div id="source-note-links" class="evidence-links"></div>
+</section>
+<div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
+<button id="practice-from-detail" type="button" disabled>Practice questions about this structure</button>
+</section>
+<section id="panel-practice" class="mobile-panel" data-mobile-active="false" aria-label="Learning objectives and recall practice">
+<section class="study-panel" id="guided-tour" aria-labelledby="tour-title">
+<h2 id="tour-title">Guided 3D larynx tour</h2>
+<p>Follow one structure at a time; explore the actual static source mesh and check your recall. Nothing is graded or saved.</p>
+<p id="tour-progress" role="status" aria-live="polite">Step 1 of 6</p>
+<h3 id="tour-heading"></h3>
+<p id="tour-explanation"></p>
+<p id="tour-question"></p>
+<p id="tour-answer" hidden></p>
+<div class="study-actions">
+<button type="button" id="tour-previous">Previous</button>
+<button type="button" id="tour-reveal">Reveal explanation</button>
+<button type="button" id="tour-next">Next</button>
+</div>
+<button id="tour-view" type="button">Highlight this part in 3D</button>
+</section>
+<section class="study-panel" id="identify-challenge" aria-labelledby="identify-title">
+<h2 id="identify-title">Identify the anatomy — 20 structures</h2>
+<p>Read the function and choose the matching structure. Similar anatomy terms make the choices meaningful. This is practice, not a graded examination; nothing is saved.</p>
+<p id="identify-progress" role="status" aria-live="polite">Question 1 of 20</p>
+<p id="identify-clue"></p>
+<fieldset class="identify-choices"><legend>Which structure matches this clue?</legend><div id="identify-options"></div></fieldset>
+<p id="identify-feedback" role="status" aria-live="polite" hidden></p>
+<p id="identify-explanation" hidden></p>
+<div id="identify-references" hidden></div>
+<div class="study-actions">
+<button type="button" id="identify-next" disabled>Next question</button>
+<button type="button" id="identify-restart">Restart all 20</button>
+</div>
+<button type="button" id="identify-find" disabled>Find the answer in 3D / notes</button>
+<p class="study-caveat">The source has bilateral groups and incomplete tissue layers; identifying a surface here is not a clinical competency test.</p>
+</section>
+<section class="study-panel" id="phonation-panel" aria-labelledby="phonation-title">
+<h2 id="phonation-title">Phonation: how the larynx works</h2>
+<p>These are <strong>static concept diagrams, not views of the 3D model or simulations of living tissue</strong>. They distinguish glottal positioning from the airflow-driven vibration that produces voice.</p>
+<div class="physiology-illustrations">
+<figure><svg viewBox="0 0 220 135" role="img" aria-label="Schematic top view of open V-shaped glottal gap during breathing">
+<path d="M60 25 Q75 25 105 108" stroke="#e9b7aa" stroke-width="23" stroke-linecap="round" fill="none"/>
+<path d="M160 25 Q145 25 115 108" stroke="#e9b7aa" stroke-width="23" stroke-linecap="round" fill="none"/>
+<path d="M82 39 L110 96 L138 39" stroke="#88d7fa" stroke-width="3" fill="none" stroke-dasharray="4 4"/>
+<text x="110" y="13" text-anchor="middle">posterior</text><text x="110" y="130" text-anchor="middle">anterior</text></svg>
+<figcaption><strong>Breathing:</strong> folds abduct; the glottal gap widens.</figcaption></figure>
+<figure><svg viewBox="0 0 220 135" role="img" aria-label="Schematic top view of closely approximated vocal folds during preparation for voice">
+<path d="M96 25 Q97 65 105 108" stroke="#e9b7aa" stroke-width="22" stroke-linecap="round" fill="none"/>
+<path d="M124 25 Q123 65 115 108" stroke="#e9b7aa" stroke-width="22" stroke-linecap="round" fill="none"/>
+<path d="M110 26 L110 104" stroke="#88d7fa" stroke-width="3" stroke-dasharray="5 4"/>
+<text x="110" y="13" text-anchor="middle">posterior</text><text x="110" y="130" text-anchor="middle">anterior</text></svg>
+<figcaption><strong>Voicing preparation:</strong> folds approximate; closure alone does not create sound.</figcaption></figure>
+<figure><svg viewBox="0 0 220 135" role="img" aria-label="Concept diagram: exhaled air flows upward through approximated vocal folds, which can oscillate; not actual tissue movement">
+<path d="M70 26 Q87 56 100 107" stroke="#e9b7aa" stroke-width="15" fill="none" stroke-linecap="round"/>
+<path d="M150 26 Q133 56 120 107" stroke="#e9b7aa" stroke-width="15" fill="none" stroke-linecap="round"/>
+<path d="M110 110 V25 M102 34 L110 21 L118 34" stroke="#85d8ff" stroke-width="4" fill="none"/>
+<path d="M84 42 Q96 54 84 66 Q72 78 84 90 M136 42 Q124 54 136 66 Q148 78 136 90" stroke="#9ee6d2" stroke-width="2" stroke-dasharray="3 4" fill="none"/>
+<text x="110" y="128" text-anchor="middle">exhaled air ↑</text></svg>
+<figcaption><strong>Vibration:</strong> exhaled airflow interacts with layered fold tissue; dashed curves are symbolic, not measured motion.</figcaption></figure>
+<figure><svg viewBox="0 0 220 135" role="img" aria-label="Concept diagram comparing a shorter relaxed band with a longer tensioned band; not a measured vocal fold model">
+<text x="12" y="27">shorter / less tense</text><path d="M30 47 H115" stroke="#e9b7aa" stroke-width="10" stroke-linecap="round"/>
+<text x="12" y="82">longer / more tense</text><path d="M30 104 H186" stroke="#e9b7aa" stroke-width="7" stroke-linecap="round"/>
+<path d="M120 104 H189 M184 100 L192 104 L184 108" stroke="#85d8ff" stroke-width="2" fill="none"/></svg>
+<figcaption><strong>Pitch and tension:</strong> fold length and tension contribute to fundamental frequency; this comparison is qualitative only.</figcaption></figure>
+</div>
+<p><strong>Vibration:</strong> airflow and pressure from exhalation interact with the layered vocal folds to generate oscillation. <strong>Pitch:</strong> fold length, tension and tissue properties help determine fundamental frequency; the cricothyroid contributes to lengthening and tensing.</p>
+<p class="study-caveat">The imported GLB depicts vocal ligaments, not full mucosa-covered vibrating vocal folds. No waveform, anatomical displacement, or clinical function is computed from the mesh.</p>
+<p><a href="https://www.asha.org/practice-portal/clinical-topics/voice-disorders/vocal-tract-visualization-and-imaging/" target="_blank" rel="noopener noreferrer">ASHA anatomical reference</a> · <a href="https://www.ncbi.nlm.nih.gov/books/NBK545265/" target="_blank" rel="noopener noreferrer">NCBI muscle physiology</a></p>
+</section>
 <section class="study-panel" aria-labelledby="objectives-title">
 <h2 id="objectives-title">Undergraduate learning objectives — draft</h2>
 <p>Work through the four outcomes below. Each outcome is supported by short readings and text-based questions, but the material has not been faculty-reviewed or accredited.</p>
@@ -72,6 +300,7 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <div class="study-actions"><button type="button" id="study-again" disabled>Review again later</button><button type="button" id="study-recognized" disabled>I recalled it</button></div>
 </fieldset>
 <p id="study-progress" role="status" aria-live="polite">Practice checks: 0. No scores, accounts or answer history saved.</p>
+</section>
 </section>
 <details class="coverage-note"><summary>What this simplified scene does NOT show</summary><p id="coverage-intro"></p><ul id="coverage-list"></ul><p id="coverage-warning"></p></details>
 <p id="status" role="status" aria-live="polite">Loading model…</p>

@@ -13,9 +13,15 @@ All 18 H.E.R.B.I.E. CAD parts remain provisional; no physical fit is certified.
 
 A free static web application for loading, assembling, inspecting and exporting real mesh models. It includes the existing 18 H.E.R.B.I.E. STL parts, both GLB assemblies, editable CAD sources and engineering documents. H.E.R.B.I.E. V1 remains **provisional and physically untested**.
 
-## SLP interactive anatomy prototype (experimental)
+## H.E.R.B.I.E. SLP Anatomy Atlas — seven independent 3D labs
 
-A separate [SLP larynx teaching scene](ANATOMY/SLP/index.html) offers a **schematic, unvalidated** 3D larynx illustration, mouse/touch orbit, labels, selection, isolation, transparency, keyboard controls and a versioned H.E.R.B.I.E. iframe message protocol. See [limitations and source record](ANATOMY/SLP/SOURCES.md). This does not replace or mix with H.E.R.B.I.E. mechanical CAD; no medical geometry is certified, phonation animation remains disabled, and no private coursework is included.
+**[OPEN THE COMPLETE SLP 3D ATLAS](https://jimedusot-beep.github.io/3D-vision/ANATOMY/SLP/systems.html)** (the public link serves the latest version only after a successful Pages publication).
+
+The Atlas provides **seven source-derived, rotatable 3D anatomy viewers** for larynx, lungs and airways, diaphragm, oral structures, pharyngeal/velopharyngeal muscles, right ear/hearing and a selected cranial-nerve/brainstem subset. The [study hub](ANATOMY/SLP/systems.html) launches each module and organizes ten SLP learning areas. The viewers support source-linked selection, labels, structure isolation and educational activities; browser-text alternatives are available when 3D is unavailable. Recent exercises include larynx/respiratory identification, hearing tours and neural active recall.
+
+The seven models **are not one spatially aligned whole-body model**. Their source coordinates, mesh completeness and licensing differ; fusing them without independently verified anatomical registration would create misleading anatomy. Original source models come from BodyParts3D / DBCLS, Z-Anatomy, OrganUI and Brain Project. Different CC BY-SA model licenses apply; see [third-party notices](THIRD_PARTY_NOTICES.md) and the Atlas's [detailed evidence and attribution page](ANATOMY/SLP/about.html). This is a personal educational study resource, not a diagnostic or clinical reconstruction.
+
+GitHub Actions builds and publishes the static Atlas along with the existing 3D workshop. See [deployment setup](docs/DEPLOYMENT.md). A public-site verification suite checks launch links and actual licensed GLB files after publication. Physical iPhone/VoiceOver and qualified educator review remain open tasks.
 
 ## McGruber Lab — repository-driven experiments
 

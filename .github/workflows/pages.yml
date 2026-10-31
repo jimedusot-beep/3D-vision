@@ -25,6 +25,22 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+      - name: Verify published SLP larynx anatomy, source notes, quizzes and iPhone layout
+        run: node tests/anatomy-browser.mjs
+      - name: Verify SLP systems atlas and respiratory study navigation before publishing
+        run: node tests/slp-systems-browser.mjs
+      - name: Verify licensed 3D lungs and airways model before publishing
+        run: node tests/slp-lungs-browser.mjs
+      - name: Verify diaphragm source model and controls before publishing
+        run: node tests/slp-diaphragm-browser.mjs
+      - name: Verify oral structures and source attribution before publishing
+        run: node tests/slp-oral-browser.mjs
+      - name: Verify pharynx and velum study before publishing
+        run: node tests/slp-pharynx-browser.mjs
+      - name: Verify right-ear 3D and hearing journey before publishing
+        run: node tests/slp-ear-browser.mjs
+      - name: Verify cranial nerves, brainstem and retrieval practice before publishing
+        run: node tests/slp-neural-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-pages-artifact@v4

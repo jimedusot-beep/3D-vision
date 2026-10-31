@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self';font-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
+<title>H.E.R.B.I.E. · Right Ear and Hearing Anatomy 3D Lab</title>
+<meta name="description" content="Explore a licensed 16-group right-ear model and follow a seven-step conceptual journey of sound for SLP study.">
+<style>
+:root{font:16px/1.5 system-ui,sans-serif;background:#0d1c27;color:#eaf5f6}*{box-sizing:border-box}
+body{margin:0}a{color:#9fe9dc}button,select{font:inherit;min-height:44px;border-radius:8px;border:1px solid #8badb4;background:#264957;color:#f0fbfc;padding:.55rem .75rem}
+button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #a5edcf;outline-offset:2px}
+header{background:#173442;border-bottom:1px solid #456779;padding:1rem clamp(.75rem,3vw,2rem)}
+header h1{font-size:1.45rem;margin:0}header p{margin:.4rem 0}
+nav{display:flex;flex-wrap:wrap;gap:.8rem;padding-top:.4rem}
+main{max-width:1250px;margin:auto;padding:1rem}
+.intro,.warning{border-left:4px solid #a2d7c6;background:#1e3c49;border-radius:6px;padding:.8rem;line-height:1.5}
+.warning{border-left-color:#e2c49e}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(285px,.85fr);gap:1rem}
+#ear-stage{position:relative;height:clamp(380px,62dvh,680px);border:1px solid #507d87;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse,#275262,#122d3b 70%,#0f1d29)}
+#ear-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
+#ear-status{position:absolute;bottom:.5rem;left:.5rem;right:.5rem;z-index:2;background:#0d2a38e8;padding:.6rem;border-radius:8px;border:1px solid #658d9d;font-size:.82rem}
+#ear-fallback{padding:1rem;position:relative;z-index:1}
+#ear-stage[data-fallback="true"]{height:auto;min-height:220px}
+#ear-stage[data-fallback="true"] #ear-status{position:relative}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0}
+.controls button[aria-pressed="true"]{background:#166c58;border-color:#a6eed4}
+.panel{border:1px solid #4a7886;border-radius:12px;padding:.9rem;background:#1b3542;min-width:0}
+.panel h2{font-size:1.1rem;margin:.1rem 0 .5rem}
+#ear-select{width:100%;margin:.4rem 0}
+#ear-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+#ear-filters label{display:flex;gap:.4rem;align-items:center;padding:.5rem;background:#214553;border-radius:7px;font-size:.84rem}
+#ear-filters input{width:20px;height:20px;accent-color:#85dcbf}
+#ear-note{border-radius:8px;padding:.75rem;background:#274957;margin:.9rem 0;min-height:140px}
+#ear-note h3{font-size:1rem;margin:0}
+#ear-note p{margin:.45rem 0}
+#ear-note-id{font-size:.84rem;color:#cee2e6}
+.study{margin:1rem 0;border:1px solid #5d8595;background:#173440;border-radius:12px;padding:.9rem}
+.study h2{font-size:1.1rem;margin:0 0 .4rem}
+.study p{margin:.5rem 0}
+.study li{margin:.4rem 0}
+footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
+[hidden]{display:none!important}
+@media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#ear-stage{height:clamp(340px,52dvh,540px)}#ear-filters{grid-template-columns:1fr}}
+
+#ear-load-note{font-size:.88rem;color:#c4dce0}
+
+#ear-journey{margin:1rem 0;padding:1rem;background:#193a46;border:1px solid #678c95;border-radius:12px}
+#ear-journey h2{font-size:1.1rem;margin:.2rem 0}
+#ear-journey-active{margin-top:.6rem}
+#ear-journey-progress{font-weight:700;color:#a7ebd4}
+#ear-journey-note{border-left:4px solid #8dcfca;padding:.65rem;background:#234956}
+#ear-journey-summary{font-weight:650}
+[hidden]{display:none!important}
+</style></head>
+<body>
+<header><h1>H.E.R.B.I.E. · Right Ear and Hearing 3D Lab</h1>
+<p>16 licensed source groups from the right external, middle and inner ear. Explore the model and follow the hearing pathway with clear study notes.</p>
+<nav aria-label="SLP Atlas navigation">
+<a href="./systems.html?system=hearing">Hearing studies</a>
+<a href="./pharynx.html">3D pharynx</a>
+<a href="./neural.html">3D cranial nerves</a><a href="./index.html">3D larynx</a>
+<a href="./oral.html">3D oral structures</a>
+<a href="./about.html">Attribution and evidence</a>
+</nav></header>
+<main>
+<p class="intro"><strong>What is actually modeled:</strong> This is the <strong>right ear only</strong> from Z-Anatomy via OrganUI: seven external-ear landmark groups, the eardrum, three ossicles, auditory tube, chorda tympani, cochlea, vestibule and a grouped vestibulocochlear nerve. It does <strong>not</strong> include a complete external auditory canal, hair cells, basilar membrane, oval window as a separate object, or central auditory pathways. The model is static, not a sound or balance simulation.</p>
+<section class="layout">
+<div>
+<div id="ear-stage" role="region" tabindex="0" aria-label="Source-derived right ear three-dimensional anatomy; drag to rotate, tap to select, arrow keys to rotate">
+<p id="ear-fallback" hidden>3D unavailable. The structure selector, notes and sound-path study remain available as text.</p>
+<p id="ear-status" role="status" aria-live="polite">Loading pinned licensed right-ear model…</p>
+</div>
+<div class="controls" role="group" aria-label="Ear camera views">
+<button type="button" data-ear-view="front">Front</button>
+<button type="button" data-ear-view="back">Back</button>
+<button type="button" data-ear-view="left">Left</button>
+<button type="button" data-ear-view="right">Right</button>
+<button type="button" data-ear-view="top">Top</button>
+</div>
+<div class="controls" role="group" aria-label="Ear selection actions">
+<button type="button" id="ear-focus" disabled>Focus selected</button>
+<button type="button" id="ear-isolate" disabled aria-pressed="false">Isolate selected</button>
+<button type="button" id="ear-all">Show all</button>
+<button type="button" id="ear-reset">Reset view</button>
+</div>
+<p class="warning"><strong>Important:</strong> These are static surface meshes, not hearing assessment data or simulations of tympanic movement, cochlear mechanics, hair-cell firing, nerve transmission or vestibular function. No conclusions about hearing loss or diagnosis should be made from these surfaces.</p>
+</div>
+<aside class="panel" aria-label="Right-ear anatomy source labels">
+<h2>16 right-ear structures</h2>
+<label for="ear-select">Choose structure</label>
+<select id="ear-select"><option value="">Select anatomical group</option></select>
+<fieldset><legend>Display regions</legend><div id="ear-filters"></div></fieldset>
+<div id="ear-note" aria-live="polite">
+<h3 id="ear-note-name">Select a structure</h3>
+<p id="ear-note-text">Choose an outer, middle, or inner right-ear structure to study.</p>
+<p id="ear-note-id"></p>
+</div>
+<p><strong>Hearing science:</strong> <a href="https://www.nidcd.nih.gov/health/how-do-we-hear" target="_blank" rel="noopener noreferrer">NIH NIDCD — How Do We Hear?</a> · <a href="https://www.asha.org/practice-portal/clinical-topics/hearing-loss/" target="_blank" rel="noopener noreferrer">ASHA — Hearing Loss</a>.</p>
+<p><strong>Source provenance:</strong> <a href="https://github.com/organui/ear-3d/blob/40ace7ed45cdbf604adda889e5db720ee6b1ce98/docs/MODEL_PROVENANCE.md" target="_blank" rel="noopener noreferrer">Pinned OrganUI 3D ear transformation and source mapping</a>.</p>
+<p><strong>Attribution and model license:</strong> <a href="https://github.com/LluisV/Z-Anatomy" target="_blank" rel="noopener noreferrer">Z-Anatomy</a> — Gauthier Kervyn, Lluís Vinent Juanico and contributors, based in part on BodyParts3D / Anatomography © DBCLS; adapted by OrganUI. <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a> applies to this derived model, distinct from the software's MIT license. No endorsement is implied.</p>
+</aside>
+</section>
+<section id="ear-journey" aria-labelledby="ear-journey-heading">
+<h2 id="ear-journey-heading">Guided activity: Follow the journey of sound</h2>
+<p>Seven ordered anatomy checkpoints following NIDCD's educational hearing pathway. Select a checkpoint to see its source mesh and notes. <strong>No movement, sound playback, physiology calculation or diagnostic testing is performed.</strong></p>
+<button id="ear-journey-start" type="button">Start 7-stop hearing tour</button>
+<div id="ear-journey-active" hidden>
+<p id="ear-journey-progress" role="status" aria-live="polite"></p>
+<p id="ear-journey-note" role="status" aria-live="polite"></p>
+<div class="controls" role="group" aria-label="Move through sound pathway">
+<button type="button" id="ear-journey-prev" disabled>Previous</button>
+<button type="button" id="ear-journey-next">Next</button>
+<button type="button" id="ear-journey-close">Close tour</button>
+</div>
+</div>
+<p id="ear-journey-summary" role="status" aria-live="polite" hidden></p>
+</section>
+<section class="study" aria-labelledby="ear-study-title">
+<h2 id="ear-study-title">Hearing, balance, and communication</h2>
+<ol>
+<li><strong>Outer ear:</strong> The pinna shapes incoming sound; it travels through the unmodeled ear canal toward the eardrum.</li>
+<li><strong>Middle ear:</strong> Eardrum vibration is relayed mechanically by malleus, incus and stapes. The auditory/Eustachian tube supports pressure equalization, not the pathway of sound vibration.</li>
+<li><strong>Inner ear:</strong> Cochlear sensory hair cells (not visible in this mesh) help transduce mechanical motion into neural signals. Cranial nerve VIII carries hearing and balance information to central pathways (not modeled). The vestibule contributes to balance, not sound perception.</li>
+</ol>
+<p><strong>Recall questions:</strong> What are the three ossicles in order? Which structure converts mechanical input into auditory signaling? What is the difference between the cochlea and the vestibule?</p>
+<p><a href="./systems.html?system=hearing">Return to SLP hearing module</a> · <a href="./pharynx.html">Continue to pharynx anatomy</a></p>
+</section>
+</main><footer>H.E.R.B.I.E. SLP Atlas · 16 source-derived right-ear groups · Personal educational study only · No patient data · No clinical assessment</footer>
+<script type="module" src="./ear.js"></script>
+</body></html>
