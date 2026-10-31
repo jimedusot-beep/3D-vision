@@ -69,7 +69,7 @@ export async function prepareNeuralModel(){
   throw Error('Focused neural derivative cannot be trusted: original hash mismatch');
  await Promise.all([
   writeFile(path.join(directory,'neural-study.glb'),studyGLB),
-  writeFile(path.join(directory,'neural-study-provenance.json'),JSON.stringify(provenance,null,2)+'\\n')
+  writeFile(path.join(directory,'neural-study-provenance.json'),JSON.stringify(provenance,null,2)+'\n')
  ]);
  console.log('Prepared source-preserving neural study GLB: '+studyGLB.length+
   ' bytes vs '+model.length+' source bytes ('+
