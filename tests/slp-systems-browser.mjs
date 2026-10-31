@@ -29,6 +29,17 @@ try{
   await page.goto(origin+'/ANATOMY/SLP/systems.html');
   await page.waitForFunction(()=>document.querySelectorAll('.module-card').length===10,null,{timeout:25000});
   assert.equal(await page.locator('.module-card').count(),10);
+  const launchLinks=[
+    './index.html','./lungs.html','./diaphragm.html','./oral.html',
+    './pharynx.html','./ear.html','./neural.html'
+  ];
+  assert.equal(await page.locator('#anatomy-launcher .anatomy-launch').count(),7);
+  for(const href of launchLinks){
+    assert.equal(await page.locator('#anatomy-launcher .anatomy-launch[href="'+href+'"]').count(),1,
+      'Missing source-model launch '+href);
+  }
+  assert.match(await page.locator('#anatomy-launcher').textContent(),/not one spatially registered human body/i);
+
   assert.equal(await page.locator('.module-card[data-active="true"]').count(),1);
   assert.match(await page.locator('#module-title').textContent(),/Respiratory system/);
   assert.equal(await page.locator('#respiratory-study').isVisible(),true);
