@@ -30,9 +30,9 @@ test('anatomical sides use patient coordinates in anterior view',()=>{
  assert.match(evidenceHtml,/subject's left appears to the viewer's right/);
 });
 test('anatomy evidence notes are published as a dedicated HTML page',()=>{
- assert.match(vite,/anatomyEvidence:'ANATOMY\\/SLP\\/about\\.html'/);
- assert.match(html,/href="\\.\\/about\\.html"/);
- assert.doesNotMatch(html,/href="\\.\\/SOURCES\\.md"/);
+ assert.ok(vite.includes("anatomyEvidence:'ANATOMY/SLP/about.html'"));
+ assert.ok(html.includes('href="./about.html"'));
+ assert.ok(!html.includes('href="./SOURCES.md"'));
  assert.match(evidenceHtml,/Illustrative geometry, not validated medical anatomy/);
  for(const ref of catalog.references)assert.ok(evidenceHtml.includes(ref.url));
 });
