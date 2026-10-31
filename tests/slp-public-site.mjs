@@ -34,7 +34,8 @@ try{
  assert.match(await page.locator('#anatomy-launcher').textContent(),/independently sourced 3D anatomy models/i);
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
  for(const item of models){
-  assert.equal(await page.locator('#anatomy-launcher a[href="./'+item.page+'"]').count(),1);
+  const launch='./'+item.page+(item.page==='index.html'?'?view=three':'');
+  assert.equal(await page.locator('#anatomy-launcher a[href="'+launch+'"]').count(),1);
   const resource=await ctx.request.get(url('ANATOMY/SLP/'+item.page),{timeout:45000});
   assert.equal(resource.status(),200,'Public anatomy HTML missing: '+item.page);
   const body=await resource.text();
