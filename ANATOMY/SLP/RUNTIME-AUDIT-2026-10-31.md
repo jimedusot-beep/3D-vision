@@ -34,6 +34,27 @@ The seven public anatomy pages **each successfully loaded and displayed original
 | P2 release | **IMPROVED on audit branch** | A successful local/predeploy build alone cannot establish the public site works. | Post-publish runtime audit verifies live model readiness, displays 3D and keeps JSON reports with evidence and thresholds as **warnings**, not misleading claims of universal speed. |
 | P1 evidence | Open | Anatomy provenance/checksums are documented, but qualified expert content and external surface review are pending (#15). | Preserve attribution; do not imply clinical accuracy or complete nerve coverage until independently reviewed. |
 
+## Source-geometry footprint baseline (new)
+
+Read-only inspection of source-pinned glTF `accessors`, `meshes`, and node source IDs confirms these are valid original-mesh groups; no geometry compression or license change has been applied. The sizes below describe **triangle-index entries interpreted as triangles**, not measured VRAM or runtime GPU draw calls.
+
+| Lab | GLB size (MiB) | Mesh definitions | Source triangle estimates |
+|---|---:|---:|---:|
+| Larynx | 5.01 | 20 | 161,306 |
+| Lungs | 3.72 | 20 | 165,844 |
+| Diaphragm | 3.48 | 13 | 151,110 |
+| Oral | 0.72 | 15 | 30,716 |
+| Pharynx | 6.82 | 20 | 279,516 |
+| Ear | 0.96 | 16 | 41,101 |
+| Neural, full source | 4.44 | 437 | 1,383,522 |
+| Neural, 74 visible source groups | (not separately extracted) | (subselection) | 316,826 |
+
+**Measured opportunity:** about **77% of the neural source triangle estimates belong to geometry that the focused SLP viewer does not display**. The full 437-mesh source is nevertheless parsed/decompressed before hiding the unrelated sections. A **separate, licensed, source-preserving 74-group optimization candidate** is justified, but must be compared on real devices and must retain original IDs, surfaces, source citations and the CC BY-SA obligations. The percentage above is **not** a promised memory or file-size reduction.
+
+The source-audit tool is `scripts/audit-slp-model-footprints.mjs` with `tests/slp-model-footprints.test.mjs`; the workflow records `slp-model-footprints.json`. It only reads original GLB JSON and never modifies the assets. <https://gltf-transform.dev/> (MIT-licensed) is a promising future engineering tool for reproducible prune/dedup and a byte-level comparison; it is **not** yet part of the Atlas or used to replace the verified binaries.
+
+The physical-device and expert checklist is [DEVICE-REVIEW.md](./DEVICE-REVIEW.md).
+
 ## Scope boundaries
 
 The live smoke tests and runtime audit confirm that a model is reachable, parsed and displayed; they do **not** validate anatomical correctness, mobile assistive technology, physical compatibility, or reliable operation offline. Visual geometry is static, without validated physiology or movement simulation. The models remain separately licensed CC BY-SA 2.1 Japan / CC BY-SA 4.0 assets, not automatically relicensed under the app code license.
