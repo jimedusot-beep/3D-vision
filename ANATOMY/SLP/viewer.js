@@ -354,7 +354,8 @@ function renderState() {
   $('status').textContent=!renderer
     ?'3D view unavailable; text-based anatomy study is ready.'
     :graphicsLost?'3D graphics are temporarily unavailable; anatomy notes and recall still work.'
-    :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.':'Illustrative larynx scene ready.';
+    :info?'Selected '+info.label+'. Referenced text; unvalidated geometry.'
+    :stageMode==='map'?'Structure-and-function study map ready. No spatial or clinical claims.':'Unvalidated 3D sketch ready.';
 }
 function select(id){view.selected=id;view.isolated=null;renderState();}
 function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
@@ -432,14 +433,13 @@ function fit(){
 // ResizeObserver is absent in some recovered-phone browsers.
 if(typeof ResizeObserver==='function')new ResizeObserver(fit).observe(stage);
 else window.addEventListener('resize',fit);
+const overviewLabels=new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold']);
 function drawLabels(){
-  // Only four overview labels by default. Showing ten projected labels at
-  // once was illegible, particularly on mobile screens.
-  const overview=new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold']);
+  // Four overview labels instead of ten overlapping tags, or one when selected.
   for(const [id,label] of labels) {
     const m=meshes.get(id);
     label.hidden=stageMode!=='three'||!view.labels||!m.visible||
-      (view.selected ? view.selected!==id : !overview.has(id));
+      (view.selected ? view.selected!==id : !overviewLabels.has(id));
     if(label.hidden)continue;
     const point=m.getWorldPosition(new THREE.Vector3()).project(camera);
     label.hidden=point.z < -1||point.z>1||Math.abs(point.x)>1||Math.abs(point.y)>1;
