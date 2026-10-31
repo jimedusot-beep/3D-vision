@@ -3,13 +3,14 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {attachSourceExplosion} from './source-explode.js';
 import {earParts,earById,earRegions,verifyEarNodes,soundJourney} from './ear-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('ear-stage');
 const activeRegions=new Set(Object.keys(earRegions)),nodes=[];
 const palette={outer:0xd4b193,middle:0x86badb,inner:0x9fcbb9,nerves:0xddc585};
 let selected=null,isolate=false,renderer=null,model=null,controls=null,camera=null,scene=null;
-let resizeObserver=null;
+let resizeObserver=null,explosion=null;
 function message(value){$('ear-status').textContent=value;}
 for(const part of earParts){
  const option=document.createElement('option');
@@ -102,7 +103,7 @@ function focus(){
 $('ear-focus').addEventListener('click',focus);
 for(const button of document.querySelectorAll('[data-ear-view]'))
  button.addEventListener('click',()=>frame(model,button.dataset.earView));
-$('ear-reset').addEventListener('click',()=>{showAll();frame(model);});
+$('ear-reset').addEventListener('click',()=>{explosion?.setAmount(0);showAll();frame(model);});
 function resize(){
  if(!renderer)return;
  const w=Math.max(1,Math.round(stage.clientWidth)),h=Math.max(1,Math.round(stage.clientHeight));
@@ -112,6 +113,8 @@ function fallback(reason){
  stage.dataset.fallback='true';stage.dataset.modelStatus='unavailable';
  stage.removeAttribute('tabindex');stage.querySelector('canvas')?.style.setProperty('display','none');
  $('ear-fallback').hidden=false;
+ for(const id of ['ear-explode','ear-explode-amount','ear-assemble'])$(id).disabled=true;
+ $('ear-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['ear-focus','ear-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-ear-view]'))button.disabled=true;
  message('3D graphics unavailable: '+reason+'. Read and select all 16 right-ear source groups below. Reload to retry graphics.');
@@ -184,6 +187,11 @@ async function load(){
    nodes.push(mesh);
   }
   model=candidate;scene.add(model);
+  explosion=attachSourceExplosion({
+   THREE,prefix:'ear',stage,model,
+   groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
+   render:draw,frame
+  });
   stage.dataset.modelStatus='ready';
   message('Licensed Z-Anatomy right-ear model loaded: 16 source-derived groups. Static surfaces; no sound propagation or hearing physiology simulation.');
   show();frame(model);resize();
