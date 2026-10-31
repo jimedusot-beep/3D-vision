@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self';style-src 'self' 'unsafe-inline';img-src 'self' data:;connect-src 'self';font-src 'self';object-src 'none';base-uri 'self';form-action 'none'">
+<title>H.E.R.B.I.E. · 3D Diaphragm Study</title>
+<meta name="description" content="Standalone, licensed source-derived 3D diaphragm, surrounding structures, and respiratory study notes.">
+<style>
+:root{font:16px/1.5 system-ui,sans-serif;background:#0d1c27;color:#eaf5f6}*{box-sizing:border-box}
+body{margin:0}a{color:#9fe9dc}button,select{font:inherit;min-height:44px;border-radius:8px;border:1px solid #8badb4;background:#264957;color:#f0fbfc;padding:.55rem .75rem}
+button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #a5edcf;outline-offset:2px}
+header{background:#173442;border-bottom:1px solid #456779;padding:1rem clamp(.75rem,3vw,2rem)}
+header h1{font-size:1.45rem;margin:0}header p{margin:.4rem 0}
+nav{display:flex;flex-wrap:wrap;gap:.8rem;padding-top:.4rem}
+main{max-width:1250px;margin:auto;padding:1rem}
+.intro,.warning{border-left:4px solid #a2d7c6;background:#1e3c49;border-radius:6px;padding:.8rem;line-height:1.5}
+.warning{border-left-color:#e2c49e}
+.layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(285px,.85fr);gap:1rem}
+#diaphragm-stage{position:relative;height:clamp(380px,62dvh,680px);border:1px solid #507d87;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse,#275262,#122d3b 70%,#0f1d29)}
+#diaphragm-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none}
+#diaphragm-status{position:absolute;bottom:.5rem;left:.5rem;right:.5rem;z-index:2;background:#0d2a38e8;padding:.6rem;border-radius:8px;border:1px solid #658d9d;font-size:.82rem}
+#diaphragm-fallback{padding:1rem;position:relative;z-index:1}
+#diaphragm-stage[data-fallback="true"]{height:auto;min-height:220px}
+#diaphragm-stage[data-fallback="true"] #diaphragm-status{position:relative}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;margin:.7rem 0}
+.controls button[aria-pressed="true"]{background:#166c58;border-color:#a6eed4}
+.panel{border:1px solid #4a7886;border-radius:12px;padding:.9rem;background:#1b3542;min-width:0}
+.panel h2{font-size:1.1rem;margin:.1rem 0 .5rem}
+#diaphragm-select{width:100%;margin:.4rem 0}
+#diaphragm-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+#diaphragm-filters label{display:flex;gap:.4rem;align-items:center;padding:.5rem;background:#214553;border-radius:7px;font-size:.84rem}
+#diaphragm-filters input{width:20px;height:20px;accent-color:#85dcbf}
+#diaphragm-note{border-radius:8px;padding:.75rem;background:#274957;margin:.9rem 0;min-height:140px}
+#diaphragm-note h3{font-size:1rem;margin:0}
+#diaphragm-note p{margin:.45rem 0}
+#diaphragm-note-id{font-size:.84rem;color:#cee2e6}
+.study{margin:1rem 0;border:1px solid #5d8595;background:#173440;border-radius:12px;padding:.9rem}
+.study h2{font-size:1.1rem;margin:0 0 .4rem}
+.study p{margin:.5rem 0}
+.study li{margin:.4rem 0}
+footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
+[hidden]{display:none!important}
+@media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#diaphragm-stage{height:clamp(340px,52dvh,540px)}#diaphragm-filters{grid-template-columns:1fr}}
+</style></head><body>
+<header><h1>H.E.R.B.I.E. · Diaphragm 3D Lab</h1>
+<p>Explore the two hemidiaphragms and eleven nearby reference structures in a separate source-derived anatomical model.</p>
+<nav aria-label="SLP atlas"><a href="./systems.html?system=respiration">Respiratory lessons</a><a href="./lungs.html">3D lungs and airways</a><a href="./index.html">3D larynx</a><a href="./about.html">Sources and limitations</a></nav>
+</header>
+<main>
+<p class="intro"><strong>Why a separate viewer?</strong> These 13 surfaces originate from <strong>BodyParts3D 3.0</strong>, whereas the other lungs viewer uses <strong>BodyParts3D 4.3</strong>. Their source coordinates and adapted scaling are not verified to align; no overlay or physiological motion is claimed.</p>
+<section class="layout">
+<div>
+<div id="diaphragm-stage" role="region" tabindex="0" aria-label="Rotate and inspect the source-derived diaphragm model">
+<p id="diaphragm-fallback" hidden>The 3D model cannot be displayed here. Select any structure from the list to continue with written descriptions.</p>
+<p id="diaphragm-status" role="status" aria-live="polite">Loading pinned diaphragm source geometry…</p>
+</div>
+<div class="controls" role="group" aria-label="3D camera views">
+<button type="button" data-diaphragm-view="front">Front</button>
+<button type="button" data-diaphragm-view="back">Back</button>
+<button type="button" data-diaphragm-view="left">Left</button>
+<button type="button" data-diaphragm-view="right">Right</button>
+<button type="button" data-diaphragm-view="top">Top</button>
+</div>
+<div class="controls" role="group" aria-label="Anatomy selection controls">
+<button type="button" id="diaphragm-focus" disabled>Focus selected</button>
+<button type="button" id="diaphragm-isolate" aria-pressed="false" disabled>Isolate selected</button>
+<button type="button" id="diaphragm-all">Show all</button>
+<button type="button" id="diaphragm-reset">Reset view</button>
+</div>
+<p class="warning">The diaphragm is a contracting muscle in the body, but this is a <strong>static educational surface model</strong>. The hemidiaphragms were split from one source mesh; surrounding structures are selected, clipped and simplified. This is not an airflow simulation or a clinically validated anatomical atlas.</p>
+</div>
+<aside class="panel" aria-label="Anatomy list and descriptions">
+<h2>13 source-derived structures</h2>
+<label for="diaphragm-select">Choose an anatomical group</label>
+<select id="diaphragm-select"><option value="">Select a structure</option></select>
+<fieldset><legend>Show categories</legend><div id="diaphragm-filters"></div></fieldset>
+<div id="diaphragm-note" aria-live="polite">
+<h3 id="diaphragm-note-name">Select a structure</h3>
+<p id="diaphragm-note-text">Inspect the right and left hemidiaphragms or a nearby reference structure.</p>
+<p id="diaphragm-note-id"></p>
+</div>
+<p>Breathing: <a href="https://www.nhlbi.nih.gov/health/lungs/body-controls-breathing" target="_blank" rel="noopener noreferrer">NHLBI on breathing muscles</a> and <a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/22-3-the-process-of-breathing" target="_blank" rel="noopener noreferrer">OpenStax §22.3</a>.</p>
+<p>Source: <a href="https://github.com/organui/organui/blob/21439ee45a2efb8cd9d970e9b56405b294e3744d/apps/web/public/models/diaphragm.ATTRIBUTION.md" target="_blank" rel="noopener noreferrer">Pinned OrganUI attribution</a>.</p>
+<p><strong>Model credit:</strong> BodyParts3D / Anatomography © Database Center for Life Science (DBCLS), adapted by OrganUI. <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">CC BY-SA 2.1 Japan</a>, distinct from the MIT software license.</p>
+</aside>
+</section>
+<section class="study" aria-labelledby="diaphragm-lesson-title">
+<h2 id="diaphragm-lesson-title">Diaphragm, breathing, and speech</h2>
+<ol>
+<li><strong>Breathing in:</strong> During inspiration, the diaphragm contracts and moves downward, increasing thoracic volume and allowing air to enter.</li>
+<li><strong>Quiet breathing out:</strong> Diaphragm relaxation and elastic recoil help move air out of the lungs.</li>
+<li><strong>Speaking:</strong> Respiratory control supports the subglottal airflow and pressure used for phonation. The static diaphragm geometry does not display muscle activation or speech pressure.</li>
+</ol>
+<p>Study question: Which structures in this model depict the primary inspiratory muscle? Identify both hemidiaphragms, then use <strong>Focus selected</strong> or <strong>Isolate selected</strong> to compare them.</p>
+<p><a href="./lungs.html">Continue to 3D lungs and airways</a> · <a href="./index.html">Continue to 3D larynx</a></p>
+</section>
+</main>
+<footer>Personal educational study only · 13 source-derived groups · No clinical decisions · No patient data · Source model is not cross-registered to BodyParts3D 4.3 lungs.</footer>
+<script type="module" src="./diaphragm.js"></script></body></html>
