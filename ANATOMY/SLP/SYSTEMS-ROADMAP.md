@@ -32,7 +32,7 @@ The grouping into ten areas is an **internal teaching/navigation design**, not a
 
 A standalone **Diaphragm 3D Lab** is now part of this PR, not a composite full-body model.
 
-- Dataset: OrganUI `organui/organui` at immutable commit `21439ee45a2efb8cd9d970e9b56405b294e3744d`, file `apps/web/public/models/diaphragm.glb`, 3,649,120 bytes, Git blob `afbc6133a44f8f9408d8c49ceb7345c61f5f690f`. Build verifies Git content-object hash and GLB v2 header before packaging. SHA-256 is printed during the build for independent recordkeeping.
+- Dataset: OrganUI `organui/organui` at immutable commit `21439ee45a2efb8cd9d970e9b56405b294e3744d`, file `apps/web/public/models/diaphragm.glb`, 3,649,120 bytes, Git blob `afbc6133a44f8f9408d8c49ceb7345c61f5f690f`. Build verifies Git content-object hash, GLB v2 header and SHA-256 `2a6c8608efe4dd33b24ffa6c9cd678c0230629de4b6340ffaa72932b63d6e5ed` before packaging.
 - Model provenance: **BodyParts3D 3.0 (20110915)** © DBCLS, via OrganUI, **CC BY-SA 2.1 Japan**. Original source meshes were checked by OrganUI against a separately pinned mirror and prepared with mesh simplification, splitting and trimming; original model attribution appears on the page.
 - Exact 13 named source-derived nodes: right and left hemidiaphragms plus the esophagus, inferior vena cava, descending aorta, heart wall, both lower lung lobes, liver, stomach, spleen, and both psoas major muscles. Only the first two are the diaphragm muscle; the others provide anatomical context.
 - Viewer: rotate/pan/zoom, five named camera views, mesh selection, focus, isolate, show-all, region filters, written descriptions and WebGL-loss fallback. Source geometry remains unchanged; lighting/color are for study clarity.
