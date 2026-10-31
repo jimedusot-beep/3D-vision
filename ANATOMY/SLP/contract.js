@@ -21,3 +21,22 @@ export function parseCommand(data, structureIds) {
   }
   return {ok:true,action:data.action,structureId:id,enabled:data.enabled,requestId:data.requestId};
 }
+
+
+// Accept only a canonical parent *origin*, not an arbitrary URL with embedded
+// credentials, paths, fragments or query data. This is transport filtering,
+// never an authentication mechanism: the embedder controls its own URL.
+export function resolveEmbedOrigin(raw, fallbackOrigin) {
+  if(typeof raw!=='string'||raw.length>2048)return fallbackOrigin;
+  try {
+    const url=new URL(raw);
+    const localHttp=url.protocol==='http:'&&
+      ['localhost','127.0.0.1','[::1]'].includes(url.hostname);
+    if(!localHttp&&url.protocol!=='https:')return fallbackOrigin;
+    if(url.username||url.password||url.search||url.hash||url.pathname!=='/')
+      return fallbackOrigin;
+    return url.origin;
+  }catch{
+    return fallbackOrigin;
+  }
+}
