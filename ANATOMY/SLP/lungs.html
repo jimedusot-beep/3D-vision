@@ -21,6 +21,10 @@ main{max-width:1250px;margin:0 auto;padding:1rem}
 #study-controls{display:flex;flex-wrap:wrap;gap:.4rem;margin:.65rem 0}
 #study-controls button[aria-pressed="true"],#lung-isolate[aria-pressed="true"]{background:#166858;border-color:#a0e3d2}
 #lung-scope{padding:.6rem;border-left:4px solid #a4dec9;background:#1b3e4b;font-size:.86rem;margin:.65rem 0}
+#lung-tour{background:#193948;border:1px solid #638894;border-radius:11px;padding:.85rem;margin:.75rem 0 1rem}
+#lung-tour h2{font-size:1.12rem;margin:0 0 .35rem}#lung-tour h3{font-size:1rem;margin:.25rem 0}
+#lung-tour p{margin:.4rem 0}#lung-tour-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.65rem 0}
+#lung-tour-progress{font-weight:700;color:#a7e7d8}#lung-tour-summary{font-weight:600}
 .panel{background:#192f3e;border:1px solid #4b6d7e;padding:.8rem;border-radius:11px;min-width:0}
 .panel h2{font-size:1.14rem;margin:.3rem 0}.panel p{margin:.5rem 0}
 #lung-select{width:100%;margin:.35rem 0}
@@ -50,6 +54,23 @@ footer{padding:1rem;color:#c3d6df;font-size:.82rem;border-top:1px solid #466b7c}
 <button id="lung-isolate" type="button" aria-pressed="false">Isolate selected</button>
 <button id="lung-all" type="button">Show all</button>
 </div>
+<section id="lung-tour" aria-label="Guided respiratory anatomy tour">
+<h2>Guided study: from lung tissue to the trachea</h2>
+<p>Five source-linked 3D observations, followed by a link to the larynx. The order is for learning—not a simulation of breathing, airflow, or movement.</p>
+<button type="button" id="lung-tour-start">Start 5-stop anatomy tour</button>
+<div id="lung-tour-active" hidden>
+<p id="lung-tour-progress" role="status" aria-live="polite"></p>
+<h3 id="lung-tour-title"></h3>
+<p id="lung-tour-note"></p>
+<div id="lung-tour-actions" role="group" aria-label="Guided tour controls">
+<button id="lung-tour-prev" type="button">Previous structure</button>
+<button id="lung-tour-next" type="button">Next structure</button>
+<button id="lung-tour-close" type="button">Exit tour</button>
+</div>
+</div>
+<p id="lung-tour-summary" role="status" aria-live="polite"></p>
+<p>Follow up: <a href="./index.html">Explore the separate 3D larynx and phonation model</a>.</p>
+</section>
 <div class="layout">
 <section aria-label="Interactive 3D lungs and airways">
 <div id="lung-stage" role="region" aria-label="3D lung model; drag to rotate, pinch to zoom, tap a source structure" tabindex="0">
