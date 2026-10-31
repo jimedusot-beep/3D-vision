@@ -20,6 +20,25 @@ test('anatomy catalog has stable distinct IDs and descriptive provenance',()=>{
  assert.equal(catalog.scientific_status,'simplified_educational_illustration_unvalidated');
  assert.equal(catalog.animation_status,'disabled_pending_validated_geometry_and_review');
 });
+test('every anatomy note links to explicit HTTPS educational sources, never to validated geometry',()=>{
+ assert.equal(catalog.references.length,3);
+ const references=new Map(catalog.references.map(ref=>[ref.id,ref]));
+ assert.equal(references.size,catalog.references.length);
+ assert.deepEqual(new Set(catalog.source_ids),new Set(references.keys()));
+ for(const ref of catalog.references) {
+   const url=new URL(ref.url);
+   assert.equal(url.protocol,'https:');
+   assert.ok(['openstax.org','www.ncbi.nlm.nih.gov'].includes(url.hostname));
+   assert.ok(ref.label.length>=12);
+ }
+ for(const structure of catalog.structures) {
+   assert.ok(structure.source_ids.length>0,structure.id+' missing source');
+   for(const id of structure.source_ids)assert.ok(references.has(id),structure.id+' has unknown reference '+id);
+ }
+ assert.match(html,/references support the written anatomy note|anatomy note &amp; references/);
+ assert.match(viewer,/NOT the approximate 3D shape/);
+ assert.match(viewer,/noopener noreferrer/);
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
