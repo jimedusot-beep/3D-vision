@@ -24,6 +24,15 @@
 
 These references do not validate the author's simplified geometry. Source IDs in `structures.json` link each teaching note to its supporting reading.
 
+## Audit pass 1 — evidence coverage and recall (2026-10-30)
+
+- Cross-checked OpenStax §22.1, NCBI Bookshelf *Anatomy, Head and Neck: Larynx* (NBK538202), and *Laryngeal Muscles* (NBK545265) for the six elementary text-only review questions. This is a desk-based source comparison, **not** an independent clinician review or anatomical mesh validation.
+- Added an evidence-linked recall panel. Learners reveal a short answer and then see its source links. The software deliberately does not score clinical proficiency, retain individual answers, or infer anything about physiology from the meshes.
+- Added a visible list of structures **not modeled**: epiglottis, vestibular folds, cricothyroid, thyroarytenoid/vocalis and interarytenoid muscles, hyoid, relevant laryngeal nerves, vocal ligament layers and detailed glottis. Their absence from the scene is **not** anatomical absence.
+- Educational prompts and descriptions contain original short summaries; no chapter text or proprietary lectures were imported.
+- **Evidence hierarchy:** publicly cited anatomy prose and short recall answers have source support, model geometry is unvalidated, and educational effectiveness has not been evaluated.
+- Target validation: test source links, review-answer hiding, review progression, omitted-structure list, and mobile layout in automated browser runs. A teacher/SLP reviewer must still validate all ten notes and the pedagogical questions before release.
+
 ## Findings and risk controls
 
 1. **High scientific risk:** the current meshes are placeholders with arbitrary units; users could mistake them for accurate representations. Keep a prominently visible caution, disabled phonation button, and note next to every referenced explanation.
