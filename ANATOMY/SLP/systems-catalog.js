@@ -1,6 +1,6 @@
 // Expandable SLP curriculum scaffold, not a claim of comprehensive coverage.
 // "outline" means no anatomical 3D model; "study" means a PARTIAL licensed
-// model (oral salivary glands/tongue/jaw), not the full subject. 
+// model (including oral or pharyngeal source meshes), not the full subject. 
 // Respiratory, larynx and diaphragm have separate, source-licensed 3D viewers.
 export const systemModules=[
   {
@@ -45,8 +45,8 @@ export const systemModules=[
     "id": "resonance",
     "name": "Resonance and velopharynx",
     "group": "Speech mechanism",
-    "stage": "outline",
-    "overview": "Pharyngeal, oral and nasal resonating spaces; soft palate and velopharyngeal closure.",
+    "stage": "study",
+    "overview": "Partial 3D pharyngeal constrictors and soft-palate muscle groups; nasal/oral cavity lining, dynamic closure and acoustics are not modeled.",
     "objectives": [
       "Locate nasopharynx, oropharynx and oral cavity.",
       "Explain the role of the velum in oral versus nasal resonance.",
@@ -54,7 +54,7 @@ export const systemModules=[
       "Connect resonance changes to speech acoustics."
     ],
     "next": [
-      "Licensed palate/pharynx meshes",
+      "Extend existing source-derived palate and pharynx muscles with verified mucosal/cavity surfaces",
       "Velopharyngeal closure study views",
       "Clinical overview with source references"
     ],
@@ -322,7 +322,7 @@ export function validateSystems(){
   const ids=new Set(systemModules.map(s=>s.id));
   if(ids.size!==10||!ids.has('respiration')||!ids.has('phonation'))throw Error('Incomplete multi-system SLP curriculum');
   if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='respiration,phonation'|| 
-  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='articulation,swallowing')
+  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='resonance,articulation,swallowing')
   throw Error('Full anatomy models and partial oral anatomy modules must be distinguished');
   if(respiratoryTerms.length!==10||respiratoryQuestions.length!==6)throw Error('Respiratory study coverage mismatch');
   const terms=new Set(respiratoryTerms.map(s=>s.id));
