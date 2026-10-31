@@ -32,6 +32,8 @@ try {
   fallback.id='webgl-fallback';
   fallback.setAttribute('role','alert');
   fallback.textContent='3D graphics are unavailable on this browser. Structure descriptions, references and study questions still work below.';
+  stage.setAttribute('aria-label','3D visualization unavailable; accessible anatomy text and study controls are provided in the adjacent panel.');
+  stage.removeAttribute('tabindex');
   stage.prepend(fallback);
 }
 scene.add(new THREE.HemisphereLight(0xffffff,0x435266,2.4));
