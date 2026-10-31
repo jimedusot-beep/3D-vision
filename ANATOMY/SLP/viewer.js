@@ -11,6 +11,7 @@ const byId=new Map(catalog.structures.map(s=>[s.id,s]));
 const references=new Map(catalog.references.map(s=>[s.id,s]));
 const meshes=new Map();
 const stage=$('stage'), overlay=$('overlay');
+let stageMode='map'; // An explanatory concept map is the honest default.
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0e1a26);
 const camera=new THREE.PerspectiveCamera(45,1,.05,100);
@@ -122,6 +123,40 @@ for(const s of catalog.structures) {
   label.textContent=s.label;
   overlay.append(label);
   labels.set(s.id,label);
+}
+// Functional grouping, NOT an anatomical coordinate map: every link points to
+// an existing sourced teaching entry, and the viewer invents no new structures.
+const mapGroups=[
+  {kind:'cartilage',title:'Structural framework',summary:'Supporting cartilages and attachment landmarks',ids:['thyroid-cartilage','cricoid-cartilage','left-arytenoid','right-arytenoid']},
+  {kind:'fold',title:'Voiced sound source',summary:'True vocal folds; no vibration is simulated',ids:['left-vocal-fold','right-vocal-fold']},
+  {kind:'muscle-open',title:'Opening the glottis',summary:'Posterior cricoarytenoid muscles abduct the folds',ids:['left-posterior-cricoarytenoid','right-posterior-cricoarytenoid']},
+  {kind:'muscle-close',title:'Closing the glottis',summary:'Lateral cricoarytenoid muscles adduct the folds',ids:['left-lateral-cricoarytenoid','right-lateral-cricoarytenoid']}
+];
+const mapButtons=new Map();
+for(const group of mapGroups){
+  const card=document.createElement('article');
+  card.className='map-group';
+  card.dataset.kind=group.kind;
+  const title=document.createElement('h3');
+  title.textContent=group.title;
+  const desc=document.createElement('p');
+  desc.textContent=group.summary;
+  const parts=document.createElement('div');
+  parts.className='map-parts';
+  for(const id of group.ids){
+    const structure=byId.get(id);
+    if(!structure)throw Error('Unknown concept-map structure '+id);
+    const button=document.createElement('button');
+    button.type='button';
+    button.dataset.conceptId=id;
+    button.textContent=structure.label;
+    button.setAttribute('aria-pressed','false');
+    button.addEventListener('click',()=>select(id));
+    parts.append(button);
+    mapButtons.set(id,button);
+  }
+  card.append(title,desc,parts);
+  $('concept-groups').append(card);
 }
 // The catalog filter uses textContent only. No user-entered HTML or network requests.
 $('structure-search').addEventListener('input',event=>{
@@ -255,6 +290,8 @@ function renderState() {
     b.setAttribute('aria-pressed',String(b.dataset.id===view.selected));
   for(const b of $('structures').querySelectorAll('button[data-isolate]'))
     b.setAttribute('aria-pressed',String(b.dataset.isolate===view.isolated));
+  for(const [id,button] of mapButtons)
+    button.setAttribute('aria-pressed',String(id===view.selected));
   $('transparent').checked=view.transparent;
   $('labels').checked=view.labels;
   const info=byId.get(view.selected);
@@ -358,6 +395,7 @@ function setCameraDistance(factor) {
   orbit?.update();
 }
 stage.addEventListener('keydown',e=>{
+  if(stageMode!=='three')return;
   const map={ArrowLeft:[0,-.12],ArrowRight:[0,.12],ArrowUp:[-.12,0],ArrowDown:[.12,0]};
   if(map[e.key]){e.preventDefault();root.rotation.x+=map[e.key][0];root.rotation.y+=map[e.key][1];}
   else if(e.key==='+'||e.key==='='){e.preventDefault();setCameraDistance(.9);}
@@ -395,9 +433,13 @@ function fit(){
 if(typeof ResizeObserver==='function')new ResizeObserver(fit).observe(stage);
 else window.addEventListener('resize',fit);
 function drawLabels(){
+  // Only four overview labels by default. Showing ten projected labels at
+  // once was illegible, particularly on mobile screens.
+  const overview=new Set(['thyroid-cartilage','cricoid-cartilage','left-vocal-fold','right-vocal-fold']);
   for(const [id,label] of labels) {
     const m=meshes.get(id);
-    label.hidden=!view.labels||!m.visible;
+    label.hidden=stageMode!=='three'||!view.labels||!m.visible||
+      (view.selected ? view.selected!==id : !overview.has(id));
     if(label.hidden)continue;
     const point=m.getWorldPosition(new THREE.Vector3()).project(camera);
     label.hidden=point.z < -1||point.z>1||Math.abs(point.x)>1||Math.abs(point.y)>1;
@@ -408,13 +450,13 @@ function drawLabels(){
 // A hidden tab must not continually consume GPU/CPU or burn phone battery.
 let frameScheduled=false;
 function scheduleFrame(){
-  if(!renderer||graphicsLost||document.hidden||frameScheduled)return;
+  if(stageMode!=='three'||!renderer||graphicsLost||document.hidden||frameScheduled)return;
   frameScheduled=true;
   requestAnimationFrame(animate);
 }
 function animate(){
   frameScheduled=false;
-  if(!renderer||graphicsLost||document.hidden)return;
+  if(stageMode!=='three'||!renderer||graphicsLost||document.hidden)return;
   orbit?.update();
   root.updateMatrixWorld(true);
   drawLabels();
@@ -424,4 +466,40 @@ function animate(){
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden){fit();scheduleFrame();}
 });
-fit();scheduleFrame();
+function presetCamera(direction){
+  if(!renderer)return;
+  root.rotation.set(0,0,0);
+  camera.position.set(0,2.1,direction==='back'?-7.3:7.3);
+  camera.up.set(0,1,0);
+  orbit?.target.set(0,0,0);
+  orbit?.update();
+  fit();
+  scheduleFrame();
+}
+function setPresentation(mode){
+  if(mode!=='map'&&mode!=='three')return;
+  if(mode==='three'&&(!renderer||graphicsLost))return;
+  stageMode=mode;
+  stage.classList.toggle('mode-map',mode==='map');
+  stage.classList.toggle('mode-three',mode==='three');
+  $('mode-map').setAttribute('aria-pressed',String(mode==='map'));
+  $('mode-three').setAttribute('aria-pressed',String(mode==='three'));
+  $('mode-three').disabled=!renderer;
+  $('three-view-controls').hidden=mode!=='three';
+  stage.setAttribute('aria-label',mode==='map'
+    ?'Interactive structure-and-function map; choose a labeled concept to read its sourced explanation'
+    :'Unvalidated 3D larynx sketch; drag to rotate, pinch or scroll to zoom');
+  if(mode==='three')stage.setAttribute('tabindex','0');
+  else stage.removeAttribute('tabindex');
+  $('notice').textContent=mode==='map'
+    ?'Concepts grouped by function, NOT anatomical position. No measurements or clinical use.'
+    :'Illustrative geometry only — NOT an anatomical reconstruction. Not for diagnosis or device design.';
+  if(mode==='three'){fit();scheduleFrame();}
+  renderState();
+}
+$('mode-map').addEventListener('click',()=>setPresentation('map'));
+$('mode-three').addEventListener('click',()=>setPresentation('three'));
+$('camera-front').addEventListener('click',()=>presetCamera('front'));
+$('camera-back').addEventListener('click',()=>presetCamera('back'));
+fit();
+setPresentation('map');
