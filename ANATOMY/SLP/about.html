@@ -11,20 +11,26 @@
 <header><nav aria-label="Study navigation"><a href="./index.html">Back to interactive anatomy study</a> · <a href="../../index.html">Robot parts and printing</a></nav></header>
 <main>
 <h1>Anatomy study: evidence and limitations</h1>
-<p class="notice"><strong>Illustrative geometry, not validated medical anatomy.</strong> The ten objects are original Three.js primitives in arbitrary display units. Their relative positions, sizes, tissue layers and muscle paths have not undergone anatomical or clinical review. Do not use them for diagnosis, surgery, competency evaluation, or 3D printing.</p>
+<p class="notice"><strong>Open-source surface anatomy — not clinically validated.</strong> The optional 3D view loads 20 groups of source-derived BodyParts3D 4.3 larynx/trachea meshes, not primitive shapes. A human anatomy specialist has NOT approved their use as examination or clinical models. The complete true vocal-fold mucosal layers, laryngeal nerves and fine tissue architecture are absent. Do not use for diagnosis, surgery, clinical simulation, competency evaluation, or 3D printing.</p>
 <h2>What is supported by references?</h2>
-<p>The viewer's short written descriptions and its six recall questions cite the educational works below. The references provide context for <em>text explanations only</em>; none supplies or certifies the 3D meshes.</p>
+<p>The viewer's original written descriptions and 12 formative practice questions cite the educational works below. Those citations support the <em>written teaching notes</em>, not the geometry. The independent BodyParts3D mesh source and license are documented separately below.</p>
 <ul>
 <li><a href="https://openstax.org/books/anatomy-and-physiology-2e/pages/22-1-organs-and-structures-of-the-respiratory-system" rel="noopener noreferrer" target="_blank">OpenStax, Anatomy &amp; Physiology 2e, §22.1 — Organs and Structures of the Respiratory System</a></li>
 <li><a href="https://www.ncbi.nlm.nih.gov/books/NBK538202/" rel="noopener noreferrer" target="_blank">NCBI Bookshelf, Anatomy, Head and Neck: Larynx</a></li>
 <li><a href="https://www.ncbi.nlm.nih.gov/books/NBK545265/" rel="noopener noreferrer" target="_blank">NCBI Bookshelf, Anatomy, Head and Neck: Laryngeal Muscles</a></li>
 </ul>
 <p>Clinical terminology, muscle actions and teaching prompts require independent review by a qualified anatomy or speech-language professional before this becomes an authoritative educational atlas.</p>
+<h2>Real 3D model provenance, transformations and license</h2>
+<p>The 3D model is a curated adaptation of <strong>BodyParts3D / Anatomography 4.3</strong>, credited to <strong>The Database Center for Life Science (DBCLS)</strong>, via the <a href="https://github.com/organui/larynx-3d" target="_blank" rel="noopener noreferrer">OrganUI Larynx</a> open anatomy project. Its mesh data remains <a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener noreferrer">CC BY-SA 2.1 Japan</a> (attribution and share-alike required). The MIT license for upstream software does <strong>not</strong> relicense these meshes. Neither DBCLS nor OrganUI endorses this viewer.</p>
+<p>OrganUI assembled 45 BodyParts3D 4.3 meshes into 20 groups and converted them to a Y-up GLB, recentering and rescaling coordinates and assigning colors; no decimation or invented anatomy is reported. We distribute the GLB unchanged and display it alongside original study content. The site build downloads the model from a pinned upstream commit and verifies both the 5,257,920-byte file size and its SHA-256 digest before packaging it.</p>
+<p>Model digest: <code>d07598a36e0177c0a1c87c28df145500d3e1766a9f02b58d003bd85e775202df</code>.</p>
+<p>Original full <a href="https://github.com/organui/larynx-3d/blob/main/docs/MODEL_PROVENANCE.md" rel="noopener noreferrer" target="_blank">source-to-mesh mapping and provenance</a> and <a href="https://github.com/organui/larynx-3d/blob/main/public/models/ATTRIBUTION.md" rel="noopener noreferrer" target="_blank">required credit and modification notice</a>.</p>
+<p><strong>Limits:</strong> The source has the paired <em>vocal ligaments</em>, not whole, mucosa-covered true vocal folds. Paired muscles and cartilages are grouped together and cannot prove which side is individually selected. Models omit mucosa, most nerves and vessels, and many other laryngeal tissues. Their color is illustrative and clinical accuracy review is pending.</p>
 <h2>Orientation and missing structures</h2>
 <p>The schematic uses the <strong>subject's</strong> left and right, not the viewer's. In an anterior-facing view the subject's left appears to the viewer's right. Rotation changes screen positions; rely on structure labels instead of screen location. The shapes and their alignment are still unvalidated.</p>
-<p>The illustration excludes many structures, such as the epiglottis, false vocal folds, hyoid, cricothyroid and thyroarytenoid muscles, interarytenoids, nerves, and the detailed layers of the glottis. Their absence from the picture does not indicate absence from the body.</p>
+<p>The sourced mesh includes the epiglottis, hyoid, trachea and several intrinsic muscle groups. It still omits full vocal-fold mucosa, false vocal-fold coverings, many nerves, vessels, and tissue layers. Missing data does not mean those structures are absent from a person.</p>
 <h2>Open anatomy resources for deeper study</h2>
-<p>These are independent external educational resources—not models imported into this prototype. Their anatomical data and application code can have different licenses, and they do not certify our schematic shapes.</p>
+<p>These external resources supplement the BodyParts3D 4.3 model used in the 3D view. Each dataset has its own scope and version-specific licensing; independent models do not certify the anatomy here.</p>
 <ul>
 <li><a href="https://www.openanatomy.org/atlas-pages/atlas-spl-head-and-neck.html" target="_blank" rel="noopener noreferrer">Open Anatomy Project — SPL Head and Neck Atlas</a> (CT-based research atlas; 3D Slicer License Section B)</li>
 <li><a href="https://github.com/CognitionLabSNUC/open-anatomy-atlas" target="_blank" rel="noopener noreferrer">Shiv Nadar University Chennai — Open Anatomy Atlas</a> (open-source reference project; inspect data-source terms)</li>
@@ -35,7 +41,7 @@
 <p>Retrieval practice is supported by a <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11078833/" target="_blank" rel="noopener noreferrer">systematic review of health-professions education research</a>, but this particular anatomy tool has not been studied for educational effectiveness.</p>
 <h2>Privacy, accessibility and licensing</h2>
 <p>No personal coursework, patient records or proprietary medical meshes are included in the public viewer. The review questions do not store scores. WebGL failure leaves text-based learning usable. Automated desktop and emulated-phone checks do not replace real-device or assistive-technology evaluation.</p>
-<p>Potential future anatomical models require <strong>file-by-file</strong> source, version, license, and attribution review before reuse. A viewer's open-source code license does not establish permission to redistribute its 3D assets.</p>
+<p>The BodyParts3D 4.3 runtime model has pinned source and license records. Any future additions still require <strong>file-by-file</strong> permission, source, version and attribution review. This work's 3D model remains under CC BY-SA 2.1 Japan regardless of the MIT code license upstream.</p>
 <h2>Release status</h2>
 <p>This is a draft prototype, not a clinical tool. Anatomy accuracy review, genuine 3D model provenance, physical-device usability, and integration with the private H.E.R.B.I.E. educational library remain incomplete.</p>
 <footer><a href="./index.html">Return to the study viewer</a></footer>
