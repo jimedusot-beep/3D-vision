@@ -1,3 +1,4 @@
+import {create3DRetry} from './retry-3d.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -199,6 +200,14 @@ const camera=new THREE.PerspectiveCamera(45,1,.05,100);
 camera.position.set(0,1.2,5.8);
 // Older devices and restricted browsers may lack WebGL; preserve the text-only study UI.
 let renderer=null,orbit=null,graphicsLost=false;
+const retry3D=create3DRetry({stage:$('status').parentElement,retry:()=>{
+  if(renderer&&!graphicsLost&&referenceState==='error'){
+    referenceState='idle';referenceError='';retry3D.hide();
+    return ensureReferenceModel(); // Failed download can recover without reloading the entire page.
+  }
+  // A lost WebGL context, missing WebGL, or renderer failure needs fresh GPU setup.
+  location.reload();
+}});
 try {
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
@@ -219,15 +228,18 @@ try {
   stage.setAttribute('aria-label','3D visualization unavailable; accessible anatomy text and study controls are provided in the adjacent panel.');
   stage.removeAttribute('tabindex');
   stage.prepend(fallback);
+  retry3D.show();
 }
 // If a mobile GPU is suspended or resets mid-session, keep study controls usable.
 renderer?.domElement.addEventListener('webglcontextlost',event=>{
   event.preventDefault();
   graphicsLost=true;
+  retry3D.show();
   $('status').textContent='3D graphics are temporarily unavailable; anatomy notes and recall still work.';
 });
 renderer?.domElement.addEventListener('webglcontextrestored',()=>{
   graphicsLost=false;
+  retry3D.hide();
   renderState();
   scheduleFrame();
 });
@@ -413,6 +425,7 @@ async function ensureReferenceModel(){
     root.visible=false;
     overlay.hidden=true;
     referenceState='ready';
+    retry3D.hide();
     // Preserve a study-tour selection made while the geometry was loading.
     applyReferenceState();
     frameRealModel('front');
@@ -420,6 +433,7 @@ async function ensureReferenceModel(){
     $('status').textContent='Licensed 3D source geometry loaded: 20 selectable groups. Expert review pending.';
   }catch(err){
     referenceState='error';
+    retry3D.show();
     referenceError=err?.message||'unknown load error';
     root.visible=false; // Never silently present fabricated shapes as source anatomy.
     overlay.hidden=true;
