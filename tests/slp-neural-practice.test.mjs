@@ -18,7 +18,7 @@ test('seven original questions are linked to source-verified SLP nerve concepts,
   assert.equal(options.filter(o=>o.id===q.correct).length,1);
  }
  assert.match(neuralPracticeQuestions[2].explanation,/vestibular/i);
- assert.match(neuralPracticeQuestions[3].explanation,/no separate CN IX mesh/i);
+ assert.match(neuralPracticeQuestions[3].explanation,/does not have a separate CN IX mesh/i);
  assert.throws(()=>practiceChoices({...neuralPracticeQuestions[0]}),/verified neural source/);
 });
 test('seven first-attempt answers return original source ids only after a choice and report honest score',()=>{
