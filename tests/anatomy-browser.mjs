@@ -66,6 +66,28 @@ try {
   assert.equal(await page.locator('button:disabled').count(),1);
   console.log('PASS: '+name+' desktop anatomy controls');
 
+  // Force WebGL initialization failure: text references and recall must remain usable.
+  const noGpu=await desktop.newPage();
+  noGpu.on('pageerror',e=>errors.push(e.message));
+  await noGpu.addInitScript(()=>{
+    const original=HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext=function(type,...args) {
+      if(['webgl','webgl2','experimental-webgl'].includes(type))return null;
+      return original.call(this,type,...args);
+    };
+  });
+  await noGpu.goto(origin+'/ANATOMY/SLP/index.html');
+  await noGpu.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('text-based anatomy study is ready.'));
+  assert.equal(await noGpu.locator('#webgl-fallback').isVisible(),true);
+  assert.equal(await noGpu.locator('button[data-id]').count(),10);
+  await noGpu.locator('button[data-id="cricoid-cartilage"]').click();
+  assert.match(await noGpu.locator('#detail').textContent(),/complete ring/);
+  await noGpu.locator('#study-next').click();
+  await noGpu.locator('#study-reveal').click();
+  assert.equal(await noGpu.locator('#study-sources a').count(),2);
+  await noGpu.locator('#reset').click();
+  console.log('PASS: '+name+' WebGL-unavailable text and recall fallback');
+
   const parent=await desktop.newPage();
   await parent.goto(origin+'/test-host.html');
   const iframe=parent.frameLocator('iframe');
