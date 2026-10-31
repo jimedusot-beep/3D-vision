@@ -31,6 +31,27 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  assert.equal(await page.locator('button[data-concept-id]').count(),10);
+  assert.equal(await page.locator('#concept-map').isVisible(),true);
+  assert.equal(await page.locator('#mode-map').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#concept-map').textContent(),/not a spatial anatomy diagram/);
+  await page.locator('button[data-concept-id="left-arytenoid"]').click();
+  assert.equal(await page.locator('button[data-concept-id="left-arytenoid"]').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#detail').textContent(),/Left arytenoid cartilage/);
+  await page.locator('#reset').click();
+  assert.equal(await page.locator('button[data-concept-id="left-arytenoid"]').getAttribute('aria-pressed'),'false');
+  if(await page.locator('#mode-three').isEnabled()){
+    await page.locator('#mode-three').click();
+    assert.equal(await page.locator('#mode-three').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#concept-map').isHidden(),true);
+    assert.equal(await page.locator('#stage canvas').isVisible(),true);
+    await page.locator('#camera-back').click();
+    await page.locator('#camera-front').click();
+    await page.locator('#mode-map').click();
+    assert.equal(await page.locator('#concept-map').isVisible(),true);
+  }else{
+    assert.equal(await page.locator('#webgl-fallback').isVisible(),true);
+  }
   await page.locator('#structure-search').fill('arytenoid cartilage');
   assert.equal(await page.locator('#structures button[data-id]:visible').count(),2);
   assert.match(await page.locator('#structure-count').textContent(),/2 of 10/);
@@ -109,10 +130,15 @@ try {
   await page.locator('#reset').click();
   assert.equal(await page.locator('#transparent').isChecked(),false);
   assert.equal(await page.locator('#labels').isChecked(),true);
-  await page.locator('#stage').focus();
-  await page.keyboard.press('ArrowRight');
-  await page.keyboard.press('Escape');
-  assert.equal(await page.locator('#stage canvas').count(),1);
+  if(await page.locator('#mode-three').isEnabled()){
+    await page.locator('#mode-three').click();
+    await page.locator('#stage').focus();
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#stage canvas').count(),1);
+    await page.locator('#mode-map').click();
+  }
+  assert.equal(await page.locator('#concept-map').isVisible(),true);
   assert.equal(await page.getByRole('button',{name:'Phonation animation unavailable'}).isDisabled(),true);
   assert.equal(await page.locator('#study-again').isDisabled(),true);
   console.log('PASS: '+name+' desktop anatomy controls');
@@ -160,6 +186,10 @@ try {
   await noGpu.goto(origin+'/ANATOMY/SLP/index.html');
   await noGpu.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('text-based anatomy study is ready.'));
   assert.equal(await noGpu.locator('#webgl-fallback').isVisible(),true);
+  assert.equal(await noGpu.locator('#concept-map').isVisible(),true);
+  assert.equal(await noGpu.locator('#mode-three').isDisabled(),true);
+  await noGpu.locator('button[data-concept-id="thyroid-cartilage"]').click();
+  assert.match(await noGpu.locator('#detail').textContent(),/Thyroid cartilage/);
   assert.equal(await noGpu.locator('button[data-id]').count(),10);
   await noGpu.locator('button[data-id="cricoid-cartilage"]').click();
   assert.match(await noGpu.locator('#detail').textContent(),/complete ring/);
@@ -239,6 +269,9 @@ try {
   touch.on('pageerror',e=>errors.push(e.message));
   await touch.goto(origin+'/ANATOMY/SLP/index.html');
   await touch.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
+  assert.equal(await touch.locator('#concept-map').isVisible(),true);
+  await touch.locator('button[data-concept-id="right-vocal-fold"]').click();
+  assert.equal(await touch.locator('button[data-concept-id="right-vocal-fold"]').getAttribute('aria-pressed'),'true');
   await touch.locator('button[data-id="right-vocal-fold"]').click();
   assert.match(await touch.locator('#detail').textContent(),/Right vocal fold/);
   assert.equal(await touch.locator('#detail .evidence-links a').count(),2);
