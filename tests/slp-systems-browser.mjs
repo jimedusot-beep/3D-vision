@@ -59,6 +59,10 @@ try{
   await page.locator('button[data-module-id="articulation"]').click();
   assert.match(await page.locator('#module-status').textContent(),/Partial source-derived 3D/i);
   assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./oral.html');
+  await page.locator('button[data-module-id="resonance"]').click();
+  assert.match(await page.locator('#module-status').textContent(),/Partial source-derived 3D/i);
+  assert.equal(await page.locator('#module-open-3d').isVisible(),true);
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./pharynx.html');
   await page.locator('button[data-module-id="phonation"]').click();
   assert.match(await page.locator('#module-status').textContent(),/3D/);
   assert.equal(await page.locator('#module-open-3d').isVisible(),true);
