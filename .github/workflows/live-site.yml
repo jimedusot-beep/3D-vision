@@ -26,6 +26,10 @@ jobs:
         run: npm run test:browser
         env:
           BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - name: Public SLP Atlas and all seven licensed model downloads
+        run: node tests/slp-public-site.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -47,6 +51,10 @@ jobs:
       - run: npx playwright install webkit
       - name: Actual public website in WebKit iPhone emulation
         run: node tests/webkit.mjs && BROWSER_ENGINE=webkit node tests/advanced-browser.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - name: Public SLP Atlas model downloads and launch buttons on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-public-site.mjs
         env:
           BASE_URL: https://jimedusot-beep.github.io/3D-vision/
       - uses: actions/upload-artifact@v4
