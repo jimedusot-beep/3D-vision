@@ -243,6 +243,28 @@ function renderState() {
       cited.append(link);
     }
     detail.append(heading,description,caveat,cited);
+    const provenance=document.createElement('details');
+    provenance.className='candidate-provenance';
+    const summary=document.createElement('summary');
+    summary.textContent='Possible open-data model (NOT imported or validated)';
+    provenance.append(summary);
+    const note=document.createElement('p');
+    const candidate=info.candidate_model;
+    if(candidate.status==='indexed_not_imported_unvalidated') {
+      note.textContent='BodyParts3D official index lists "'+candidate.source_label+
+        '" ('+candidate.concept_id+', '+candidate.representation_id+
+        '). This is an index match only: NO source mesh is loaded or scientifically reviewed.';
+    } else {
+      note.textContent='No exact complete true vocal-fold mesh has been matched in this candidate index. A vocal ligament is NOT equivalent to an entire true vocal fold.';
+    }
+    provenance.append(note);
+    const indexLink=document.createElement('a');
+    indexLink.href=catalog.mesh_candidate_catalog.index_url;
+    indexLink.target='_blank';
+    indexLink.rel='noopener noreferrer';
+    indexLink.textContent='View official source index';
+    provenance.append(indexLink);
+    detail.append(provenance);
   } else {
     detail.textContent='Select a structure to learn its name and function. All model shapes are conceptual placeholders.';
   }
