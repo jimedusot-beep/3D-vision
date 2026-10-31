@@ -46,6 +46,9 @@ try{
  assert.equal(await page.locator('#diaphragm-explode-amount').count(),1);
  if(!fallback){
   assert.equal(await page.locator('#diaphragm-explode').isEnabled(),true);
+  // The original bug snapped the learner back to front when using Explode.
+  await page.locator('[data-diaphragm-view="right"]').click();
+  const rightCameraView=await page.locator('#diaphragm-stage canvas').screenshot();
   await page.locator('#diaphragm-explode').click();
   assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'65');
   assert.equal(await page.locator('#diaphragm-explode').getAttribute('aria-pressed'),'true');
@@ -58,6 +61,9 @@ try{
   assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'0');
   assert.equal(await page.locator('#diaphragm-explode').getAttribute('aria-pressed'),'false');
   assert.match(await page.locator('#diaphragm-explode-status').textContent(),/original relative positions/);
+  const restoredRightView=await page.locator('#diaphragm-stage canvas').screenshot();
+  assert.deepEqual(restoredRightView,rightCameraView,
+   'diaphragm: Explode and Reassemble must preserve right/rotated camera direction and framed pose');
   await page.locator('#diaphragm-explode').click();
   await page.locator('#diaphragm-reset').click();
   assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'0');
