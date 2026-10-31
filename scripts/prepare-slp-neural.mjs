@@ -3,6 +3,7 @@
 // Only 44 cranial-nerve records and 30 brainstem records are surfaced in
 // our study UI; remaining third-party geometry is hidden, never re-licensed.
 import {createHash} from 'node:crypto';
+import {createNeuralStudySubset} from './create-neural-study-subset.mjs';
 import {mkdir,readFile,writeFile,rename,rm,copyFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -61,6 +62,19 @@ export async function prepareNeuralModel(){
   ensurePinned('model','neural.glb',neuralModel.modelPath),
   ensurePinned('manifest','neural-source-manifest.json',neuralModel.manifestPath)
  ]);
+ // Preserve and checksum the original pinned source above, then derive a
+ // strictly filtered second GLB. Never overwrite the immutable source file.
+ const {studyGLB,provenance}=createNeuralStudySubset(model);
+ if(provenance.sourceSHA256!==neuralModel.modelSha256)
+  throw Error('Focused neural derivative cannot be trusted: original hash mismatch');
+ await Promise.all([
+  writeFile(path.join(directory,'neural-study.glb'),studyGLB),
+  writeFile(path.join(directory,'neural-study-provenance.json'),JSON.stringify(provenance,null,2)+'\\n')
+ ]);
+ console.log('Prepared source-preserving neural study GLB: '+studyGLB.length+
+  ' bytes vs '+model.length+' source bytes ('+
+  (100*(1-studyGLB.length/model.length)).toFixed(1)+'% fewer transfer bytes), '+provenance.studyMeshDefinitions+
+  ' verified original Draco primitives; derivative SHA-256 '+provenance.modelSHA256);
  const gltfDecoder=path.resolve('node_modules/three/examples/jsm/libs/draco/gltf');
  const dest=path.join(directory,'draco');await mkdir(dest,{recursive:true});
  for(const file of ['draco_decoder.js','draco_decoder.wasm','draco_wasm_wrapper.js'])
