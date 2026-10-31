@@ -77,8 +77,8 @@ export function initSystems3D({stage,modules,onSelect}){
  }
  for(const [i,m] of modules.entries()){
   const object=new THREE.Group();object.position.set(...pos[m.id]);scene.add(object);
-  const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(m.stage==='3d'?.23:.18,1),
-   new THREE.MeshStandardMaterial({color:m.stage==='3d'?hasModel:outline,roughness:.4,metalness:.12,emissive:0x000000}));
+  const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(m.stage==='3d'?.23:m.stage==='study'?.205:.18,1),
+   new THREE.MeshStandardMaterial({color:m.stage==='3d'||m.stage==='study'?hasModel:outline,roughness:.4,metalness:.12,emissive:0x000000}));
   mesh.userData.systemId=m.id;
   object.add(mesh);targets.push(mesh);
   const label=nameSprite((i+1)+'. '+m.name.replace(' and ',' & ').slice(0,28));
@@ -122,7 +122,7 @@ export function initSystems3D({stage,modules,onSelect}){
   if(renderer){
    const current=modules.find(m=>m.id===id);
    status.textContent=(current?.name||'Selected topic')+
-    ': '+(current?.stage==='3d'?'source-derived anatomical 3D module available':'study roadmap / no anatomical mesh yet')+
+    ': '+(current?.stage==='3d'?'source-derived anatomical 3D module available':current?.stage==='study'?'partial source-derived anatomy available; other structures missing':'study roadmap / no anatomical mesh yet')+
     '. Select a topic below for details.';
    draw();
   }
