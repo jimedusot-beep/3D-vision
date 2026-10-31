@@ -36,11 +36,13 @@ try{
   assert.equal(await page.locator('#lung-stage').getAttribute('data-model-status'),'ready');
   assert.equal(await page.locator('#lung-stage canvas').count(),1);
   const dims=await page.locator('#lung-stage canvas').evaluate(el=>{
-   const a=el.getBoundingClientRect(),b=el.parentElement.getBoundingClientRect();
-   return {width:a.width,expected:b.width,height:a.height,h:b.height};
+   const a=el.getBoundingClientRect(),stage=el.parentElement;
+   return {width:a.width,expected:stage.clientWidth,height:a.height,h:stage.clientHeight};
   });
-  assert.ok(Math.abs(dims.width-dims.expected)<2,'Retina canvas must remain CSS-sized');
-  assert.ok(Math.abs(dims.height-dims.h)<2,'Retina canvas height must fit stage');
+  assert.ok(Math.abs(dims.width-dims.expected)<=1,
+   'Retina canvas must match stage CSS content width: '+JSON.stringify(dims));
+  assert.ok(Math.abs(dims.height-dims.h)<=1,
+   'Retina canvas height must match stage CSS content height: '+JSON.stringify(dims));
   await page.locator('#lung-separate').evaluate(el=>{el.value='75';el.dispatchEvent(new Event('input',{bubbles:true}));});
   assert.equal(await page.locator('#lung-stage').getAttribute('data-separation'),'75');
   await page.locator('#lung-assemble').click();
