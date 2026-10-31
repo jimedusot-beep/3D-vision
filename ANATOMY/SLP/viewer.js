@@ -139,6 +139,7 @@ function renderState() {
 }
 function select(id){view.selected=id;view.isolated=null;renderState();}
 function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
+function setIsolated(id){view.selected=id;view.isolated=id;renderState();}
 function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(4,3,7);orbit.target.set(0,0,0);orbit.update();renderState();}
 $('show-all').onclick=()=>{view.isolated=null;renderState();};
 $('reset').onclick=reset;
@@ -185,7 +186,7 @@ function receive(event) {
   const c=parseCommand(event.data,ids);
   if(c.ok){
     if(c.action==='select')select(c.structureId);
-    if(c.action==='isolate')isolate(c.structureId);
+    if(c.action==='isolate')setIsolated(c.structureId);
     if(c.action==='transparency'){view.transparent=c.enabled;renderState();}
     if(c.action==='labels'){view.labels=c.enabled;renderState();}
     if(c.action==='reset')reset();
