@@ -10,8 +10,10 @@ export const neuralModel=Object.freeze({
  repo:'itayinbarr/brainproject',commit:'2929e94f521a8ddceab26bc100a98dc06b0da060',
  modelPath:'brain-atlas/models/brain.glb',modelBytes:4650816,
  modelBlob:'c80dd62202b5cf8a2a43c7a019311781bd95457c',
+ modelSha256:'76a49ea4526a4880613aec7a02756bd7301b0b9d0680d7cae33e197b672c5453',
  manifestPath:'brain-atlas/models/manifest.json',manifestBytes:232455,
  manifestBlob:'ad25ab2d45b2d46a94f324143506f0fa3bc6906a',
+ manifestSha256:'66c32355e02c3ba5fadf3b3bdb61b18c619162d6c5ee2083262e59bed4274d93',
  license:'CC-BY-SA-4.0',source:'Z-Anatomy / BodyParts3D',
  expectedCranialRecords:44,expectedBrainstemRecords:30
 });
@@ -23,9 +25,11 @@ export function validNeuralAsset(data,type){
  if(type==='model')return data.byteLength===neuralModel.modelBytes &&
   data.subarray(0,4).toString('ascii')==='glTF' &&
   data.readUInt32LE(4)===2 && data.readUInt32LE(8)===data.length &&
-  gitBlobDigest(data)===neuralModel.modelBlob;
+  gitBlobDigest(data)===neuralModel.modelBlob&&
+  createHash('sha256').update(data).digest('hex')===neuralModel.modelSha256;
  if(type==='manifest'){
-  if(data.length!==neuralModel.manifestBytes||gitBlobDigest(data)!==neuralModel.manifestBlob)return false;
+  if(data.length!==neuralModel.manifestBytes||gitBlobDigest(data)!==neuralModel.manifestBlob||
+  createHash('sha256').update(data).digest('hex')!==neuralModel.manifestSha256)return false;
   try{
    const records=JSON.parse(data.toString('utf8')).nodes;
    return Array.isArray(records)&&records.length===437 &&
