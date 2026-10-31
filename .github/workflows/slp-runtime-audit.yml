@@ -1,0 +1,81 @@
+name: Audit live SLP anatomy rendering and load times
+on:
+  push:
+    branches: ['audit/slp-runtime-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: slp-live-performance-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit-chromium:
+    name: Actual live 3D on iPhone Chromium simulation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Audit all seven *public* anatomy model render paths and loading time
+        run: node tests/slp-runtime-audit.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: slp-runtime-chromium
+          path: test-results/slp-runtime-audit-chromium.json
+  audit-webkit:
+    name: Actual live 3D on iPhone WebKit simulation
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install webkit
+      - name: Audit all seven *public* anatomy model render paths and loading time
+        run: BROWSER_ENGINE=webkit node tests/slp-runtime-audit.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: slp-runtime-webkit
+          path: test-results/slp-runtime-audit-webkit.json
+  slow-chromium:
+    name: Constrained network and decoded GLB size baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Prepare source-verified 3D anatomy models
+        run: npm run anatomy:model
+      - name: Inspect glTF mesh, primitive, source-tag and neural-hidden geometry counts
+        run: node scripts/audit-slp-model-footprints.mjs
+      - run: npx playwright install --with-deps chromium
+      - name: Simulate constrained network and CPU loading of largest labs
+        run: node tests/slp-slow-mobile.mjs
+        env:
+          BASE_URL: https://jimedusot-beep.github.io/3D-vision/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: slp-slow-network-and-geometry
+          path: |
+            test-results/slp-model-footprints.json
+            test-results/slp-slow-mobile.json
