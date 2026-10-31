@@ -85,7 +85,11 @@ try{
  assert.equal(manualLink.status(),200,'Public physical-iPhone review page missing');
  const source=await manualLink.text();
  assert.match(source,/no.*uploaded/i,'Privacy notice missing from iPhone review');
- assert.match(source,/iphone-review\\.js/,'Review JavaScript is not linked');
+ // Vite fingerprints the module filename in production (e.g. assets/iphoneReview-HASH.js).
+ // Check the published module, then verify the script actually builds all 13
+ // native review controls in both public browser engines below.
+ assert.match(source,/<script\\b[^>]*type="module"[^>]*src="[^"]+\\.js"/i,
+  'Built iPhone review JavaScript module is not linked');
  await page.goto(url('ANATOMY/SLP/iphone-review.html'),{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>document.querySelectorAll('#lab-tasks .task').length===7,null,{timeout:30000});
  assert.equal(await page.locator('#device-tasks .task').count(),6);
