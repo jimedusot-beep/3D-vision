@@ -14,6 +14,11 @@ const ids=new Set(catalog.structures.map(x=>x.id));
 const message=(action,more={})=>({source:'herbie',version:1,action,...more});
 test('anatomical sides use patient coordinates in anterior view',()=>{
  assert.deepEqual(SUBJECT_X,{left:1,right:-1});
+ assert.equal(catalog.coordinate_frame.subject_left,'+X');
+ assert.equal(catalog.coordinate_frame.subject_right,'-X');
+ assert.equal(catalog.coordinate_frame.anterior,'+Z');
+ assert.equal(catalog.coordinate_frame.superior,'+Y');
+ assert.equal(catalog.coordinate_frame.units,catalog.units);
  assert.equal(sideX('left',.38),.38);
  assert.equal(sideX('right',.38),-.38);
  assert.throws(()=>sideX('up',.5),RangeError);
