@@ -31,6 +31,7 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  assert.equal(await page.locator('button[data-isolate="left-vocal-fold"]').getAttribute('aria-label'),'Isolate Left vocal fold');
   assert.match(await page.locator('#orientation-note').textContent(),/subject's left is on your right/);
   const about=await desktop.newPage();
   const evidenceResponse=await about.goto(origin+'/ANATOMY/SLP/about.html');
@@ -73,6 +74,25 @@ try {
   assert.equal(await page.locator('#stage canvas').count(),1);
   assert.equal(await page.locator('button:disabled').count(),1);
   console.log('PASS: '+name+' desktop anatomy controls');
+
+  // A mid-session graphics interruption must not disable text-based study.
+  const lostGpu=await desktop.newPage();
+  lostGpu.on('pageerror',e=>errors.push(e.message));
+  await lostGpu.goto(origin+'/ANATOMY/SLP/index.html');
+  await lostGpu.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'));
+  await lostGpu.evaluate(()=>document.querySelector('#stage canvas')
+    .dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
+  assert.match(await lostGpu.locator('#status').textContent(),/temporarily unavailable/);
+  await lostGpu.locator('button[data-id="cricoid-cartilage"]').click();
+  assert.match(await lostGpu.locator('#detail').textContent(),/complete ring/);
+  await lostGpu.locator('#study-next').click();
+  await lostGpu.locator('#study-reveal').click();
+  assert.equal(await lostGpu.locator('#study-sources a').count(),2);
+  await lostGpu.evaluate(()=>document.querySelector('#stage canvas')
+    .dispatchEvent(new Event('webglcontextrestored')));
+  assert.match(await lostGpu.locator('#status').textContent(),/Referenced text; unvalidated geometry/);
+  await lostGpu.close();
+  console.log('PASS: '+name+' mid-session GPU interruption preserves study');
 
   // Force WebGL initialization failure: text references and recall must remain usable.
   const noGpu=await desktop.newPage();
