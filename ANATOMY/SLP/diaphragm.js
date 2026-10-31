@@ -3,13 +3,14 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {attachSourceExplosion} from './source-explode.js';
 import {diaphragmParts,diaphragmById,diaphragmRegions,verifyDiaphragmNodes} from './diaphragm-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('diaphragm-stage');
 const activeRegions=new Set(Object.keys(diaphragmRegions)),nodes=[];
 const palette={diaphragm:0xd18b7b,passages:0x83c0d7,thoracic:0xc7b2a0,abdominal:0xb5ac84,muscular:0xa3b3cf};
 let selected=null,isolate=false,renderer=null,model=null,controls=null,camera=null,scene=null;
-let resizeObserver=null;
+let resizeObserver=null,explosion=null;
 function message(value){$('diaphragm-status').textContent=value;}
 for(const part of diaphragmParts){
  const option=document.createElement('option');
@@ -102,7 +103,7 @@ function focus(){
 $('diaphragm-focus').addEventListener('click',focus);
 for(const button of document.querySelectorAll('[data-diaphragm-view]'))
  button.addEventListener('click',()=>frame(model,button.dataset.diaphragmView));
-$('diaphragm-reset').addEventListener('click',()=>{showAll();frame(model);});
+$('diaphragm-reset').addEventListener('click',()=>{explosion?.setAmount(0);showAll();frame(model);});
 function resize(){
  if(!renderer)return;
  const w=Math.max(1,Math.round(stage.clientWidth)),h=Math.max(1,Math.round(stage.clientHeight));
@@ -112,6 +113,8 @@ function fallback(reason){
  stage.dataset.fallback='true';stage.dataset.modelStatus='unavailable';
  stage.removeAttribute('tabindex');stage.querySelector('canvas')?.style.setProperty('display','none');
  $('diaphragm-fallback').hidden=false;
+ for(const id of ['diaphragm-explode','diaphragm-explode-amount','diaphragm-assemble'])$(id).disabled=true;
+ $('diaphragm-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['diaphragm-focus','diaphragm-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-diaphragm-view]'))button.disabled=true;
  message('3D graphics unavailable: '+reason+'. Read and select all 13 written source groups below. Reload to retry graphics.');
@@ -184,6 +187,11 @@ async function load(){
    nodes.push(mesh);
   }
   model=candidate;scene.add(model);
+  explosion=attachSourceExplosion({
+   THREE,prefix:'diaphragm',stage,model,
+   groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
+   render:draw,frame
+  });
   stage.dataset.modelStatus='ready';
   message('Licensed BodyParts3D 3.0 diaphragm: 13 original source-derived groups loaded. Static surface geometry; no movement simulation.');
   show();frame(model);resize();

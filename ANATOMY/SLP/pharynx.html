@@ -44,6 +44,12 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 @media(max-width:750px){main{padding:.65rem}.layout{grid-template-columns:1fr}#pharynx-stage{height:clamp(340px,52dvh,540px)}#pharynx-filters{grid-template-columns:1fr}}
 
 #pharynx-load-note{font-size:.88rem;color:#c4dce0}
+.explode-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem;margin:.7rem 0 .3rem;padding:.7rem;border:1px solid #749fac;border-radius:9px;background:#173b47}
+.explode-bar label{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.explode-bar input[type="range"]{flex:1 1 160px;min-width:100px;accent-color:#88dfca;min-height:44px}
+.explode-bar button[aria-pressed="true"]{border-color:#9be9ce;background:#16664f}
+.explode-status{font-size:.85rem;color:#c7e8e6;margin:.3rem 0 .8rem;line-height:1.5}
+@media(max-width:500px){.explode-bar{display:grid;grid-template-columns:1fr 1fr}.explode-bar input{grid-column:1/-1}.explode-bar label{justify-content:center}}
 </style></head><body>
 <header><h1>Pharynx and soft palate · 3D anatomy</h1>
 <p>Explore real source-derived pharyngeal and velopharyngeal muscle groups and selected landmarks. Personal educational study only.</p>
@@ -75,6 +81,14 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <button type="button" id="pharynx-all">Show all</button>
 <button type="button" id="pharynx-reset">Reset view</button>
 </div>
+<div class="explode-bar" role="group" aria-label="Physical 3D source-mesh separation controls">
+<button type="button" id="pharynx-explode" aria-pressed="false" disabled>Explode 3D</button>
+<label for="pharynx-explode-amount">Separation <output id="pharynx-explode-value" for="pharynx-explode-amount">0%</output></label>
+<input type="range" id="pharynx-explode-amount" min="0" max="100" step="5" value="0" disabled>
+<button type="button" id="pharynx-assemble" disabled>Reassemble</button>
+</div>
+<p id="pharynx-explode-status" class="explode-status" role="status" aria-live="polite">3D separation is available after the licensed source model loads.</p>
+
 <p id="pharynx-load-note">Model download is about 7.1 MB. The asset loads only when you open this page; older phones may need the written fallback.</p>
 <p class="warning"><strong>No physiological motion is simulated.</strong> These surfaces cannot show velopharyngeal closure, swallowing timing, vocal-tract acoustics or airway safety. Anatomy and function descriptions require faculty review before instructional or clinical assessment use.</p>
 </div>

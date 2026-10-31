@@ -3,13 +3,14 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {attachSourceExplosion} from './source-explode.js';
 import {oralParts,oralById,oralRegions,verifyOralNodes} from './oral-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('oral-stage');
 const activeRegions=new Set(Object.keys(oralRegions)),nodes=[];
 const palette={glands:0xd4a183,ducts:0x90cccf,articulator:0xbf817c,landmarks:0xbab4ac};
 let selected=null,isolate=false,renderer=null,model=null,controls=null,camera=null,scene=null;
-let resizeObserver=null;
+let resizeObserver=null,explosion=null;
 function message(value){$('oral-status').textContent=value;}
 for(const part of oralParts){
  const option=document.createElement('option');
@@ -102,7 +103,7 @@ function focus(){
 $('oral-focus').addEventListener('click',focus);
 for(const button of document.querySelectorAll('[data-oral-view]'))
  button.addEventListener('click',()=>frame(model,button.dataset.oralView));
-$('oral-reset').addEventListener('click',()=>{showAll();frame(model);});
+$('oral-reset').addEventListener('click',()=>{explosion?.setAmount(0);showAll();frame(model);});
 function resize(){
  if(!renderer)return;
  const w=Math.max(1,Math.round(stage.clientWidth)),h=Math.max(1,Math.round(stage.clientHeight));
@@ -112,6 +113,8 @@ function fallback(reason){
  stage.dataset.fallback='true';stage.dataset.modelStatus='unavailable';
  stage.removeAttribute('tabindex');stage.querySelector('canvas')?.style.setProperty('display','none');
  $('oral-fallback').hidden=false;
+ for(const id of ['oral-explode','oral-explode-amount','oral-assemble'])$(id).disabled=true;
+ $('oral-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['oral-focus','oral-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-oral-view]'))button.disabled=true;
  message('3D graphics unavailable: '+reason+'. Read and select all 13 written source groups below. Reload to retry graphics.');
@@ -184,6 +187,11 @@ async function load(){
    nodes.push(mesh);
   }
   model=candidate;scene.add(model);
+  explosion=attachSourceExplosion({
+   THREE,prefix:'oral',stage,model,
+   groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
+   render:draw,frame
+  });
   stage.dataset.modelStatus='ready';
   message('Licensed Z-Anatomy oral study model: 15 source-derived groups loaded. Static tongue, jaw, glands, ducts and hyoid; no motion simulation.');
   show();frame(model);resize();

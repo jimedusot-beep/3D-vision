@@ -3,13 +3,14 @@
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {attachSourceExplosion} from './source-explode.js';
 import {pharynxParts,pharynxById,pharynxRegions,verifyPharynxNodes} from './pharynx-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('pharynx-stage');
 const activeRegions=new Set(Object.keys(pharynxRegions)),nodes=[];
 const palette={wall:0xcd917c,elevators:0x94b3e6,palate:0x85d2c5,landmarks:0xd5c5b6,vessels:0xd98f95,nerves:0xd9be73};
 let selected=null,isolate=false,renderer=null,model=null,controls=null,camera=null,scene=null;
-let resizeObserver=null;
+let resizeObserver=null,explosion=null;
 function message(value){$('pharynx-status').textContent=value;}
 for(const part of pharynxParts){
  const option=document.createElement('option');
@@ -102,7 +103,7 @@ function focus(){
 $('pharynx-focus').addEventListener('click',focus);
 for(const button of document.querySelectorAll('[data-pharynx-view]'))
  button.addEventListener('click',()=>frame(model,button.dataset.pharynxView));
-$('pharynx-reset').addEventListener('click',()=>{showAll();frame(model);});
+$('pharynx-reset').addEventListener('click',()=>{explosion?.setAmount(0);showAll();frame(model);});
 function resize(){
  if(!renderer)return;
  const w=Math.max(1,Math.round(stage.clientWidth)),h=Math.max(1,Math.round(stage.clientHeight));
@@ -112,6 +113,8 @@ function fallback(reason){
  stage.dataset.fallback='true';stage.dataset.modelStatus='unavailable';
  stage.removeAttribute('tabindex');stage.querySelector('canvas')?.style.setProperty('display','none');
  $('pharynx-fallback').hidden=false;
+ for(const id of ['pharynx-explode','pharynx-explode-amount','pharynx-assemble'])$(id).disabled=true;
+ $('pharynx-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['pharynx-focus','pharynx-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-pharynx-view]'))button.disabled=true;
  message('3D graphics unavailable: '+reason+'. Read and select all 13 written source groups below. Reload to retry graphics.');
@@ -184,6 +187,11 @@ async function load(){
    nodes.push(mesh);
   }
   model=candidate;scene.add(model);
+  explosion=attachSourceExplosion({
+   THREE,prefix:'pharynx',stage,model,
+   groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
+   render:draw,frame
+  });
   stage.dataset.modelStatus='ready';
   message('Licensed BodyParts3D 4.3 pharyngeal muscle study: 20 source-defined groups loaded. Static surfaces, not velopharyngeal closure or swallowing motion.');
   show();frame(model);resize();

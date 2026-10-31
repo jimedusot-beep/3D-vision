@@ -70,6 +70,12 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 #neural-practice-feedback{padding:.8rem;border-left:4px solid #a5edcf;background:#204652;line-height:1.5}
 #neural-practice-summary{font-weight:600;padding:.65rem}
 @media(max-width:600px){.practice-options{grid-template-columns:1fr}}
+.explode-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem;margin:.7rem 0 .3rem;padding:.7rem;border:1px solid #749fac;border-radius:9px;background:#173b47}
+.explode-bar label{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.explode-bar input[type="range"]{flex:1 1 160px;min-width:100px;accent-color:#88dfca;min-height:44px}
+.explode-bar button[aria-pressed="true"]{border-color:#9be9ce;background:#16664f}
+.explode-status{font-size:.85rem;color:#c7e8e6;margin:.3rem 0 .8rem;line-height:1.5}
+@media(max-width:500px){.explode-bar{display:grid;grid-template-columns:1fr 1fr}.explode-bar input{grid-column:1/-1}.explode-bar label{justify-content:center}}
 </style></head><body>
 <header><h1>H.E.R.B.I.E. · Cranial Nerves and Brainstem</h1>
 <p>Real 3D source anatomy for part of the neural control of speech, hearing and swallowing.</p>
@@ -102,6 +108,14 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <button id="neural-all" type="button">Show all / clear filters</button>
 <button id="neural-reset" type="button">Reset 3D camera</button>
 </div>
+<div class="explode-bar" role="group" aria-label="Physical 3D source-mesh separation controls">
+<button type="button" id="neural-explode" aria-pressed="false" disabled>Explode 3D</button>
+<label for="neural-explode-amount">Separation <output id="neural-explode-value" for="neural-explode-amount">0%</output></label>
+<input type="range" id="neural-explode-amount" min="0" max="100" step="5" value="0" disabled>
+<button type="button" id="neural-assemble" disabled>Reassemble</button>
+</div>
+<p id="neural-explode-status" class="explode-status" role="status" aria-live="polite">3D separation is available after the licensed source model loads.</p>
+
 <p class="warning"><strong>Static educational geometry only.</strong> No patient-specific nerves, injury simulation, electrical activity, clinical testing or clinical localization. The underlying brain model contains additional cortical/subcortical geometry which is <strong>hidden by default</strong>, not displayed as a complete brain reconstruction. No unverified overlay with the separate ear, larynx, oral or pharynx models.</p>
 </div>
 <aside class="panel" aria-label="Neural anatomy labels and notes">

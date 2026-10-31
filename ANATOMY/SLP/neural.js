@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+import {attachSourceExplosion} from './source-explode.js';
 import {initNeuralPractice} from './neural-practice-ui.js';
 import {neuralParts,neuralById,neuralRegions,neuralLessons,
  verifyNeuralManifest,verifyNeuralNodes,teachingStepId} from './neural-manifest.js';
@@ -13,7 +14,7 @@ const active=new Set(Object.keys(neuralRegions));
 let sideFilter='both',searchQuery='';
 const selectedMeshes=new Map();
 let selected=null,isolate=false,scene=null,renderer=null,camera=null,controls=null,draco=null,allMeshes=[];
-let model=null,lessonIndex=-1,resizeObserver=null;
+let model=null,lessonIndex=-1,resizeObserver=null,explosion=null;
 const colors={cranial_nerves:0xe3ba7e,brainstem:0x8abbd5};
 function status(msg){$('neural-status').textContent=msg;}
 for(const category of Object.keys(neuralRegions)){
@@ -138,7 +139,7 @@ $('neural-focus').addEventListener('click',focus);
 for(const button of document.querySelectorAll('[data-neural-view]')){
  button.addEventListener('click',()=>frame(available(),button.dataset.neuralView));
 }
-$('neural-reset').addEventListener('click',()=>{showAll();frame(available());});
+$('neural-reset').addEventListener('click',()=>{explosion?.setAmount(0);showAll();frame(available());});
 function resize(){
  if(!renderer)return;
  const w=Math.max(1,stage.clientWidth),h=Math.max(1,stage.clientHeight);
@@ -150,6 +151,8 @@ function fallback(reason){
  stage.querySelector('canvas')?.style.setProperty('display','none');
  $('neural-fallback').hidden=false;
  $('neural-focus').disabled=true;$('neural-isolate').disabled=true;
+ for(const id of ['neural-explode','neural-explode-amount','neural-assemble'])$(id).disabled=true;
+ $('neural-explode-status').textContent='3D separation unavailable; written source notes remain available.';
  for(const button of document.querySelectorAll('[data-neural-view]'))button.disabled=true;
  status('3D model unavailable: '+reason+'. Text notes and the seven-stop neural study remain available.');
 }
@@ -227,6 +230,13 @@ async function loadNeural(){
   const byId=[...selectedMeshes.keys()].map(id=>({id,category:neuralById.get(id).region}));
   if(!verifyNeuralNodes(byId))throw Error('GLB is missing one or more of the 74 pinned Z-Anatomy nerve/brainstem source groups');
   model=gltf.scene;scene.add(model);
+  explosion=attachSourceExplosion({
+   THREE,prefix:'neural',stage,model,
+   groups:[...selectedMeshes.entries()].map(([id,meshes])=>({id:String(id),meshes})),
+   render:draw,
+   // Source GLB contains 363 unrelated records: frame only visible SLP meshes.
+   frame:()=>frame(available())
+  });
   stage.dataset.modelStatus='ready';status('74 source-derived nerve/brainstem groups available. Other Brain Project geometry hidden; incomplete nerve coverage is disclosed.');
   refreshVisibility();resize();frame(available());
   draco.dispose();

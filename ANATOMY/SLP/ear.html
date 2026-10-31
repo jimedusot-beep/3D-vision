@@ -52,6 +52,12 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 #ear-journey-note{border-left:4px solid #8dcfca;padding:.65rem;background:#234956}
 #ear-journey-summary{font-weight:650}
 [hidden]{display:none!important}
+.explode-bar{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem;margin:.7rem 0 .3rem;padding:.7rem;border:1px solid #749fac;border-radius:9px;background:#173b47}
+.explode-bar label{display:flex;align-items:center;gap:.4rem;white-space:nowrap}
+.explode-bar input[type="range"]{flex:1 1 160px;min-width:100px;accent-color:#88dfca;min-height:44px}
+.explode-bar button[aria-pressed="true"]{border-color:#9be9ce;background:#16664f}
+.explode-status{font-size:.85rem;color:#c7e8e6;margin:.3rem 0 .8rem;line-height:1.5}
+@media(max-width:500px){.explode-bar{display:grid;grid-template-columns:1fr 1fr}.explode-bar input{grid-column:1/-1}.explode-bar label{justify-content:center}}
 </style></head>
 <body>
 <header><h1>H.E.R.B.I.E. · Right Ear and Hearing 3D Lab</h1>
@@ -84,6 +90,14 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <button type="button" id="ear-all">Show all</button>
 <button type="button" id="ear-reset">Reset view</button>
 </div>
+<div class="explode-bar" role="group" aria-label="Physical 3D source-mesh separation controls">
+<button type="button" id="ear-explode" aria-pressed="false" disabled>Explode 3D</button>
+<label for="ear-explode-amount">Separation <output id="ear-explode-value" for="ear-explode-amount">0%</output></label>
+<input type="range" id="ear-explode-amount" min="0" max="100" step="5" value="0" disabled>
+<button type="button" id="ear-assemble" disabled>Reassemble</button>
+</div>
+<p id="ear-explode-status" class="explode-status" role="status" aria-live="polite">3D separation is available after the licensed source model loads.</p>
+
 <p class="warning"><strong>Important:</strong> These are static surface meshes, not hearing assessment data or simulations of tympanic movement, cochlear mechanics, hair-cell firing, nerve transmission or vestibular function. No conclusions about hearing loss or diagnosis should be made from these surfaces.</p>
 </div>
 <aside class="panel" aria-label="Right-ear anatomy source labels">

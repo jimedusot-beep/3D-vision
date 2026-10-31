@@ -40,6 +40,32 @@ try{
  assert.equal(await page.locator('[data-diaphragm-view]').count(),5);
  assert.match(await page.locator('main').textContent(),/source coordinates and adapted scaling are not verified/i);
  const fallback=await page.locator('#diaphragm-stage').getAttribute('data-fallback')==='true';
+
+ // Explosion is a real mesh transform, not a text-only box or isolated note.
+ assert.equal(await page.locator('#diaphragm-explode').count(),1);
+ assert.equal(await page.locator('#diaphragm-explode-amount').count(),1);
+ if(!fallback){
+  assert.equal(await page.locator('#diaphragm-explode').isEnabled(),true);
+  await page.locator('#diaphragm-explode').click();
+  assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'65');
+  assert.equal(await page.locator('#diaphragm-explode').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#diaphragm-explode-status').textContent(),/3D source meshes separated/);
+  await page.locator('#diaphragm-explode-amount').evaluate(input=>{
+   input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'100');
+  await page.locator('#diaphragm-assemble').click();
+  assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'0');
+  assert.equal(await page.locator('#diaphragm-explode').getAttribute('aria-pressed'),'false');
+  assert.match(await page.locator('#diaphragm-explode-status').textContent(),/original relative positions/);
+  await page.locator('#diaphragm-explode').click();
+  await page.locator('#diaphragm-reset').click();
+  assert.equal(await page.locator('#diaphragm-stage').getAttribute('data-explosion-amount'),'0');
+ }else{
+  assert.equal(await page.locator('#diaphragm-explode').isDisabled(),true);
+  assert.match(await page.locator('#diaphragm-explode-status').textContent(),/unavailable/);
+ }
+
  if(fallback){
   assert.match(await page.locator('#diaphragm-status').textContent(),/WebGL not supported|WebGL context lost/i,
    'An asset download/geometry error is not an acceptable graphics fallback');

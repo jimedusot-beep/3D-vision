@@ -40,6 +40,32 @@ try{
  assert.match(await page.locator('main').textContent(),/right ear only/i);
  assert.match(await page.locator('main').textContent(),/CC BY-SA 4\.0/);
  const fallback=await page.locator('#ear-stage').getAttribute('data-fallback')==='true';
+
+ // Explosion is a real mesh transform, not a text-only box or isolated note.
+ assert.equal(await page.locator('#ear-explode').count(),1);
+ assert.equal(await page.locator('#ear-explode-amount').count(),1);
+ if(!fallback){
+  assert.equal(await page.locator('#ear-explode').isEnabled(),true);
+  await page.locator('#ear-explode').click();
+  assert.equal(await page.locator('#ear-stage').getAttribute('data-explosion-amount'),'65');
+  assert.equal(await page.locator('#ear-explode').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#ear-explode-status').textContent(),/3D source meshes separated/);
+  await page.locator('#ear-explode-amount').evaluate(input=>{
+   input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  assert.equal(await page.locator('#ear-stage').getAttribute('data-explosion-amount'),'100');
+  await page.locator('#ear-assemble').click();
+  assert.equal(await page.locator('#ear-stage').getAttribute('data-explosion-amount'),'0');
+  assert.equal(await page.locator('#ear-explode').getAttribute('aria-pressed'),'false');
+  assert.match(await page.locator('#ear-explode-status').textContent(),/original relative positions/);
+  await page.locator('#ear-explode').click();
+  await page.locator('#ear-reset').click();
+  assert.equal(await page.locator('#ear-stage').getAttribute('data-explosion-amount'),'0');
+ }else{
+  assert.equal(await page.locator('#ear-explode').isDisabled(),true);
+  assert.match(await page.locator('#ear-explode-status').textContent(),/unavailable/);
+ }
+
  if(fallback){
   assert.match(await page.locator('#ear-status').textContent(),/WebGL not supported|WebGL context lost/i,
    'A bad source download or GLB parse must fail the test, not count as a working fallback');

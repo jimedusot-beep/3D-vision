@@ -63,6 +63,32 @@ try{
  assert.equal(await page.locator('[data-neural-view]').count(),5);
  assert.match(await page.locator('main').textContent(),/CN IX is missing as a separate 3D mesh/i);
  const fallback=await page.locator('#neural-stage').getAttribute('data-fallback')==='true';
+
+ // Explosion is a real mesh transform, not a text-only box or isolated note.
+ assert.equal(await page.locator('#neural-explode').count(),1);
+ assert.equal(await page.locator('#neural-explode-amount').count(),1);
+ if(!fallback){
+  assert.equal(await page.locator('#neural-explode').isEnabled(),true);
+  await page.locator('#neural-explode').click();
+  assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'65');
+  assert.equal(await page.locator('#neural-explode').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#neural-explode-status').textContent(),/3D source meshes separated/);
+  await page.locator('#neural-explode-amount').evaluate(input=>{
+   input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'100');
+  await page.locator('#neural-assemble').click();
+  assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'0');
+  assert.equal(await page.locator('#neural-explode').getAttribute('aria-pressed'),'false');
+  assert.match(await page.locator('#neural-explode-status').textContent(),/original relative positions/);
+  await page.locator('#neural-explode').click();
+  await page.locator('#neural-reset').click();
+  assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'0');
+ }else{
+  assert.equal(await page.locator('#neural-explode').isDisabled(),true);
+  assert.match(await page.locator('#neural-explode-status').textContent(),/unavailable/);
+ }
+
  if(fallback){
   assert.match(await page.locator('#neural-status').textContent(),/WebGL not supported|WebGL context lost/i,
    'Asset/decoder/mesh ID parsing failure is not an acceptable fallback');
