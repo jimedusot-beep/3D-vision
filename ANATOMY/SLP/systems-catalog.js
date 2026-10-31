@@ -102,8 +102,8 @@ export const systemModules=[
     "id": "hearing",
     "name": "Hearing and auditory processing",
     "group": "Control and perception",
-    "stage": "outline",
-    "overview": "Outer, middle and inner ear, auditory nerve and central auditory pathways in spoken communication.",
+    "stage": "study",
+    "overview": "Partial source-derived 3D right outer/middle/inner ear and CN VIII; ear canal, hair cells and central auditory pathways are not modeled.",
     "objectives": [
       "Locate pinna, tympanic membrane, ossicles and cochlea.",
       "Trace auditory transduction from vibration to neural signaling.",
@@ -111,7 +111,7 @@ export const systemModules=[
       "Connect hearing differences with language access and habilitation."
     ],
     "next": [
-      "Open-license temporal bone/inner ear model",
+      "Source-verified right-ear model added; next find licensed full auditory canal, inner-ear microanatomy and bilateral structures",
       "Sound-transmission conceptual animation",
       "Audiology and SLP boundary reference"
     ],
@@ -322,7 +322,7 @@ export function validateSystems(){
   const ids=new Set(systemModules.map(s=>s.id));
   if(ids.size!==10||!ids.has('respiration')||!ids.has('phonation'))throw Error('Incomplete multi-system SLP curriculum');
   if(systemModules.filter(s=>s.stage==='3d').map(s=>s.id).join(',')!=='respiration,phonation'|| 
-  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='resonance,articulation,swallowing')
+  systemModules.filter(s=>s.stage==='study').map(s=>s.id).join(',')!=='resonance,articulation,hearing,swallowing')
   throw Error('Full anatomy models and partial oral anatomy modules must be distinguished');
   if(respiratoryTerms.length!==10||respiratoryQuestions.length!==6)throw Error('Respiratory study coverage mismatch');
   const terms=new Set(respiratoryTerms.map(s=>s.id));
