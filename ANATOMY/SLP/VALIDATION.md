@@ -52,6 +52,18 @@ These references do not validate the author's simplified geometry. Source IDs in
 
 Reference context for anatomical sidedness: [DICOM human orientation](https://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.7.6.2.html) and [anatomical position explanation](https://med.libretexts.org/Bookshelves/Anatomy_and_Physiology/Human_Anatomy_Laboratory_Manual/01%3A_Overview_and_the_Microscope/1.02%3A_Anatomical_Position_and_Planes).
 
+## iPhone screen capture investigation — high-DPI canvas clipping (2026-10-31)
+
+A real Safari screenshot showed the unvalidated 3D sketch clipped in the **lower-right** with several projected labels overlapping near the center. This was not merely a subjective preference: the viewer called `renderer.setPixelRatio(Math.min(devicePixelRatio,2))` and `renderer.setSize(stageWidth,stageHeight,false)`, but the CSS provided no definite canvas width/height. Consequently its high-resolution **drawing buffer pixel dimensions became its CSS layout dimensions** on Retina devices, while the stage clipped its contents. The scene and labels used different visual coordinate systems.
+
+Correction:
+- Explicitly size the canvas to exactly 100% of the stage in **CSS pixels**, use absolute positioning and keep the device-resolution backing buffer for clarity. No medical geometry changes.
+- Center the optional sketch with a modestly closer front/back camera preset; hide floating overview labels on narrow screens, leaving one only when a structure is selected.
+- Reduce the mobile header and warning footprint while preserving explicit warnings about schematic/unvalidated geometry.
+- Add a high-density iPhone browser regression asserting the canvas *rendered bounding rect* exactly matches its parent even when `canvas.width` is significantly larger in device pixels. The test also checks no overlapping default labels and camera-preset controls.
+
+**Release gate:** maintain separate draft PR and manually deployed Render preview; do not treat desktop rendering alone as proof of phone correctness. Actual on-device Safari and VoiceOver reviews remain required.
+
 ## Visual safety audit — structure/function map (2026-10-31)
 
 **Observed usability problem:** the first-release canvas drew an assembly of arbitrary cylinders, cones and rods, using ten projected labels. That appearance was difficult to interpret and could incorrectly imply a realistic laryngeal reconstruction. Changing lighting or sculpting novel anatomy without validated source meshes would worsen scientific misrepresentation.
