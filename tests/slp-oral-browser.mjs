@@ -39,6 +39,32 @@ try{
  assert.match(await page.locator('main').textContent(),/does not include lips, teeth, velum, pharynx/i);
  assert.match(await page.locator('main').textContent(),/CC BY-SA 4.0/);
  const fallback=await page.locator('#oral-stage').getAttribute('data-fallback')==='true';
+
+ // Explosion is a real mesh transform, not a text-only box or isolated note.
+ assert.equal(await page.locator('#oral-explode').count(),1);
+ assert.equal(await page.locator('#oral-explode-amount').count(),1);
+ if(!fallback){
+  assert.equal(await page.locator('#oral-explode').isEnabled(),true);
+  await page.locator('#oral-explode').click();
+  assert.equal(await page.locator('#oral-stage').getAttribute('data-explosion-amount'),'65');
+  assert.equal(await page.locator('#oral-explode').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#oral-explode-status').textContent(),/3D source meshes separated/);
+  await page.locator('#oral-explode-amount').evaluate(input=>{
+   input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  assert.equal(await page.locator('#oral-stage').getAttribute('data-explosion-amount'),'100');
+  await page.locator('#oral-assemble').click();
+  assert.equal(await page.locator('#oral-stage').getAttribute('data-explosion-amount'),'0');
+  assert.equal(await page.locator('#oral-explode').getAttribute('aria-pressed'),'false');
+  assert.match(await page.locator('#oral-explode-status').textContent(),/original relative positions/);
+  await page.locator('#oral-explode').click();
+  await page.locator('#oral-reset').click();
+  assert.equal(await page.locator('#oral-stage').getAttribute('data-explosion-amount'),'0');
+ }else{
+  assert.equal(await page.locator('#oral-explode').isDisabled(),true);
+  assert.match(await page.locator('#oral-explode-status').textContent(),/unavailable/);
+ }
+
  if(fallback){
   assert.match(await page.locator('#oral-status').textContent(),/WebGL not supported|WebGL context lost/i,
    'A bad source download or GLB parse must fail the test, not count as a working fallback');
