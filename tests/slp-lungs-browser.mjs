@@ -49,6 +49,18 @@ try{
   assert.equal(await page.locator('#lung-stage').getAttribute('data-separation'),'0');
   for(const view of ['front','back','left','right','top'])
    await page.locator('[data-view="'+view+'"]').click();
+  assert.equal(await page.locator('#lung-focus').isDisabled(),true);
+  await page.locator('#lung-select').selectOption('FMA7394');
+  assert.equal(await page.locator('#lung-focus').isEnabled(),true);
+  await page.locator('#lung-separate').evaluate(el=>{el.value='50';el.dispatchEvent(new Event('input',{bubbles:true}));});
+  await page.locator('#lung-focus').click();
+  assert.equal(await page.locator('#lung-stage').getAttribute('data-focused-group'),'FMA7394');
+  assert.equal(await page.locator('#lung-stage').getAttribute('data-separation'),'50',
+    'Manual focus must preserve the selected exploded study position');
+  await page.locator('#lung-all').click();
+  assert.equal(await page.locator('#lung-focus').isDisabled(),true);
+  assert.equal(await page.locator('#lung-stage').getAttribute('data-focused-group'),null);
+  await page.locator('#lung-assemble').click();
  }
  // Tour remains functional as source-linked text if WebGL is unavailable.
  await page.locator('#lung-tour-start').click();
@@ -93,6 +105,7 @@ try{
   assert.equal(await page.locator('#lung-stage').getAttribute('data-model-status'),'unavailable');
   assert.equal(await page.locator('#lung-stage').getAttribute('tabindex'),null);
   assert.equal(await page.locator('#lung-separate').isDisabled(),true);
+  assert.equal(await page.locator('#lung-focus').isDisabled(),true);
   assert.match(await page.locator('#model-status').textContent(),/graphics unavailable/i);
   assert.equal(await page.locator('#lung-stage canvas').isVisible(),false);
   await page.locator('#lung-tour-start').click();
