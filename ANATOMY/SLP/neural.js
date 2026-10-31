@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
+import {initNeuralPractice} from './neural-practice-ui.js';
 import {neuralParts,neuralById,neuralRegions,neuralLessons,
  verifyNeuralManifest,verifyNeuralNodes,teachingStepId} from './neural-manifest.js';
 const $=id=>document.getElementById(id),stage=$('neural-stage');
@@ -231,6 +232,7 @@ async function loadNeural(){
   draco.dispose();
  }catch(e){model=null;fallback(String(e?.message||'invalid source geometry'));}
 }
+const practice=initNeuralPractice({selectStructure:select,focusStructure:focus});
 let studyIndex=-1;
 function presentLesson(){
  if(studyIndex<0||studyIndex>=neuralLessons.length)return;
@@ -242,6 +244,7 @@ function presentLesson(){
  $('neural-lesson-next').textContent=studyIndex===neuralLessons.length-1?'Finish study':'Next';
 }
 $('neural-lesson-start').addEventListener('click',()=>{
+ if(practice.isActive())practice.stop();
  studyIndex=0;$('neural-lesson-active').hidden=false;
  $('neural-lesson-summary').hidden=true;presentLesson();
 });
