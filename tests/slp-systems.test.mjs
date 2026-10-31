@@ -2,6 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {systemModules,respiratoryTerms,respiratoryQuestions,validateSystems} from '../ANATOMY/SLP/systems-catalog.js';
+import {systemLayout,validateLayout} from '../ANATOMY/SLP/systems-network-3d.js';
 test('SLP system study map has ten unique, source-linked curriculum areas',()=>{
   assert.equal(validateSystems(),true);
   assert.equal(systemModules.length,10);
@@ -14,8 +15,8 @@ test('SLP system study map has ten unique, source-linked curriculum areas',()=>{
     assert.match(m.source,/^https:\/\/(www\.)?asha\.org\//);
     assert.ok(['3d','study','outline'].includes(m.stage));
   }
-  assert.deepEqual(systemModules.filter(x=>x.stage==='3d').map(x=>x.id),['phonation']);
-  assert.deepEqual(systemModules.filter(x=>x.stage==='study').map(x=>x.id),['respiration']);
+  assert.deepEqual(systemModules.filter(x=>x.stage==='3d').map(x=>x.id),['respiration','phonation']);
+  assert.equal(systemModules.filter(x=>x.stage==='study').length,0);
 });
 test('respiration content covers airway, breathing muscles, subglottal pressure and speech coordination',()=>{
  const ids=new Set(respiratoryTerms.map(x=>x.id));
@@ -38,6 +39,11 @@ test('website links larynx from systems and both are standalone Vite build entri
  const larynx=readFileSync(new URL('../ANATOMY/SLP/index.html',import.meta.url),'utf8');
  const vite=readFileSync(new URL('../vite.config.js',import.meta.url),'utf8');
  assert.match(vite,/systems:'ANATOMY\/SLP\/systems\.html'/);
+ assert.match(vite,/lungs:'ANATOMY\/SLP\/lungs\.html'/);
+ assert.equal(validateLayout(systemModules),true);
+ assert.equal(Object.keys(systemLayout).length,10);
+ assert.match(html,/id="systems-network"/);
+ assert.match(html,/href="\.\/lungs\.html"/);
  assert.match(html,/href="\.\/index\.html"/);
  assert.match(larynx,/href="\.\/systems\.html"/);
  assert.match(html,/id="resp-diagram"/);
