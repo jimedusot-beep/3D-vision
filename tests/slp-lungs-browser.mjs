@@ -82,7 +82,27 @@ try{
  assert.deepEqual(errors,[]);
  await mkdir('test-results',{recursive:true});
  await page.screenshot({path:'test-results/slp-lungs-'+name+'-iphone.png',fullPage:true});
- console.log('PASS: '+name+' pinned respiratory source model, 20 groups, six lobe filters, mobile camera and fallback');
+ if(!fallback){
+  // Simulate loss *after* the source model was ready and between pointer events.
+  // A graphics crash must not throw, falsely report "ready", or disable text/tour access.
+  await page.locator('#lung-stage canvas').evaluate(canvas=>{
+   canvas.dispatchEvent(new MouseEvent('pointerdown',{clientX:110,clientY:110,bubbles:true}));
+   canvas.dispatchEvent(new Event('webglcontextlost',{cancelable:true}));
+   canvas.dispatchEvent(new MouseEvent('pointerup',{clientX:110,clientY:110,bubbles:true}));
+  });
+  assert.equal(await page.locator('#lung-stage').getAttribute('data-model-status'),'unavailable');
+  assert.equal(await page.locator('#lung-stage').getAttribute('tabindex'),null);
+  assert.equal(await page.locator('#lung-separate').isDisabled(),true);
+  assert.match(await page.locator('#model-status').textContent(),/graphics unavailable/i);
+  assert.equal(await page.locator('#lung-stage canvas').isVisible(),false);
+  await page.locator('#lung-tour-start').click();
+  assert.equal(await page.locator('#lung-select').inputValue(),'FMA7338');
+  await page.locator('#lung-tour-close').click();
+  await page.locator('#lung-select').selectOption('FMA7394');
+  assert.match(await page.locator('#lung-note-name').textContent(),/Trachea/);
+ }
+ assert.deepEqual(errors,[]);
+ console.log('PASS: '+name+' source respiratory geometry, mobile tour, graphics-loss recovery and text fallback');
 }catch(e){
  console.error('FAIL: '+name+' 3D lungs browser:',e.stack);process.exitCode=1;
 }finally{await browser.close();}
