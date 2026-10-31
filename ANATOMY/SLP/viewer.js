@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import catalog from './structures.json';
 import {parseCommand, VERSION} from './contract.js';
+import {sideX} from './orientation.js';
 
 const $=id=>document.getElementById(id);
 const ids=new Set(catalog.structures.map(s=>s.id));
@@ -12,7 +13,7 @@ const stage=$('stage'), overlay=$('overlay');
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0e1a26);
 const camera=new THREE.PerspectiveCamera(45,1,.05,100);
-camera.position.set(4,3,7);
+camera.position.set(0,2.1,7.3);
 // Older devices and restricted browsers may lack WebGL; preserve the text-only study UI.
 let renderer=null,orbit=null;
 try {
@@ -66,17 +67,18 @@ function ellipsoid(id,position,scale) {
   meshes.get(id).scale.set(...scale);
 }
 // Primitive placeholders: NOT scans, actual dimensions, or validated anatomical geometry.
-// Y is vertical, Z anterior. Geometry is deliberately schematic.
+// Y is superior, Z is anterior and +X is the SUBJECT's left. An anterior view
+// therefore shows anatomical left on the viewer's right. Unvalidated geometry.
 add('thyroid-cartilage',new THREE.CylinderGeometry(1.18,1.0,1.85,28,1,true,-2.18,4.36),[0,.48,.1]);
 add('cricoid-cartilage',new THREE.TorusGeometry(.87,.18,14,40),[0,-.72,0],[Math.PI/2,0,0]);
-add('left-arytenoid',new THREE.ConeGeometry(.22,.56,12),[-.38,-.20,-.55]);
-add('right-arytenoid',new THREE.ConeGeometry(.22,.56,12),[.38,-.20,-.55]);
-rod('left-vocal-fold',[-.37,-.15,-.48],[-.10,-.08,.65],.085);
-rod('right-vocal-fold',[.37,-.15,-.48],[.10,-.08,.65],.085);
-ellipsoid('left-posterior-cricoarytenoid',[-.56,-.54,-.73],[.23,.45,.13]);
-ellipsoid('right-posterior-cricoarytenoid',[.56,-.54,-.73],[.23,.45,.13]);
-ellipsoid('left-lateral-cricoarytenoid',[-.72,-.32,-.25],[.15,.32,.18]);
-ellipsoid('right-lateral-cricoarytenoid',[.72,-.32,-.25],[.15,.32,.18]);
+add('left-arytenoid',new THREE.ConeGeometry(.22,.56,12),[sideX('left',.38),-.20,-.55]);
+add('right-arytenoid',new THREE.ConeGeometry(.22,.56,12),[sideX('right',.38),-.20,-.55]);
+rod('left-vocal-fold',[sideX('left',.37),-.15,-.48],[sideX('left',.10),-.08,.65],.085);
+rod('right-vocal-fold',[sideX('right',.37),-.15,-.48],[sideX('right',.10),-.08,.65],.085);
+ellipsoid('left-posterior-cricoarytenoid',[sideX('left',.56),-.54,-.73],[.23,.45,.13]);
+ellipsoid('right-posterior-cricoarytenoid',[sideX('right',.56),-.54,-.73],[.23,.45,.13]);
+ellipsoid('left-lateral-cricoarytenoid',[sideX('left',.72),-.32,-.25],[.15,.32,.18]);
+ellipsoid('right-lateral-cricoarytenoid',[sideX('right',.72),-.32,-.25],[.15,.32,.18]);
 
 const view={selected:null,isolated:null,transparent:false,labels:true};
 const labels=new Map();
@@ -193,7 +195,7 @@ function renderState() {
 function select(id){view.selected=id;view.isolated=null;renderState();}
 function isolate(id){view.selected=id;view.isolated=view.isolated===id?null:id;renderState();}
 function setIsolated(id){view.selected=id;view.isolated=id;renderState();}
-function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(4,3,7);if(orbit){orbit.target.set(0,0,0);orbit.update();}renderState();}
+function reset(){view.selected=null;view.isolated=null;view.transparent=false;view.labels=true;root.rotation.set(0,0,0);camera.position.set(0,2.1,7.3);if(orbit){orbit.target.set(0,0,0);orbit.update();}renderState();}
 $('show-all').onclick=()=>{view.isolated=null;renderState();};
 $('reset').onclick=reset;
 $('transparent').onchange=e=>{view.transparent=e.target.checked;renderState();};
