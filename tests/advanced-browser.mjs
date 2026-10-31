@@ -50,8 +50,43 @@ try{
  await select(0);await page.locator('#position-x').fill('10');await page.locator('#apply-transform').click();await close((await position())[0],10);await close((await position())[1],30);
  await page.locator('#undo').click();await close((await position())[0],0);await page.locator('#redo').click();await close((await position())[0],10);report('Parent movement propagates through the joint; undo and redo preserve constraints');
  await left();await page.locator('#select-all').click();await page.locator('#group').click();assert.match(await page.locator('#status').textContent(),/top-level/);assert.equal(await count(),'2');assert.equal(await page.locator('#joint-list option').count(),1);report('Unsupported grouping rolls back atomically without damaging parts or joints');
- await inspector();await page.locator('#joint-value').fill('999');await page.locator('#joint-apply').click();assert.match(await page.locator('#status').textContent(),/travel must be between/);await close((await position())[1],30);
- await page.locator('#joint-animate').click();await page.waitForFunction(()=>Math.abs(vision.workshop.root.userData.joints[0].value-90)>1);await page.locator('#joint-animate').click();await page.waitForFunction(()=>document.getElementById('joint-animate').textContent==='Animate joint');const savedValue=await page.evaluate(()=>vision.workshop.root.userData.joints[0].value);assert.ok(savedValue>=-180&&savedValue<=180);await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));await close(await page.evaluate(()=>vision.workshop.root.userData.joints[0].value),savedValue);report('Travel limits reject invalid edits; joint animation pauses at a saveable pose');
+ await inspector();
+ // Issue #24: entering invalid input must not rebuild the root or add undo
+ // checkpoints, especially immediately before the Animate button is clicked.
+ await page.evaluate(()=>{window.__jointRootBeforeInvalid=vision.workshop.root;});
+ const historyBefore=await page.evaluate(()=>vision.workshop.past.length);
+ for(let n=0;n<3;n++){
+   await page.locator('#joint-value').fill('999');
+   await page.locator('#joint-apply').click();
+   assert.match(await page.locator('#status').textContent(),/travel must be between/);
+   assert.equal(await page.evaluate(()=>vision.workshop.root===window.__jointRootBeforeInvalid),true,
+     'Bad input must not rebuild the scene root');
+   assert.equal(await page.evaluate(()=>vision.workshop.past.length),historyBefore,
+     'Bad input must not checkpoint/overwrite undo history');
+   assert.equal(await page.locator('#joint-value').inputValue(),'90',
+     'Show the last good value instead of stale 999');
+   await close(await page.evaluate(()=>vision.workshop.root.userData.joints[0].value),90);
+   await close((await position())[1],30);
+ }
+ await page.locator('#joint-animate').click();
+ const justStarted=await page.evaluate(()=>({
+   value:vision.workshop.root.userData.joints[0].value,
+   button:document.getElementById('joint-animate').textContent,
+   status:document.getElementById('status').textContent,
+   selected:document.getElementById('joint-list').value,
+   error:document.getElementById('status').classList.contains('status-error')
+ }));
+ assert.equal(justStarted.button,'Pause joint','Animation must start: '+JSON.stringify(justStarted));
+ assert.ok(Math.abs(justStarted.value-90)>1,
+   'Animation must immediately move the joint, without waiting for WebKit RAF: '+JSON.stringify(justStarted));
+ assert.match(justStarted.status,/Joint animation running/);
+ await page.locator('#joint-animate').click();
+ await page.waitForFunction(()=>document.getElementById('joint-animate').textContent==='Animate joint');
+ const savedValue=await page.evaluate(()=>vision.workshop.root.userData.joints[0].value);
+ assert.ok(savedValue>=-180&&savedValue<=180);
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ await close(await page.evaluate(()=>vision.workshop.root.userData.joints[0].value),savedValue);
+ report('Invalid travel preserves root and undo history; animation primes immediately and pauses at a saveable pose');
  await page.locator('#save').click();await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Revision saved'));await page.reload();await ready();assert.equal(await page.locator('#joint-list option').count(),1);await close(await page.evaluate(()=>vision.workshop.root.userData.joints[0].value),savedValue);
  await inspector();await page.locator('#joint-value').fill('45');await page.locator('#joint-apply').click();const downloads=page.waitForEvent('download');await page.locator('#export').click();await page.getByRole('button',{name:'Download complete project (.3dv)',exact:true}).click();const file=path.resolve('test-results/jointed-'+engine+'.3dv');await(await downloads).saveAs(file);await page.locator('#close-dialog').click();await clear();await page.locator('#file-input').setInputFiles(file);await page.waitForFunction(()=>document.getElementById('status').textContent.includes('Project package reopened'));
  assert.equal(await page.locator('#joint-list option').count(),1);await inspector();await page.locator('#joint-value').fill('0');await page.locator('#joint-apply').click();await close((await position())[0],40);await close((await position())[1],0);report('Joints survive IndexedDB reload and a downloaded/reimported complete project package');
