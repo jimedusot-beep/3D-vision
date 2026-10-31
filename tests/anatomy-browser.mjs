@@ -31,6 +31,8 @@ try {
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   await page.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'),null,{timeout:30000});
   assert.equal(await page.locator('button[data-id]').count(),10);
+  assert.equal(await page.locator('#learning-objectives li').count(),4);
+  assert.match(await page.locator('#study-progress').textContent(),/nothing is saved/);
   assert.equal(await page.locator('button[data-isolate="left-vocal-fold"]').getAttribute('aria-label'),'Isolate Left vocal fold');
   assert.match(await page.locator('#orientation-note').textContent(),/subject's left is on your right/);
   const about=await desktop.newPage();
@@ -48,6 +50,11 @@ try {
   await page.locator('#study-reveal').click();
   assert.match(await page.locator('#study-answer').textContent(),/Thyroid cartilage/);
   assert.equal(await page.locator('#study-sources a').count(),2);
+  assert.match(await page.locator('#study-explanation').textContent(),/drawing does not reproduce/);
+  assert.equal(await page.locator('#study-again').isEnabled(),true);
+  await page.locator('#study-again').click();
+  assert.match(await page.locator('#study-progress').textContent(),/review again: 1/);
+  assert.equal(await page.locator('#study-again').isDisabled(),true);
   await page.locator('#study-next').click();
   assert.match(await page.locator('#study-question').textContent(),/complete ring/);
   assert.equal(await page.locator('#study-answer').isHidden(),true);
@@ -72,7 +79,8 @@ try {
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#stage canvas').count(),1);
-  assert.equal(await page.locator('button:disabled').count(),1);
+  assert.equal(await page.getByRole('button',{name:'Phonation animation unavailable'}).isDisabled(),true);
+  assert.equal(await page.locator('#study-again').isDisabled(),true);
   console.log('PASS: '+name+' desktop anatomy controls');
 
   // A mid-session graphics interruption must not disable text-based study.
@@ -175,6 +183,8 @@ try {
   await touch.locator('#study-next').click();
   await touch.locator('#study-reveal').click();
   assert.match(await touch.locator('#study-answer').textContent(),/Thyroid cartilage/);
+  await touch.locator('#study-recognized').click();
+  assert.match(await touch.locator('#study-progress').textContent(),/recalled: 1/);
   assert.equal(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);
   await mkdir('test-results',{recursive:true});
