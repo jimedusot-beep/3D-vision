@@ -1,5 +1,5 @@
-// Source-derived BodyParts3D 4.3 ear GLB, CC BY-SA 2.1 Japan (OrganUI).
-// No mucosal lining, pharyngeal cavity surface or closure/swallowing animation.
+// Right-ear source-derived Z-Anatomy anatomy via OrganUI, CC BY-SA 4.0.
+// No ear-canal surface, simulated hearing mechanics, cochlear microanatomy or brain pathway.
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
