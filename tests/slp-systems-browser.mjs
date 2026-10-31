@@ -32,6 +32,10 @@ try{
   assert.equal(await page.locator('.module-card[data-active="true"]').count(),1);
   assert.match(await page.locator('#module-title').textContent(),/Respiratory system/);
   assert.equal(await page.locator('#respiratory-study').isVisible(),true);
+  assert.match(await page.locator('#module-status').textContent(),/3D/);
+  assert.equal(await page.locator('#systems-network').isVisible(),true);
+  assert.equal(await page.locator('#module-open-3d').isVisible(),true);
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./lungs.html');
   assert.equal(await page.locator('#term-grid .term').count(),10);
   assert.equal(await page.locator('#resp-options button').count(),3);
   assert.equal(await page.locator('#resp-next').isDisabled(),true);
@@ -54,8 +58,10 @@ try{
   await page.locator('button[data-module-id="phonation"]').click();
   assert.match(await page.locator('#module-status').textContent(),/3D/);
   assert.equal(await page.locator('#module-open-3d').isVisible(),true);
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./index.html');
   await page.locator('button[data-module-id="respiration"]').click();
   assert.equal(await page.locator('#respiratory-study').isVisible(),true);
+  assert.equal(await page.locator('#model-target-link').getAttribute('href'),'./lungs.html');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await page.goto(origin+'/ANATOMY/SLP/index.html');
   assert.equal(await page.locator('a[href="./systems.html"]').count(),2);
