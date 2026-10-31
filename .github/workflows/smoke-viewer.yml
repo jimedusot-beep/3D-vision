@@ -13,6 +13,7 @@ on:
       - 'vite.config.js'
       - 'scripts/**'
       - 'tests/**'
+      - 'ANATOMY/**'
       - '.github/workflows/smoke-viewer.yml'
   pull_request:
 concurrency:
@@ -41,6 +42,8 @@ jobs:
         run: npm run test:browser
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+      - name: SLP anatomy desktop and touch interaction
+        run: node tests/anatomy-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-artifact@v4
@@ -63,6 +66,8 @@ jobs:
       - run: npx playwright install webkit
       - name: WebKit model load, manipulation, save/reopen and export
         run: node tests/webkit.mjs && BROWSER_ENGINE=webkit node tests/advanced-browser.mjs
+      - name: SLP anatomy iPhone WebKit interaction
+        run: BROWSER_ENGINE=webkit node tests/anatomy-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

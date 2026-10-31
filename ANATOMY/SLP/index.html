@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Simplified educational 3D larynx viewer. Not anatomically validated.">
+<title>3D Vision · SLP Anatomy Lab</title>
+<style>
+:root{font:16px/1.45 system-ui,sans-serif;color:#e9f2f6;background:#0d1721}
+*{box-sizing:border-box}body{margin:0}a{color:#96e6df}button,input{font:inherit}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid #405568}
+header h1{font-size:1.25rem;margin:0}header p{margin:0;color:#b6c9d4;font-size:.85rem}
+.workspace-nav{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.workspace-nav>*{padding:.45rem .7rem;border:1px solid #64839a;border-radius:7px}.workspace-nav [aria-current=page]{background:#17615b;color:#fff}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height:calc(100dvh - 102px);min-height:450px}
+#stage{position:relative;min-height:360px;overflow:hidden;background:radial-gradient(circle,#263e4c,#0e1a26)}
+#stage canvas{display:block;touch-action:none}
+#overlay{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.part-label{position:absolute;transform:translate(-50%,-50%);background:#152633e6;border:1px solid #698da2;border-radius:6px;padding:2px 5px;font-size:.7rem;white-space:nowrap}
+#notice{position:absolute;left:.75rem;bottom:.75rem;right:.75rem;background:#162b3de6;padding:.55rem;border-radius:8px;font-size:.8rem}
+aside{overflow:auto;padding:1rem;border-left:1px solid #405568;background:#14212d}
+h2{font-size:1rem;margin:.3rem 0 .65rem}#structures{display:grid;gap:.4rem}
+button{background:#223b4a;color:#f2fafb;border:1px solid #64839a;border-radius:7px;padding:.55rem .7rem;cursor:pointer;text-align:left}
+button:hover,button:focus-visible{outline:2px solid #81dcd5;outline-offset:1px}
+button[aria-pressed="true"]{background:#17615b;border-color:#88e1d0}button:disabled{opacity:.55;cursor:not-allowed}
+#structure-search{display:block;width:100%;margin:.25rem 0 .4rem;background:#203541;border:1px solid #7598aa;border-radius:7px;padding:.65rem;color:#fff;min-height:44px}
+#structure-search:focus-visible{outline:2px solid #81dcd5;outline-offset:2px}
+#structure-count{font-size:.84rem;color:#c5dfe6;margin:.2rem 0 .6rem}
+.controls{display:flex;flex-wrap:wrap;gap:.4rem;margin:.75rem 0}.controls button{flex:1 1 100px}
+label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
+#detail{min-height:6rem;padding:.65rem;background:#203541;border-radius:8px}#detail p{margin:.5rem 0}.evidence-note{font-size:.84rem;color:#e1d9bf}.evidence-links{font-size:.85rem}.evidence-links a{display:block;margin-top:.35rem;overflow-wrap:anywhere}
+#status{color:#c5dfe6;font-size:.84rem}small{color:#b7cad5}#webgl-fallback{position:relative;z-index:1;max-width:34rem;margin:1.5rem;padding:1rem;border:1px solid #a6bdd0;border-radius:8px;background:#243745;color:#fff}.study-panel{margin-top:1rem;padding:.8rem;border:1px solid #405568;border-radius:8px;background:#1b3040}.study-panel h2{margin-top:0}.practice-rating{border:1px solid #64839a;border-radius:7px;margin-top:.65rem;padding:.5rem}.practice-rating legend{padding:0 .35rem;font-size:.88rem}.study-panel ol{margin:.5rem 0;padding-left:1.4rem}.study-panel li{margin:.6rem 0}.study-panel li p{margin:.2rem 0;font-size:.9rem}.study-panel li a{display:inline-block;margin-right:.5rem;font-size:.85rem}.study-panel p{margin:.5rem 0}.study-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.55rem 0}.study-actions button{flex:1 1 130px}.study-sources a{display:block;overflow-wrap:anywhere;margin:.3rem 0}.coverage-note{margin-top:1rem}
+@media(max-width:760px){main{height:auto;display:flex;flex-direction:column}#stage{height:50dvh;min-height:300px}aside{border-left:0;border-top:1px solid #405568}header p{width:100%}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head><body>
+<header><div><h1>3D Vision · SLP Anatomy Lab</h1><p>Simplified illustration, not a validated anatomical model</p></div>
+<nav class="workspace-nav" aria-label="Project workspaces"><a href="../../index.html">Robot parts &amp; printing — Back to mechanical workshop</a><strong aria-current="page">SLP anatomy study</strong></nav></header>
+<main>
+<section id="stage" aria-label="3D anatomy scene; drag to rotate, pinch or scroll to zoom" tabindex="0">
+<div id="overlay" aria-hidden="true"></div>
+<div id="notice">Illustrative geometry only. Not to scale; not for diagnosis, surgery or device design. Phonation animation unavailable pending validation.</div>
+</section>
+<aside aria-label="Anatomy structure controls">
+<h2>Laryngeal structures</h2><p id="orientation-note">Anatomical left and right describe the subject, not you. In the front view, the subject's left is on your right; rotating the model changes screen positions. All locations are approximate.</p><label for="structure-search">Search laryngeal structures</label>
+<input id="structure-search" type="search" aria-controls="structures" autocomplete="off" spellcheck="false" placeholder="Try cartilage, vocal fold, left…">
+<p id="structure-count" role="status" aria-live="polite">10 structures available.</p>
+<div id="structures"></div>
+<div class="controls">
+<button id="show-all" type="button">Show all</button><button id="reset" type="button">Reset view</button>
+</div>
+<label><input id="transparent" type="checkbox"> Make other structures transparent</label>
+<label><input id="labels" type="checkbox" checked> Show structure labels</label>
+<button type="button" disabled title="Requires validated geometry and expert anatomical review">Phonation animation unavailable</button>
+<h2>Selected structure — anatomy note &amp; references</h2><div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
+<section class="study-panel" aria-labelledby="objectives-title">
+<h2 id="objectives-title">Undergraduate learning objectives — draft</h2>
+<p>Work through the four outcomes below. Each outcome is supported by short readings and text-based questions, but the material has not been faculty-reviewed or accredited.</p>
+<ol id="learning-objectives"></ol>
+</section>
+<section class="study-panel" aria-labelledby="study-title">
+<h2 id="study-title">Evidence-based recall practice</h2>
+<p>Practice the referenced written anatomy, not the unvalidated 3D shapes. No score or personal data is stored.</p>
+<p id="study-objective">Each question is linked to a learning objective.</p>
+<p id="study-question" role="status" aria-live="polite">Choose “Next question” to begin.</p>
+<p id="study-answer" role="status" aria-live="polite" hidden></p>
+<p id="study-explanation" hidden></p>
+<div id="study-sources" class="study-sources" hidden></div>
+<p id="study-scope">Practicing all source-linked questions.</p>
+<div class="study-actions"><button type="button" id="study-selected" disabled>Practice selected structure</button><button type="button" id="study-reset">Restart all questions</button></div>
+<div class="study-actions"><button type="button" id="study-next">Next question</button><button type="button" id="study-reveal" disabled>Reveal answer &amp; references</button></div>
+<fieldset class="practice-rating"><legend>After revealing, rate your recall (not a graded exam)</legend>
+<div class="study-actions"><button type="button" id="study-again" disabled>Review again later</button><button type="button" id="study-recognized" disabled>I recalled it</button></div>
+</fieldset>
+<p id="study-progress" role="status" aria-live="polite">Practice checks: 0. No scores, accounts or answer history saved.</p>
+</section>
+<details class="coverage-note"><summary>What this simplified scene does NOT show</summary><p id="coverage-intro"></p><ul id="coverage-list"></ul><p id="coverage-warning"></p></details>
+<p id="status" role="status" aria-live="polite">Loading model…</p>
+<small>Keyboard: arrow keys rotate, + / − zoom, Escape resets. Tap a part or its name to select. <a href="./about.html">Source and accuracy notes</a>.</small>
+</aside></main><script type="module" src="./viewer.js"></script></body></html>
