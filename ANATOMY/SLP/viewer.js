@@ -915,4 +915,7 @@ $('camera-left').addEventListener('click',()=>presetCamera('left'));
 $('camera-right').addEventListener('click',()=>presetCamera('right'));
 $('camera-top').addEventListener('click',()=>presetCamera('top'));
 fit();
-setPresentation('map');
+// Opening from the anatomy Atlas requests real licensed geometry directly.
+// Keep the concept-map default for existing lesson links and iframe clients.
+const requested3D=new URLSearchParams(location.search).get('view')==='three';
+setPresentation(requested3D&&renderer?'three':'map');
