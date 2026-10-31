@@ -42,11 +42,12 @@ function chooseModule(id,scroll=false){
   $('module-open-3d').hidden=!['3d','study'].includes(module.stage);
   if(module.stage==='3d'||module.stage==='study'){
     const destination=module.id==='respiration'?'./lungs.html':
-      module.id==='phonation'?'./index.html':'./oral.html';
+      module.id==='phonation'?'./index.html':module.id==='resonance'?'./pharynx.html':'./oral.html';
     $('model-target-link').href=destination;
     $('model-target-link').textContent=module.id==='respiration'
       ?'Open 3D lung tissue segments, bronchial trees and trachea':
       module.id==='phonation'?'Open 3D larynx, muscles, cartilages and exploded study':
+      module.id==='resonance'?'Open partial 3D pharynx and soft-palate muscle study':
       'Open partial 3D oral study: tongue, jaw, hyoid, glands and ducts';
   }
   systemsNetwork?.select(id);
