@@ -16,7 +16,8 @@ test('one reachable anatomy launcher links all seven source-derived modules',()=
  const home=read('index.html');
  assert.equal((html.match(/class="anatomy-launch"/g)||[]).length,7);
  for(const lab of labs){
-  assert.ok(html.includes('class="anatomy-launch" href="./'+lab.page+'"'),'Missing '+lab.page);
+  const href='./'+lab.page+(lab.page==='index.html'?'?view=three':'');
+  assert.ok(html.includes('class="anatomy-launch" href="'+href+'"'),'Missing '+href);
   assert.ok(read('ANATOMY/SLP/'+lab.page).includes('type="module"'),'Not a standalone Vite page: '+lab.page);
  }
  assert.match(home,/href="\.\/ANATOMY\/SLP\/systems\.html"/);
