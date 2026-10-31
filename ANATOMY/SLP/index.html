@@ -46,6 +46,28 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height
 .map-parts button:hover,.map-parts button:focus-visible{outline:2px solid #8cddd4;outline-offset:2px}
 .map-parts button[aria-pressed="true"]{background:#17615b;border-color:#b3f1df}
 #stage.mode-map #notice{border:1px solid #4d7b84}
+#source-tools{margin:0 0 1.1rem;border:1px solid #6b97a1;border-radius:11px;padding:.65rem;background:#193341}
+#source-tools[hidden],#source-note[hidden]{display:none}
+#source-tools summary{font-weight:700;cursor:pointer;min-height:42px;padding:.3rem}
+#source-select{display:block;min-height:44px;width:100%;margin:.4rem 0;color:#fff;background:#213d4c;border:1px solid #80a4b5;border-radius:8px;padding:.6rem}
+#layer-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem}
+#layer-options label{display:flex;align-items:center;gap:.35rem;min-height:42px;background:#234353;border:1px solid #648d9a;border-radius:7px;padding:.35rem .45rem;font-size:.85rem}
+#layer-options input{width:19px;height:19px;accent-color:#75dac4}
+#source-note{border-left:4px solid #7ad4bd;background:#172e3b;border-radius:7px;padding:.85rem;margin:0 0 1rem}
+#source-note h3{margin:.1rem 0 .5rem}
+#source-note-links a{display:block;min-height:34px;margin:.25rem 0}
+.study-caveat{font-size:.83rem;color:#c3d9df;line-height:1.45}
+.physiology-illustrations{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+.physiology-illustrations figure{margin:0;background:#203847;border:1px solid #5c8b99;padding:.5rem;border-radius:10px;min-width:0}
+.physiology-illustrations svg{width:100%;max-height:190px}
+.physiology-illustrations text{font:11px system-ui,sans-serif;fill:#d4e4ec}
+.physiology-illustrations figcaption{font-size:.82rem;line-height:1.4}
+#tour-progress{font-weight:700;color:#9be8d5}
+#tour-answer:not([hidden]){padding:.55rem;border-left:3px solid #8ad8bf;background:#193643}
+#three-view-controls{max-width:calc(100% - 1rem);flex-wrap:wrap;justify-content:flex-end}
+#three-view-controls button{min-height:39px}
+@media(max-width:420px){.physiology-illustrations{grid-template-columns:1fr}#layer-options{grid-template-columns:1fr}}
+
 #selection-ribbon{position:absolute;left:clamp(.6rem,2vw,1.1rem);right:clamp(.6rem,2vw,1.1rem);bottom:3.6rem;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:.7rem;flex-wrap:wrap;padding:.65rem .75rem;border:1px solid #85c5c6;background:#112f3fe8;border-radius:12px;box-shadow:0 6px 20px #0005}
 #selection-ribbon[hidden]{display:none}
 #model-structure{position:absolute;top:6.4rem;left:.6rem;right:.6rem;z-index:3;font-size:.8rem;line-height:1.35;border:1px solid #85c5c6;background:#112f3fee;border-radius:10px;padding:.55rem .65rem;max-height:6.5rem;overflow:auto}
@@ -137,6 +159,8 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 </div>
 <div id="three-view-controls" role="group" aria-label="3D camera presets" hidden>
 <button id="camera-front" type="button">Front</button><button id="camera-back" type="button">Back</button>
+<button id="camera-left" type="button">Left</button><button id="camera-right" type="button">Right</button>
+<button id="camera-top" type="button">Top</button>
 </div>
 <p id="model-structure" hidden role="status" aria-live="polite"></p>
 <div id="overlay" aria-hidden="true"></div>
@@ -149,6 +173,15 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <button type="button" data-mobile-target="panel-practice" aria-controls="panel-practice" aria-pressed="false">3 · Practice</button>
 </nav>
 <section id="panel-structures" class="mobile-panel" data-mobile-active="true" aria-label="Find and inspect anatomy structures">
+<details id="source-tools" hidden>
+<summary>Explore all 20 model structures</summary>
+<label for="source-select">Select a source-derived anatomy group</label>
+<select id="source-select"><option value="">Choose a structure</option></select>
+<fieldset id="source-filters"><legend>Show 3D anatomy layers</legend><div id="layer-options"></div></fieldset>
+<p id="layer-count" role="status" aria-live="polite">All 20 anatomy groups visible.</p>
+<button id="source-show-all" type="button">Show all layers</button>
+<p class="study-caveat">Layer filters affect visibility, not anatomical existence. Some source parts combine both sides.</p>
+</details>
 <h2>Laryngeal structures</h2><p id="orientation-note">Anatomical left and right describe the subject, not you. In the front view, the subject's left is on your right; rotating the model changes screen positions. All locations are approximate.</p><label for="structure-search">Search laryngeal structures</label>
 <input id="structure-search" type="search" aria-controls="structures" autocomplete="off" spellcheck="false" placeholder="Try cartilage, vocal fold, left…">
 <p id="structure-count" role="status" aria-live="polite">10 structures available.</p>
@@ -161,10 +194,54 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <button type="button" disabled title="Requires validated geometry and expert anatomical review">Phonation animation unavailable</button>
 </section>
 <section id="panel-details" class="mobile-panel" data-mobile-active="false" aria-label="Selected structure and evidence">
-<h2>Selected structure — anatomy note &amp; references</h2><div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
+<h2>Selected structure — anatomy note &amp; references</h2>
+<section id="source-note" aria-label="Source model anatomy identification" hidden>
+<h3 id="source-note-name"></h3>
+<p id="source-note-pronunciation"></p>
+<p id="source-note-function"></p>
+<p id="source-note-limitation" class="evidence-note"></p>
+<div id="source-note-links" class="evidence-links"></div>
+</section>
+<div id="detail" aria-live="polite">Select a structure to learn its name and function.</div>
 <button id="practice-from-detail" type="button" disabled>Practice questions about this structure</button>
 </section>
 <section id="panel-practice" class="mobile-panel" data-mobile-active="false" aria-label="Learning objectives and recall practice">
+<section class="study-panel" id="guided-tour" aria-labelledby="tour-title">
+<h2 id="tour-title">Guided 3D larynx tour</h2>
+<p>Follow one structure at a time; explore the actual static source mesh and check your recall. Nothing is graded or saved.</p>
+<p id="tour-progress" role="status" aria-live="polite">Step 1 of 6</p>
+<h3 id="tour-heading"></h3>
+<p id="tour-explanation"></p>
+<p id="tour-question"></p>
+<p id="tour-answer" hidden></p>
+<div class="study-actions">
+<button type="button" id="tour-previous">Previous</button>
+<button type="button" id="tour-reveal">Reveal explanation</button>
+<button type="button" id="tour-next">Next</button>
+</div>
+<button id="tour-view" type="button">Highlight this part in 3D</button>
+</section>
+<section class="study-panel" id="phonation-panel" aria-labelledby="phonation-title">
+<h2 id="phonation-title">Phonation: how the larynx works</h2>
+<p>These are <strong>static concept diagrams, not views of the 3D model or simulations of living tissue</strong>. They distinguish glottal positioning from the airflow-driven vibration that produces voice.</p>
+<div class="physiology-illustrations">
+<figure><svg viewBox="0 0 220 135" role="img" aria-label="Schematic top view of open V-shaped glottal gap during breathing">
+<path d="M60 25 Q75 25 105 108" stroke="#e9b7aa" stroke-width="23" stroke-linecap="round" fill="none"/>
+<path d="M160 25 Q145 25 115 108" stroke="#e9b7aa" stroke-width="23" stroke-linecap="round" fill="none"/>
+<path d="M82 39 L110 96 L138 39" stroke="#88d7fa" stroke-width="3" fill="none" stroke-dasharray="4 4"/>
+<text x="110" y="13" text-anchor="middle">posterior</text><text x="110" y="130" text-anchor="middle">anterior</text></svg>
+<figcaption><strong>Breathing:</strong> folds abduct; the glottal gap widens.</figcaption></figure>
+<figure><svg viewBox="0 0 220 135" role="img" aria-label="Schematic top view of closely approximated vocal folds during preparation for voice">
+<path d="M96 25 Q97 65 105 108" stroke="#e9b7aa" stroke-width="22" stroke-linecap="round" fill="none"/>
+<path d="M124 25 Q123 65 115 108" stroke="#e9b7aa" stroke-width="22" stroke-linecap="round" fill="none"/>
+<path d="M110 26 L110 104" stroke="#88d7fa" stroke-width="3" stroke-dasharray="5 4"/>
+<text x="110" y="13" text-anchor="middle">posterior</text><text x="110" y="130" text-anchor="middle">anterior</text></svg>
+<figcaption><strong>Voicing preparation:</strong> folds approximate; closure alone does not create sound.</figcaption></figure>
+</div>
+<p><strong>Vibration:</strong> airflow and pressure from exhalation interact with the layered vocal folds to generate oscillation. <strong>Pitch:</strong> fold length, tension and tissue properties help determine fundamental frequency; the cricothyroid contributes to lengthening and tensing.</p>
+<p class="study-caveat">The imported GLB depicts vocal ligaments, not full mucosa-covered vibrating vocal folds. No waveform, anatomical displacement, or clinical function is computed from the mesh.</p>
+<p><a href="https://www.asha.org/practice-portal/clinical-topics/voice-disorders/vocal-tract-visualization-and-imaging/" target="_blank" rel="noopener noreferrer">ASHA anatomical reference</a> · <a href="https://www.ncbi.nlm.nih.gov/books/NBK545265/" target="_blank" rel="noopener noreferrer">NCBI muscle physiology</a></p>
+</section>
 <section class="study-panel" aria-labelledby="objectives-title">
 <h2 id="objectives-title">Undergraduate learning objectives — draft</h2>
 <p>Work through the four outcomes below. Each outcome is supported by short readings and text-based questions, but the material has not been faculty-reviewed or accredited.</p>
