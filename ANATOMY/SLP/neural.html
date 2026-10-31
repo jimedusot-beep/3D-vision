@@ -62,6 +62,14 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 
 #neural-search,#neural-side{display:block;width:100%;box-sizing:border-box;margin:.4rem 0 .8rem;background:#264957;color:#fff;border:1px solid #93b7be;border-radius:7px;padding:.65rem;font:inherit}
 #neural-search-count,#neural-visible-count{font-size:.86rem;color:#c5e7e9;margin:.45rem 0}
+#neural-practice-progress{font-weight:650;color:#aee9d8}
+.practice-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin:1rem 0}
+.practice-options button{padding:.8rem;text-align:left;min-height:48px;border-radius:8px}
+.practice-options button[data-correct="true"]{border-color:#8fe5b6;background:#245e50}
+.practice-options button[aria-pressed="true"][data-correct="false"]{border-color:#f0b8a2;background:#77483f}
+#neural-practice-feedback{padding:.8rem;border-left:4px solid #a5edcf;background:#204652;line-height:1.5}
+#neural-practice-summary{font-weight:600;padding:.65rem}
+@media(max-width:600px){.practice-options{grid-template-columns:1fr}}
 </style></head><body>
 <header><h1>H.E.R.B.I.E. · Cranial Nerves and Brainstem</h1>
 <p>Real 3D source anatomy for part of the neural control of speech, hearing and swallowing.</p>
@@ -136,6 +144,25 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 </div>
 </div>
 <p id="neural-lesson-summary" role="status" aria-live="polite" hidden></p>
+</section>
+<section id="neural-practice" class="study" aria-labelledby="neural-practice-heading">
+<h2 id="neural-practice-heading">Cranial-nerve active-recall practice</h2>
+<p>Seven short, low-stakes function questions based on the documented SLP nerve checkpoints. Choose an answer <strong>before</strong> the Atlas reveals its source structure. Get an explanation, then optionally retry what you missed. CN IX remains text-only because it has no verified source mesh here.</p>
+<button type="button" id="neural-practice-start">Start 7-question practice</button>
+<div id="neural-practice-active" hidden>
+<p id="neural-practice-progress" role="status" aria-live="polite"></p>
+<h3 id="neural-practice-question"></h3>
+<div id="neural-practice-options" class="practice-options" role="group" aria-label="Answer choices"></div>
+<p id="neural-practice-feedback" role="status" aria-live="polite" hidden></p>
+<div class="controls">
+<button type="button" id="neural-practice-next" disabled>Next question</button>
+<button type="button" id="neural-practice-exit">Exit practice</button>
+</div>
+</div>
+<p id="neural-practice-summary" role="status" aria-live="polite" hidden></p>
+<button type="button" id="neural-practice-missed" hidden>Review missed questions</button>
+<p><strong>Privacy:</strong> Questions, answers and scores remain in this page session only; nothing is uploaded or saved. Review performance is not a clinical competency measure. For durable learning, revisit these questions on another day.</p>
+<p>Learning rationale: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7379743/" target="_blank" rel="noopener noreferrer">evidence-based retrieval practice in clinical anatomy</a>. Source-nerve explanations are linked to the references in the neural lesson below.</p>
 </section>
 <section class="study" aria-labelledby="neural-boundaries">
 <h2 id="neural-boundaries">Study connections and limits</h2>
