@@ -50,6 +50,26 @@ try{
   for(const view of ['front','back','left','right','top'])
    await page.locator('[data-view="'+view+'"]').click();
  }
+ // Tour remains functional as source-linked text if WebGL is unavailable.
+ await page.locator('#lung-tour-start').click();
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-tour-step'),'1');
+ assert.equal(await page.locator('#lung-select').inputValue(),'FMA7338');
+ assert.match(await page.locator('#lung-tour-title').textContent(),/Right upper-lobe/);
+ assert.equal(await page.locator('#lung-tour-prev').isDisabled(),true);
+ await page.locator('#lung-tour-next').click();
+ assert.equal(await page.locator('#lung-select').inputValue(),'FMA26661');
+ await page.locator('#lung-tour-prev').click();
+ assert.equal(await page.locator('#lung-select').inputValue(),'FMA7338');
+ for(let i=0;i<4;i++)await page.locator('#lung-tour-next').click();
+ assert.equal(await page.locator('#lung-select').inputValue(),'FMA7394');
+ assert.equal(await page.locator('#lung-tour-next').textContent(),'Finish tour');
+ await page.locator('#lung-tour-next').click();
+ assert.equal(await page.locator('#lung-stage').getAttribute('data-tour-step'),'off');
+ assert.match(await page.locator('#lung-tour-summary').textContent(),/Tour complete/);
+ assert.equal(await page.locator('#lung-select').inputValue(),'');
+ await page.locator('#lung-tour-start').click();
+ await page.locator('#lung-tour-close').click();
+ assert.match(await page.locator('#lung-tour-summary').textContent(),/Tour closed/);
  await page.locator('#lung-select').selectOption('FMA7394');
  assert.match(await page.locator('#lung-note-name').textContent(),/Trachea/);
  assert.match(await page.locator('#lung-note-text').textContent(),/conducting airway/i);
