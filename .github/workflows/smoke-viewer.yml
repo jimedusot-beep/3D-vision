@@ -56,6 +56,8 @@ jobs:
         run: node tests/slp-pharynx-browser.mjs
       - name: Z-Anatomy right-ear source verification and hearing guide on iPhone Chromium
         run: node tests/slp-ear-browser.mjs
+      - name: Pinned cranial nerve and brainstem Draco mesh source on Chromium
+        run: node tests/slp-neural-browser.mjs
       - name: Cross-device account storage and recovery workflows
         run: npm run test:cloud
       - uses: actions/upload-artifact@v4
@@ -92,6 +94,8 @@ jobs:
         run: BROWSER_ENGINE=webkit node tests/slp-pharynx-browser.mjs
       - name: Pinned right-ear anatomy and hearing journey on iPhone WebKit
         run: BROWSER_ENGINE=webkit node tests/slp-ear-browser.mjs
+      - name: Cranial nerves and brainstem with local Draco on iPhone WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-neural-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
