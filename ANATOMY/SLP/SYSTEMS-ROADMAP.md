@@ -54,7 +54,9 @@ Course packet **topic coverage (not a verbatim transcription):**
 
 **M1 (implemented on draft)**: ten-area navigation; respiratory concept atlas + recall; larynx study preserved and directly linked both ways; tests and an opt-in preview.
 
-**M2**: source-derived lung/airway model integrated; next add source-validated diaphragm/rib cage/intercostal meshes; verify coordinate systems, object groups, source licenses, size and mobile performance. Only label *lung/airway surfaces* as 3D available; do not label diaphragm or rib cage as imported.
+**M2**: source-derived lung/airway model integrated, with a five-stop, native-button guided tour referencing five real FMA-labeled geometry groups. The tour selects and frames source meshes, supports text fallback, and hands off to the separate larynx 3D view. It is a study sequence, **not** modeled airflow or a breathing-motion simulation. Next add source-validated diaphragm/rib cage/intercostal meshes; verify coordinate systems, object groups, source licenses, size and mobile performance. Only label *lung/airway surfaces* as 3D available; do not label diaphragm or rib cage as imported.
+
+**Candidate anatomical source for next expansion (not integrated):** [OrganUI diaphragm attribution](https://github.com/organui/organui/blob/master/apps/web/public/models/diaphragm.ATTRIBUTION.md) describes a derivative of **BodyParts3D 3.0** under **CC BY-SA 2.1 Japan**. The existing lung asset is **BodyParts3D 4.3**, and the two projects independently recenter, rescale, and rotate their meshes. Do not simply overlay these GLBs or claim physically accurate alignment. Before import, pin a source commit, verify exact GLB SHA-256/bytes/structure names, preserve attribution and share-alike, examine original coordinate systems and transforms, test geometry boundaries and WebGL memory on older phones, and obtain educational review. If alignment cannot be justified, use **separate labeled 3D viewports** rather than an unvalidated composite.
 
 **M3**: add resonance and orofacial licensed models; integrate IPA sound production concepts with explanation of articulatory mechanisms. Do not simulate unvalidated tissue motion.
 
