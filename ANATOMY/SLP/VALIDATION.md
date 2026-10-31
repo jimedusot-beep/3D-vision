@@ -1,5 +1,20 @@
 # SLP larynx atlas — evidence and validation plan
 
+## Digital exploded anatomy for personal study — 2026-10-31
+
+**Intended use:** A phone-first, interactive **study tool**, not a school display, print-ready model, physical assembly, surgery simulator, or representation of actual displacement in the body.
+
+- Added **Exploded study** beside Study map and normal 3D anatomy, with a reversible **0–100% separation** control and **Reassemble**.
+- The downloaded GLB remains BodyParts3D 4.3/OrganUI source geometry, CC BY-SA 2.1 Japan. The twenty manually curated motion vectors represent *readable study spacing* in subject-oriented X/Y/Z, **not measured physiological travel or anatomical force vectors**.
+- Keep all 45 original mesh elements rigidly bundled by their **20 actual source group identifiers**. Use Three.js parent groups and `attach()` to preserve world-space mesh transforms before translating. Never scale, warp, subdivide, or pretend bilateral groups are independently separable sides.
+- `0%` exactly restores each whole-group translation to `[0,0,0]`. Exiting exploded view or pressing Reset returns to the source anatomical assembly; selecting a group still highlights its existing source model. Relative alignment is original only when not exploded.
+- Camera fit dynamically handles separated geometry without changing source mesh shape or proportions. Three-button presentation includes a visible educational warning while pieces are separated.
+- Unit tests verify strict twenty-ID coverage, deterministic translation, exact 0% restoration and invalid-amount rejection; browser tests cover 3D → exploded → slider → reassemble → source 3D/map on desktop and iPhone WebKit. These are interaction tests, not anatomical accuracy certification.
+- Retain previously cited **limitations**: the asset includes only vocal ligaments, not entire vocal folds; some source structures group bilateral geometry; expert spatial/medical review and actual-device VoiceOver inspection are still required.
+
+**Protection:** Existing robot/CAD workshop remains unmodified. Draft anatomy PR and separate opt-in Render preview remain distinct from deployed `main`.
+
+
 **Status:** engineering prototype. The ten displayed meshes are original, intentionally schematic Three.js primitives. There has been **no anatomical landmark, dimensional, spatial, or expert validation** of the meshes. Do not print, diagnose from, or assess clinical competency using these shapes.
 
 ## What has actually been checked
