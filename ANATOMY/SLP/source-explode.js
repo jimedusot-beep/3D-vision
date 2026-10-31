@@ -91,7 +91,9 @@ export function attachSourceExplosion({THREE,prefix,stage,model,groups,render,fr
   status.textContent=amount>0?
    '3D source meshes separated by '+amount+'% for study. These are NOT anatomical positions.':
    '3D source meshes assembled in their original relative positions.';
-  frame(model);render();
+  // Keep the learner's chosen view while refitting separated mesh bounds.
+  // Explicit camera presets and Reset remain the only controls that change angle.
+  frame(model,'current');render();
  }
  toggle.disabled=false;slider.disabled=false;
  toggle.addEventListener('click',()=>update(amount===0?65:0));

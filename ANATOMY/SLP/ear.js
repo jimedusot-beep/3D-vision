@@ -88,11 +88,13 @@ function frame(object,orientation='front'){
  const fitHeight=largest/(2*Math.tan(fov/2));
  const fitWidth=fitHeight/(width/height);
  const distance=Math.min(45,Math.max(2,Math.max(fitHeight,fitWidth)*1.6));
- const vector=orientation==='back'?new THREE.Vector3(0,0,-1):
+ const prior=camera.position.clone().sub(controls.target);
+ const keepView=orientation==='current'&&prior.lengthSq()>1e-9;
+ const vector=keepView?prior.normalize():orientation==='back'?new THREE.Vector3(0,0,-1):
   orientation==='left'?new THREE.Vector3(1,0,0):
   orientation==='right'?new THREE.Vector3(-1,0,0):
   orientation==='top'?new THREE.Vector3(0,1,0):new THREE.Vector3(0,0,1);
- camera.up.set(0,orientation==='top'?0:1,orientation==='top'?-1:0);
+ if(!keepView)camera.up.set(0,orientation==='top'?0:1,orientation==='top'?-1:0);
  camera.position.copy(center).addScaledVector(vector,distance);
  controls.target.copy(center);camera.lookAt(center);controls.update();draw();
 }

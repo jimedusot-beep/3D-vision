@@ -119,11 +119,13 @@ function frame(meshes,orientation='front'){
  const span=Math.max(size.x,size.y,size.z,.03),ratio=Math.max(.3,stage.clientWidth/Math.max(1,stage.clientHeight));
  const fit=span/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov)/2));
  const distance=Math.max(.08,Math.min(10,fit*Math.max(1,1/ratio)*1.65));
- const v=orientation==='back'?new THREE.Vector3(0,0,-1):
+ const prior=camera.position.clone().sub(controls.target);
+ const keepView=orientation==='current'&&prior.lengthSq()>1e-9;
+ const v=keepView?prior.normalize():orientation==='back'?new THREE.Vector3(0,0,-1):
   orientation==='left'?new THREE.Vector3(1,0,0):
   orientation==='right'?new THREE.Vector3(-1,0,0):
   orientation==='top'?new THREE.Vector3(0,1,0):new THREE.Vector3(0,0,1);
- camera.up.set(0,orientation==='top'?0:1,orientation==='top'?-1:0);
+ if(!keepView)camera.up.set(0,orientation==='top'?0:1,orientation==='top'?-1:0);
  camera.position.copy(center).addScaledVector(v,distance);
  camera.near=Math.max(.0001,distance/1500);
  camera.far=Math.max(20,distance*8);
@@ -253,7 +255,7 @@ async function loadNeural(){
    groups:[...selectedMeshes.entries()].map(([id,meshes])=>({id:String(id),meshes})),
    render:draw,
    // Source GLB contains 363 unrelated records: frame only visible SLP meshes.
-   frame:()=>frame(available())
+   frame:()=>frame(available(),'current')
   });
   stage.dataset.modelStatus='ready';retry3D.hide();status('74 source-derived nerve/brainstem groups loaded from the smaller, source-preserving study GLB. Other Brain Project geometry is not included; incomplete nerve coverage is disclosed.');
   refreshVisibility();resize();frame(available());

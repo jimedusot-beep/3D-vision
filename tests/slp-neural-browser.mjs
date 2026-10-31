@@ -87,6 +87,9 @@ try{
  assert.equal(await page.locator('#neural-explode-amount').count(),1);
  if(!fallback){
   assert.equal(await page.locator('#neural-explode').isEnabled(),true);
+  // The original bug snapped the learner back to front when using Explode.
+  await page.locator('[data-neural-view="right"]').click();
+  const rightCameraView=await page.locator('#neural-stage canvas').screenshot();
   await page.locator('#neural-explode').click();
   assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'65');
   assert.equal(await page.locator('#neural-explode').getAttribute('aria-pressed'),'true');
@@ -99,6 +102,9 @@ try{
   assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'0');
   assert.equal(await page.locator('#neural-explode').getAttribute('aria-pressed'),'false');
   assert.match(await page.locator('#neural-explode-status').textContent(),/original relative positions/);
+  const restoredRightView=await page.locator('#neural-stage canvas').screenshot();
+  assert.deepEqual(restoredRightView,rightCameraView,
+   'neural: Explode and Reassemble must preserve right/rotated camera direction and framed pose');
   await page.locator('#neural-explode').click();
   await page.locator('#neural-reset').click();
   assert.equal(await page.locator('#neural-stage').getAttribute('data-explosion-amount'),'0');
