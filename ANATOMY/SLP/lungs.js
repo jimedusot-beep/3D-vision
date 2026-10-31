@@ -1,3 +1,4 @@
+import {create3DRetry} from './retry-3d.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -6,6 +7,7 @@ import {initLungTour} from './lung-tour.js';
 import {initLungPractice} from './lung-practice.js';
 
 const $=id=>document.getElementById(id),stage=$('lung-stage');
+const retry3D=create3DRetry({stage});
 const regionColors={
  'right-upper':0xd5a286,'right-middle':0x91b7a7,'right-lower':0xb87f75,
  'left-upper':0xd9b997,'left-lower':0x879fae,'airway':0x9ed4d8
@@ -117,6 +119,7 @@ function fallback(reason){
  stage.removeAttribute('tabindex');
  stage.querySelector('canvas')?.style.setProperty('display','none');
  $('fallback').hidden=false;
+ retry3D.show();
  message('3D graphics unavailable: '+reason+'. All 20 written source-model labels and descriptions remain available. Reload this page to retry 3D.');
  $('lung-objects').textContent='Text study available for all 20 licensed model groups; graphics unavailable.';
  for(const id of ['lung-focus','lung-isolate','lung-separate','lung-assemble','lung-explode'])$(id).disabled=true;
@@ -200,7 +203,7 @@ async function load(){
   scene.add(model);
   if(stage.dataset.fallback==='true')return;
   $('lung-explode').disabled=false;$('lung-separate').disabled=false;
-  stage.dataset.modelStatus='ready';
+  stage.dataset.modelStatus='ready';retry3D.hide();
   message('Licensed BodyParts3D 4.3 lung segments and airway surfaces loaded. Rotate or select a group; this is not a breathing simulation.');
   show();view('front');size();$('lung-focus').disabled=!selected;lungTour?.refresh();
  }catch(e){model=null;fallback(String(e?.message||'asset or decoder problem'));}
