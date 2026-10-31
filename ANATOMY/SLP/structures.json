@@ -6,68 +6,123 @@
   "units": "arbitrary_visual_units_not_anatomical_measurements",
   "animation_status": "disabled_pending_validated_geometry_and_review",
   "source_ids": [
-    "openstax-ap22-1"
+    "openstax-ap22-1",
+    "ncbi-larynx",
+    "ncbi-muscles"
   ],
   "structures": [
     {
       "id": "thyroid-cartilage",
       "label": "Thyroid cartilage",
       "kind": "cartilage",
-      "description": "Prominent protective cartilage surrounding the front of the larynx."
+      "description": "The largest unpaired laryngeal cartilage; its anterior plates help protect the larynx.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx"
+      ]
     },
     {
       "id": "cricoid-cartilage",
       "label": "Cricoid cartilage",
       "kind": "cartilage",
-      "description": "Ring-shaped cartilage below the thyroid cartilage."
+      "description": "An unpaired cartilage inferior to the thyroid cartilage. It forms a complete ring around the airway, with a wider posterior lamina.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-larynx"
+      ]
     },
     {
       "id": "left-arytenoid",
       "label": "Left arytenoid cartilage",
       "kind": "cartilage",
-      "description": "One of two arytenoid cartilages associated with vocal-fold positioning."
+      "description": "Paired cartilage on the posterior cricoid; its vocal process anchors the posterior end of a vocal ligament.",
+      "source_ids": [
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "right-arytenoid",
       "label": "Right arytenoid cartilage",
       "kind": "cartilage",
-      "description": "One of two arytenoid cartilages associated with vocal-fold positioning."
+      "description": "Paired cartilage on the posterior cricoid; its vocal process anchors the posterior end of a vocal ligament.",
+      "source_ids": [
+        "ncbi-larynx",
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "left-vocal-fold",
       "label": "Left vocal fold",
       "kind": "fold",
-      "description": "One of the paired tissue folds involved in phonation."
+      "description": "One of the true vocal folds, attached anteriorly near the thyroid cartilage and posteriorly to an arytenoid; its vibration helps produce voice.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "right-vocal-fold",
       "label": "Right vocal fold",
       "kind": "fold",
-      "description": "One of the paired tissue folds involved in phonation."
+      "description": "One of the true vocal folds, attached anteriorly near the thyroid cartilage and posteriorly to an arytenoid; its vibration helps produce voice.",
+      "source_ids": [
+        "openstax-ap22-1",
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "left-posterior-cricoarytenoid",
       "label": "Left posterior cricoarytenoid",
       "kind": "muscle",
-      "description": "Posterior cricoarytenoid muscles help abduct the vocal folds."
+      "description": "The posterior cricoarytenoid is the sole muscle that abducts the true vocal folds, opening the glottis during breathing.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "right-posterior-cricoarytenoid",
       "label": "Right posterior cricoarytenoid",
       "kind": "muscle",
-      "description": "Posterior cricoarytenoid muscles help abduct the vocal folds."
+      "description": "The posterior cricoarytenoid is the sole muscle that abducts the true vocal folds, opening the glottis during breathing.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "left-lateral-cricoarytenoid",
       "label": "Left lateral cricoarytenoid",
       "kind": "muscle",
-      "description": "Lateral cricoarytenoid muscles help adduct the vocal folds."
+      "description": "The lateral cricoarytenoid adducts the true vocal folds through medial arytenoid rotation, helping close the glottis.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
     },
     {
       "id": "right-lateral-cricoarytenoid",
       "label": "Right lateral cricoarytenoid",
       "kind": "muscle",
-      "description": "Lateral cricoarytenoid muscles help adduct the vocal folds."
+      "description": "The lateral cricoarytenoid adducts the true vocal folds through medial arytenoid rotation, helping close the glottis.",
+      "source_ids": [
+        "ncbi-muscles"
+      ]
+    }
+  ],
+  "references": [
+    {
+      "id": "openstax-ap22-1",
+      "label": "OpenStax A&P 2e — Respiratory Structures",
+      "url": "https://openstax.org/books/anatomy-and-physiology-2e/pages/22-1-organs-and-structures-of-the-respiratory-system"
+    },
+    {
+      "id": "ncbi-larynx",
+      "label": "NCBI Bookshelf — Larynx Anatomy",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK538202/"
+    },
+    {
+      "id": "ncbi-muscles",
+      "label": "NCBI Bookshelf — Laryngeal Muscles",
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK545265/"
     }
   ]
 }
