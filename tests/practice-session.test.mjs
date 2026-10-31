@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createPracticeSession,nextPracticeQuestion,ratePracticeQuestion,practiceSummary} from '../ANATOMY/SLP/practice-session.js';
+import {createPracticeSession,nextPracticeQuestion,ratePracticeQuestion,practiceSummary,questionsForStructure} from '../ANATOMY/SLP/practice-session.js';
 
 const cards=[{id:'alpha'},{id:'beta'},{id:'gamma'}];
 test('validates unique nonempty practice IDs',()=>{
@@ -42,4 +42,27 @@ test('sessions are independent and summary is aggregate-only',()=>{
   ratePracticeQuestion(first,'alpha','again');
   assert.equal(practiceSummary(second).checks,0);
   assert.deepEqual(Object.keys(practiceSummary(first)).sort(),['checks','recognized','remaining','reviewAgain','round'].sort());
+});
+
+test('selected study supports paired anatomy concepts without duplicating prompts',()=>{
+  const items=[
+    {id:'left-only',structure_id:'left-lateral-cricoarytenoid'},
+    {id:'other',structure_id:'thyroid-cartilage'},
+    {id:'right-only',structure_id:'right-lateral-cricoarytenoid'}
+  ];
+  assert.deepEqual(questionsForStructure(items,'right-lateral-cricoarytenoid').map(x=>x.id),['left-only','right-only']);
+  assert.deepEqual(questionsForStructure(items,'thyroid-cartilage').map(x=>x.id),['other']);
+  assert.deepEqual(questionsForStructure(items,'cricoid-cartilage'),[]);
+  assert.throws(()=>questionsForStructure(items,null),TypeError);
+});
+test('focused practice resets in new volatile session without altering authored questions',()=>{
+  const items=[{id:'fold',structure_id:'left-vocal-fold'},{id:'cartilage',structure_id:'thyroid-cartilage'}];
+  const source=JSON.stringify(items);
+  const first=createPracticeSession(items);
+  nextPracticeQuestion(first);
+  ratePracticeQuestion(first,'fold','again');
+  const focus=createPracticeSession(questionsForStructure(items,'right-vocal-fold'));
+  assert.equal(nextPracticeQuestion(focus),'fold');
+  assert.equal(practiceSummary(focus).checks,0);
+  assert.equal(JSON.stringify(items),source);
 });
