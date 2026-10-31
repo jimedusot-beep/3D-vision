@@ -63,6 +63,16 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height
 .physiology-illustrations text{font:11px system-ui,sans-serif;fill:#d4e4ec}
 .physiology-illustrations figcaption{font-size:.82rem;line-height:1.4}
 #tour-progress{font-weight:700;color:#9be8d5}
+#identify-progress{font-weight:700;color:#9be8d5}
+#identify-clue{font-weight:650;line-height:1.55}
+.identify-choices{min-width:0;border:1px solid #688d9b;border-radius:9px;padding:.7rem}
+#identify-options{display:grid;grid-template-columns:1fr;gap:.42rem}
+#identify-options button{text-align:left;min-height:48px;white-space:normal;padding:.65rem .8rem}
+#identify-options button[aria-pressed="true"]{background:#245e66;border-color:#9cdacf}
+#identify-feedback:not([hidden]){padding:.6rem;border-left:3px solid #86d7bd;background:#213e4e;border-radius:3px}
+#identify-explanation:not([hidden]){margin:.6rem 0}
+#identify-references a{display:block;padding:.4rem 0}
+#identify-find{min-height:44px;margin:.5rem 0}
 #tour-answer:not([hidden]){padding:.55rem;border-left:3px solid #8ad8bf;background:#193643}
 #three-view-controls{max-width:calc(100% - 1rem);flex-wrap:wrap;justify-content:flex-end}
 #three-view-controls button{min-height:39px}
@@ -220,6 +230,22 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <button type="button" id="tour-next">Next</button>
 </div>
 <button id="tour-view" type="button">Highlight this part in 3D</button>
+</section>
+<section class="study-panel" id="identify-challenge" aria-labelledby="identify-title">
+<h2 id="identify-title">Identify the anatomy — 20 structures</h2>
+<p>Read the function and choose the matching structure. Similar anatomy terms make the choices meaningful. This is practice, not a graded examination; nothing is saved.</p>
+<p id="identify-progress" role="status" aria-live="polite">Question 1 of 20</p>
+<p id="identify-clue"></p>
+<fieldset class="identify-choices"><legend>Which structure matches this clue?</legend><div id="identify-options"></div></fieldset>
+<p id="identify-feedback" role="status" aria-live="polite" hidden></p>
+<p id="identify-explanation" hidden></p>
+<div id="identify-references" hidden></div>
+<div class="study-actions">
+<button type="button" id="identify-next" disabled>Next question</button>
+<button type="button" id="identify-restart">Restart all 20</button>
+</div>
+<button type="button" id="identify-find" disabled>Find the answer in 3D / notes</button>
+<p class="study-caveat">The source has bilateral groups and incomplete tissue layers; identifying a surface here is not a clinical competency test.</p>
 </section>
 <section class="study-panel" id="phonation-panel" aria-labelledby="phonation-title">
 <h2 id="phonation-title">Phonation: how the larynx works</h2>
