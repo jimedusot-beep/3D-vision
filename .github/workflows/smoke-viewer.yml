@@ -50,6 +50,8 @@ jobs:
         run: node tests/slp-lungs-browser.mjs
       - name: Pinned 3D diaphragm source, mobile study and accessibility fallback
         run: node tests/slp-diaphragm-browser.mjs
+      - name: Recover actual failed source-model downloads with Retry 3D
+        run: node tests/slp-retry-browser.mjs
       - name: Z-Anatomy oral structure identification and mobile study
         run: node tests/slp-oral-browser.mjs
       - name: Pinned BodyParts3D 4.3 pharynx, soft-palate and source-model mobile study
@@ -88,6 +90,8 @@ jobs:
         run: BROWSER_ENGINE=webkit node tests/slp-lungs-browser.mjs
       - name: Pinned diaphragm 3D on iPhone WebKit
         run: BROWSER_ENGINE=webkit node tests/slp-diaphragm-browser.mjs
+      - name: Recover licensed 3D in iPhone WebKit after a transient network failure
+        run: BROWSER_ENGINE=webkit node tests/slp-retry-browser.mjs
       - name: Z-Anatomy oral structures on iPhone WebKit
         run: BROWSER_ENGINE=webkit node tests/slp-oral-browser.mjs
       - name: Pharynx and soft palate source anatomy on iPhone WebKit

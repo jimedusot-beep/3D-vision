@@ -1,6 +1,7 @@
 // Focused neural Atlas: 44 cranial-nerve/branch and 30 brainstem records.
 // Model: Brain Project / Z-Anatomy / BodyParts3D, CC BY-SA 4.0.
 // No generated anatomical tubes or invented missing CN IX geometry.
+import {create3DRetry} from './retry-3d.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -10,6 +11,7 @@ import {initNeuralPractice} from './neural-practice-ui.js';
 import {neuralParts,neuralById,neuralRegions,neuralLessons,
  verifyNeuralManifest,verifyNeuralNodes,teachingStepId} from './neural-manifest.js';
 const $=id=>document.getElementById(id),stage=$('neural-stage');
+const retry3D=create3DRetry({stage});
 const active=new Set(Object.keys(neuralRegions));
 let sideFilter='both',searchQuery='';
 const selectedMeshes=new Map();
@@ -150,6 +152,7 @@ function fallback(reason){
  stage.removeAttribute('tabindex');
  stage.querySelector('canvas')?.style.setProperty('display','none');
  $('neural-fallback').hidden=false;
+ retry3D.show();
  $('neural-focus').disabled=true;$('neural-isolate').disabled=true;
  for(const id of ['neural-explode','neural-explode-amount','neural-assemble'])$(id).disabled=true;
  $('neural-explode-status').textContent='3D separation unavailable; written source notes remain available.';
@@ -237,7 +240,7 @@ async function loadNeural(){
    // Source GLB contains 363 unrelated records: frame only visible SLP meshes.
    frame:()=>frame(available())
   });
-  stage.dataset.modelStatus='ready';status('74 source-derived nerve/brainstem groups available. Other Brain Project geometry hidden; incomplete nerve coverage is disclosed.');
+  stage.dataset.modelStatus='ready';retry3D.hide();status('74 source-derived nerve/brainstem groups available. Other Brain Project geometry hidden; incomplete nerve coverage is disclosed.');
   refreshVisibility();resize();frame(available());
   draco.dispose();
  }catch(e){model=null;fallback(String(e?.message||'invalid source geometry'));}

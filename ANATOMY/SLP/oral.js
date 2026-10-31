@@ -1,5 +1,6 @@
 // Licensed Z-Anatomy oral/salivary model via OrganUI (CC BY-SA 4.0).
 // Tongue, mandible and hyoid are landmarks, not complete speech/swallowing mechanics.
+import {create3DRetry} from './retry-3d.js';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -7,6 +8,7 @@ import {attachSourceExplosion} from './source-explode.js';
 import {oralParts,oralById,oralRegions,verifyOralNodes} from './oral-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('oral-stage');
+const retry3D=create3DRetry({stage});
 const activeRegions=new Set(Object.keys(oralRegions)),nodes=[];
 const palette={glands:0xd4a183,ducts:0x90cccf,articulator:0xbf817c,landmarks:0xbab4ac};
 let selected=null,isolate=false,renderer=null,model=null,controls=null,camera=null,scene=null;
@@ -113,6 +115,7 @@ function fallback(reason){
  stage.dataset.fallback='true';stage.dataset.modelStatus='unavailable';
  stage.removeAttribute('tabindex');stage.querySelector('canvas')?.style.setProperty('display','none');
  $('oral-fallback').hidden=false;
+ retry3D.show();
  for(const id of ['oral-explode','oral-explode-amount','oral-assemble'])$(id).disabled=true;
  $('oral-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['oral-focus','oral-isolate'])$(id).disabled=true;
@@ -192,7 +195,7 @@ async function load(){
    groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
    render:draw,frame
   });
-  stage.dataset.modelStatus='ready';
+  stage.dataset.modelStatus='ready';retry3D.hide();
   message('Licensed Z-Anatomy oral study model: 15 source-derived groups loaded. Static tongue, jaw, glands, ducts and hyoid; no motion simulation.');
   show();frame(model);resize();
  }catch(e){model=null;fallback(String(e?.message||'invalid model'));}
