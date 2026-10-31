@@ -51,6 +51,22 @@ try {
     assert.equal(await page.locator('#stage canvas').isVisible(),true);
     await page.locator('#camera-back').click();
     await page.locator('#camera-front').click();
+    await page.locator('#mode-explode').click();
+    assert.equal(await page.locator('#mode-explode').getAttribute('aria-pressed'),'true');
+    assert.equal(await page.locator('#explode-controls').isVisible(),true);
+    assert.match(await page.locator('#explode-warning').textContent(),/not in anatomical positions/);
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'65');
+    await page.locator('#explode-amount').evaluate(input=>{
+      input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    assert.equal(await page.locator('#explode-value').textContent(),'100%');
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'100');
+    await page.locator('#explode-assemble').click();
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'0');
+    assert.equal(await page.locator('#explode-value').textContent(),'0%');
+    await page.locator('#mode-three').click();
+    assert.equal(await page.locator('#explode-controls').isHidden(),true);
+    assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'0');
     await page.locator('#mode-map').click();
     assert.equal(await page.locator('#concept-map').isVisible(),true);
   }else{
@@ -307,6 +323,16 @@ try {
     assert.equal(geometry.labels,0,'Overview labels must not overlap the phone canvas');
     await touch.locator('#camera-back').click();
     await touch.locator('#camera-front').click();
+    await touch.locator('#mode-explode').click();
+    assert.equal(await touch.locator('#explode-controls').isVisible(),true);
+    assert.equal(await touch.locator('#stage').getAttribute('data-explosion-amount'),'65');
+    await touch.locator('#explode-amount').evaluate(input=>{
+      input.value='85';input.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    assert.equal(await touch.locator('#explode-value').textContent(),'85%');
+    await touch.locator('#explode-assemble').click();
+    assert.equal(await touch.locator('#stage').getAttribute('data-explosion-amount'),'0');
+    assert.equal(await touch.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     await touch.locator('#mode-map').click();
     assert.equal(await touch.locator('#concept-map').isVisible(),true);
   }else{
