@@ -11,6 +11,27 @@
 | **SPL Open Anatomy — Head and Neck Atlas** | [Official atlas page](https://www.openanatomy.org/atlas-pages/atlas-spl-head-and-neck.html): **3D Slicer License, Section B** | CT-derived neck context and laryngeal cartilage models | Confirm actual scope and accuracy of each relevant label, atlas terms, CT provenance, model extraction and conversion limitations; research-only disclaimer; no clinical use |
 | **Web reimplementations of atlases** | [nqwrc browser atlas](https://github.com/nqwrc/3d-anatomy) describes mixed source licenses including NC derivatives | UI and performance reference only | **Do not copy the bundled asset library wholesale.** Recover each underlying source and its obligations first |
 
+## Verified official BodyParts3D 4.0 IS-A index crosswalk (no binary meshes imported)
+
+The official [BodyParts3D IS-A organ model index](https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/isa_parts_list_e.txt) identifies **8 of the 10** structures represented by our current illustrative placeholders. This is useful evidence that candidate entries exist, **not** that their mesh shape, attachments, dimensions, CT correspondence or availability in a particular archive have passed verification.
+
+| Our structure ID | Original archive name | FMA concept ID | BP representation ID |
+| --- | --- | --- | --- |
+| `thyroid-cartilage` | thyroid cartilage | FMA55099 | BP7901 |
+| `cricoid-cartilage` | cricoid cartilage | FMA9615 | BP9117 |
+| `left-arytenoid` | left arytenoid cartilage | FMA55114 | BP8314 |
+| `right-arytenoid` | right arytenoid cartilage | FMA55113 | BP9249 |
+| `left-posterior-cricoarytenoid` | left posterior crico-arytenoid | FMA46578 | BP7822 |
+| `right-posterior-cricoarytenoid` | right posterior crico-arytenoid | FMA46577 | BP8360 |
+| `left-lateral-cricoarytenoid` | left lateral crico-arytenoid | FMA46581 | BP8828 |
+| `right-lateral-cricoarytenoid` | right lateral crico-arytenoid | FMA46580 | BP8618 |
+
+**Critical non-equivalence:** `left-vocal-fold` and `right-vocal-fold` have **no verified exact index mapping**. The archive lists `left vocal ligament` (FMA55246, BP8188) and `right vocal ligament` (FMA55245, BP9026), but ligament geometry does not represent the complete true vocal fold with its mucosa and muscle. Do **not** substitute the ligaments for whole vocal folds or assert complete phonatory anatomy.
+
+Other model IDs visible in the same index, for future inventory: `epiglottis` FMA55130 / BP9263, `left thyro-arytenoid` FMA46590 / BP7801, and `right thyro-arytenoid` FMA46589 / BP7867. **They have not been imported or validated.** Hyphenated source names such as `crico-arytenoid` are genuine archive labels; searching for only `cricoarytenoid` misses entries.
+
+The current `structures.json` stores this crosswalk with status `indexed_not_imported_unvalidated`. Follow the download/attribution and human-review gates before accepting any actual OBJ/GLB.
+
 ### Recommended practical order
 
 1. **Inventory first, no download in CI.** Query BodyParts3D's official structure index for thyroid cartilage, cricoid cartilage, arytenoids, true vocal folds, posterior/lateral cricoarytenoid muscles and relevant orientation landmarks. Mark **present / absent / ambiguous** for every target.
