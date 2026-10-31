@@ -9,18 +9,13 @@ import {neuralParts,neuralById,neuralRegions,neuralLessons,
  verifyNeuralManifest,verifyNeuralNodes,teachingStepId} from './neural-manifest.js';
 const $=id=>document.getElementById(id),stage=$('neural-stage');
 const active=new Set(Object.keys(neuralRegions));
+let sideFilter='both',searchQuery='';
 const selectedMeshes=new Map();
 let selected=null,isolate=false,scene=null,renderer=null,camera=null,controls=null,draco=null,allMeshes=[];
 let model=null,lessonIndex=-1,resizeObserver=null;
 const colors={cranial_nerves:0xe3ba7e,brainstem:0x8abbd5};
 function status(msg){$('neural-status').textContent=msg;}
 for(const category of Object.keys(neuralRegions)){
- const group=document.createElement('optgroup');group.label=neuralRegions[category];
- for(const part of neuralParts.filter(p=>p.region===category)){
-  const option=document.createElement('option');option.value=String(part.id);
-  option.textContent=part.name+' · '+part.side;group.append(option);
- }
- $('neural-select').append(group);
  const label=document.createElement('label'),checkbox=document.createElement('input');
  checkbox.type='checkbox';checkbox.value=category;checkbox.checked=true;
  checkbox.addEventListener('change',()=>{
@@ -29,12 +24,47 @@ for(const category of Object.keys(neuralRegions)){
  });label.append(checkbox,document.createTextNode(neuralRegions[category]));
  $('neural-filters').append(label);
 }
+function matchesSide(part){return sideFilter==='both'||part.side===sideFilter;}
+function matchesSearch(part){
+ if(!searchQuery)return true;
+ return (part.name+' '+part.side+' '+part.id+' '+part.sourceName).toLowerCase().includes(searchQuery);
+}
+function rebuildChoices(){
+ const list=$('neural-select');
+ const empty=document.createElement('option');empty.value='';empty.textContent='Select a structure';
+ list.replaceChildren(empty);
+ let count=0;
+ for(const [id,label] of Object.entries(neuralRegions)){
+  const group=document.createElement('optgroup');group.label=label;
+  for(const part of neuralParts.filter(p=>p.region===id&&matchesSide(p)&&matchesSearch(p))){
+   const option=document.createElement('option');option.value=String(part.id);
+   option.textContent=part.name+' · '+part.side;group.append(option);
+   count++;
+  }
+  if(group.childElementCount)list.append(group);
+ }
+ list.value=selected!==null&&neuralById.has(selected)&&matchesSide(neuralById.get(selected))&&matchesSearch(neuralById.get(selected))?String(selected):'';
+ $('neural-search-count').textContent=count+' of 74 structures match the search and side filters.';
+}
+$('neural-search').addEventListener('input',event=>{
+ searchQuery=event.target.value.trim().toLowerCase();
+ if(selected!==null&&!matchesSearch(neuralById.get(selected)))select(null);
+ rebuildChoices();
+});
+$('neural-side').addEventListener('change',event=>{
+ sideFilter=event.target.value;
+ if(selected!==null&&!matchesSide(neuralById.get(selected)))select(null);
+ rebuildChoices();refreshVisibility();
+});
+rebuildChoices();
 function draw(){if(renderer&&!document.hidden)renderer.render(scene,camera);}
 function displayed(mesh){
  const p=neuralById.get(mesh.userData.studyId);
- return active.has(p.region)&&(!isolate||p.id===selected);
+ return active.has(p.region)&&matchesSide(p)&&(!isolate||p.id===selected);
 }
 function refreshVisibility(){
+ const count=neuralParts.filter(p=>active.has(p.region)&&matchesSide(p)&&(!isolate||p.id===selected)).length;
+ $('neural-visible-count').textContent=count+' source records match the 3D display filters.';
  if(!allMeshes.length)return;
  for(const mesh of allMeshes){
   mesh.visible=displayed(mesh);
@@ -48,7 +78,12 @@ function select(id){
  if(selected!==null&&!p)return;
  $('neural-select').value=p?String(p.id):'';
  isolate=false;$('neural-isolate').setAttribute('aria-pressed','false');
- if(p){active.add(p.region);for(const el of $('neural-filters').querySelectorAll('input'))el.checked=active.has(el.value);}
+ if(p){
+  active.add(p.region);for(const el of $('neural-filters').querySelectorAll('input'))el.checked=active.has(el.value);
+  if(!matchesSide(p)){sideFilter='both';$('neural-side').value='both';}
+  if(!matchesSearch(p)){searchQuery='';$('neural-search').value='';}
+ }
+ rebuildChoices();
  $('neural-note-name').textContent=p?p.name+' · '+p.side:'Select a structure';
  $('neural-note-text').textContent=p?p.note:'Source-based anatomy for 44 cranial nerve/branch and 30 brainstem/nucleus records.';
  $('neural-note-id').textContent=p?'Original Z-Anatomy / BodyParts3D model node ID: '+p.id+' · '+p.sourceName+' · '+p.region:'';
@@ -61,8 +96,9 @@ $('neural-select').addEventListener('change',event=>select(event.target.value||n
 function showAll(){
  active.clear();Object.keys(neuralRegions).forEach(k=>active.add(k));
  for(const el of $('neural-filters').querySelectorAll('input'))el.checked=true;
- select(null);
- refreshVisibility();
+ sideFilter='both';searchQuery='';
+ $('neural-side').value='both';$('neural-search').value='';
+ select(null);rebuildChoices();refreshVisibility();
 }
 $('neural-all').addEventListener('click',showAll);
 $('neural-isolate').addEventListener('click',()=>{
