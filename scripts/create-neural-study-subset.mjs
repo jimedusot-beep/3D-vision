@@ -17,7 +17,7 @@ function parseGLB(data){
   const length=data.readUInt32LE(offset),type=data.toString('ascii',offset+4,offset+8);
   offset+=8;assert(offset+length<=data.length,'truncated GLB chunk');
   if(type==='JSON'){assert(!json,'duplicate JSON chunk');json=JSON.parse(data.toString('utf8',offset,offset+length));}
-  else if(type==='BIN\\0'){assert(!bin,'duplicate BIN chunk');bin=data.subarray(offset,offset+length);}
+  else if(type.slice(0,3)==='BIN'&&type.charCodeAt(3)===0){assert(!bin,'duplicate BIN chunk');bin=data.subarray(offset,offset+length);}
   else throw Error('Unsafe neural subset: unknown GLB chunk '+JSON.stringify(type));
   offset+=length;
  }
@@ -33,7 +33,7 @@ function encodeGLB(json,bin){
  out.write('glTF',0);out.writeUInt32LE(2,4);out.writeUInt32LE(out.length,8);
  out.writeUInt32LE(chunk.length,12);out.write('JSON',16);chunk.copy(out,20);
  const next=20+chunk.length;out.writeUInt32LE(payload.length,next);
- out.write('BIN\\0',next+4,'ascii');payload.copy(out,next+8);
+ out.writeUInt32LE(0x004e4942,next+4);payload.copy(out,next+8);
  return out;
 }
 export function createNeuralStudySubset(source){
