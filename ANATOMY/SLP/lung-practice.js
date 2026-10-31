@@ -90,7 +90,7 @@ export function initLungPractice({selectStructure,focusStructure,resetScene}){
   }
  }
  function finish(completed){
-  const total=questions.length,score=correct;
+  const total=questions.length,score=correct,seen=index+(answered?1:0);
   questions=[];index=-1;answered=false;
   panel.hidden=true;quick.hidden=false;full.hidden=false;
   stage.dataset.practice='off';
@@ -98,8 +98,7 @@ export function initLungPractice({selectStructure,focusStructure,resetScene}){
   summary.hidden=false;
   summary.textContent=completed
    ?'Review complete: '+score+' of '+total+' correct on the first attempt. Study aid only; no result was saved.'
-   :'Practice exited after '+Math.max(0,total?Math.min(total,index+1):0)+
-      ' questions. No answers saved.';
+   :'Practice exited after '+seen+' of '+total+' questions. No answers saved.';
  }
  function begin(mode){
   if(stage.dataset.tourStep!=='off')$('lung-tour-close').click();
@@ -119,10 +118,7 @@ export function initLungPractice({selectStructure,focusStructure,resetScene}){
  });
  exit.addEventListener('click',()=>{
   if(index<0)return;
-  const seen=index+(answered?1:0);
   finish(false);
-  summary.textContent='Practice exited after '+seen+' of '+(seen?seen:0)+
-   ' answered questions. No answers saved.';
  });
  stage.dataset.practice='off';
  return {exit:()=>{if(index>=0)exit.click();}};
