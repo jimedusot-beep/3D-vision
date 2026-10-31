@@ -91,7 +91,7 @@ export function jointPanel({root, selected, mutate, checkpoint, resetPreview, ch
     resetPreview(); const j = current(); if (!j || j.type === 'fixed') throw Error('Choose a moving joint');
     setJointValue(root(), j.id, j.value); checkpoint();
     const phase = Math.asin(Math.max(-1, Math.min(1, 2 * (j.value - j.min) / (j.max - j.min) - 1)));
-    animation = {id:j.id, start:performance.now(), phase};
+    animation = {id:j.id, start:performance.now(), phase, elapsedMs:0};
     values();
     // Prime one small pose update immediately. Background/throttled WebKit can
     // delay the first RAF; moving the joint on the actual user command gives
@@ -105,7 +105,12 @@ export function jointPanel({root, selected, mutate, checkpoint, resetPreview, ch
     if (!animation) return false;
     const j = list().find(j => j.id === animation.id);
     if (!j) { stop(); return false; }
-    try { setJointValue(root(), j.id, j.min + (Math.sin((t - animation.start) / 1500 + animation.phase) + 1) / 2 * (j.max - j.min)); values(); poseChanged(); }
+    // A requestAnimationFrame scheduled before the user's click may run with
+    // an earlier frame timestamp, especially on throttled mobile browsers.
+    // Never let that stale frame rewind the immediate 48 ms preview update.
+    const elapsed=Math.max(animation.elapsedMs,Number.isFinite(t)?Math.max(0,t-animation.start):0);
+    animation.elapsedMs=elapsed;
+    try { setJointValue(root(), j.id, j.min + (Math.sin(elapsed / 1500 + animation.phase) + 1) / 2 * (j.max - j.min)); values(); poseChanged(); }
     catch (e) { stop(); status(e.message, true); }
     return !!animation;
   }
