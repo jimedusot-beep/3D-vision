@@ -85,15 +85,35 @@ try{
  assert.equal(manualLink.status(),200,'Public physical-iPhone review page missing');
  const source=await manualLink.text();
  assert.match(source,/no.*uploaded/i,'Privacy notice missing from iPhone review');
- // Vite fingerprints the module filename in production (e.g. assets/iphoneReview-HASH.js).
- // Check the published module, then verify the script actually builds all 13
- // native review controls in both public browser engines below.
- assert.match(source,/<script\\b[^>]*type="module"[^>]*src="[^"]+\\.js"/i,
-  'Built iPhone review JavaScript module is not linked');
- await page.goto(url('ANATOMY/SLP/iphone-review.html'),{waitUntil:'domcontentloaded'});
+ // Verify the actual built module as a DOM element. Vite fingerprints script
+ // filenames on each build, so source-filename or regex guesses are brittle.
+ const reviewURL=url('ANATOMY/SLP/iphone-review.html');
+ const reviewNav=await page.goto(reviewURL,{waitUntil:'domcontentloaded',timeout:60000});
+ assert.ok(reviewNav?.ok(),'Live physical-iPhone review page failed to load');
+ const moduleSrc=await page.locator('script[type="module"][src]').last().getAttribute('src');
+ assert.ok(moduleSrc&&moduleSrc.endsWith('.js'),'Published iPhone review has no JavaScript module');
+ const moduleRes=await ctx.request.get(new URL(moduleSrc,reviewURL).href,{timeout:45000});
+ assert.equal(moduleRes.status(),200,'Compiled iPhone review JavaScript is not served');
  await page.waitForFunction(()=>document.querySelectorAll('#lab-tasks .task').length===7,null,{timeout:30000});
  assert.equal(await page.locator('#device-tasks .task').count(),6);
- assert.equal(await page.locator('#report').count(),1);
+ assert.equal(await page.locator('fieldset').count(),13);
+ assert.equal(await page.locator('a.open-lab').count(),7);
+ await page.locator('#run-diagnostics').click();
+ assert.match(await page.locator('#diagnostics-status').textContent(),/capabilities checked/);
+ await page.locator('[data-task="larynx"] input[value="pass"]').check();
+ await page.locator('[data-task="voiceover"] input[value="issue"]').check();
+ await page.locator('#observations').fill('Manual phone test pending; simulated review UI check only.');
+ await page.locator('#make-report').click();
+ const report=await page.locator('#report').inputValue();
+ assert.match(report,/Larynx \/ phonation: pass/);
+ assert.match(report,/VoiceOver screen reader: issue/);
+ assert.match(report,/Not an automated hardware or VoiceOver pass/);
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.waitForFunction(()=>document.querySelectorAll('#lab-tasks .task').length===7,null,{timeout:30000});
+ assert.equal(await page.locator('[data-task="larynx"] input[value="pass"]').isChecked(),true);
+ await page.locator('#clear-review').click();
+ assert.equal(await page.locator('[data-task="larynx"] input[value="not-tested"]').isChecked(),true);
+ assert.equal(await page.evaluate(()=>localStorage.getItem('herbie:slp:iphone-review:v1')),null);
  assert.deepEqual(errors,[]);
  console.log('PASS public Pages: 7 source GLBs, source integrity, 10-topic Atlas and private physical-iPhone review');
 }finally{await browser.close();}
