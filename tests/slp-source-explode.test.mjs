@@ -90,3 +90,17 @@ test('all five previously missing viewers have physically linked controls and We
   assert.doesNotMatch(js,/new THREE\.(SphereGeometry|CylinderGeometry|TubeGeometry)/);
  }
 });
+
+test('seven source anatomy viewers expose consistent Retry 3D controls on errors',async()=>{
+ const {readFileSync}=await import('node:fs');
+ for(const id of ['diaphragm','oral','pharynx','ear','neural','lungs','viewer']){
+  const code=readFileSync(new URL('../ANATOMY/SLP/'+id+'.js',import.meta.url),'utf8');
+  assert.match(code,/create3DRetry/,'Missing Retry 3D helper in '+id);
+  assert.match(code,/retry3D\.show\(\)/,'Missing failure recovery path in '+id);
+  assert.match(code,/retry3D\.hide\(\)/,'Missing recovery-success or context-restored cleanup in '+id);
+ }
+ const utility=readFileSync(new URL('../ANATOMY/SLP/retry-3d.js',import.meta.url),'utf8');
+ assert.match(utility,/Retry 3D/);
+ assert.match(utility,/aria-label/);
+ assert.match(utility,/location\.reload/);
+});
