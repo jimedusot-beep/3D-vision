@@ -40,6 +40,32 @@ try{
  assert.match(await page.locator('main').textContent(),/mucosal pharyngeal lining/i);
  assert.match(await page.locator('main').textContent(),/CC BY-SA 2\.1 Japan/);
  const fallback=await page.locator('#pharynx-stage').getAttribute('data-fallback')==='true';
+
+ // Explosion is a real mesh transform, not a text-only box or isolated note.
+ assert.equal(await page.locator('#pharynx-explode').count(),1);
+ assert.equal(await page.locator('#pharynx-explode-amount').count(),1);
+ if(!fallback){
+  assert.equal(await page.locator('#pharynx-explode').isEnabled(),true);
+  await page.locator('#pharynx-explode').click();
+  assert.equal(await page.locator('#pharynx-stage').getAttribute('data-explosion-amount'),'65');
+  assert.equal(await page.locator('#pharynx-explode').getAttribute('aria-pressed'),'true');
+  assert.match(await page.locator('#pharynx-explode-status').textContent(),/3D source meshes separated/);
+  await page.locator('#pharynx-explode-amount').evaluate(input=>{
+   input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  assert.equal(await page.locator('#pharynx-stage').getAttribute('data-explosion-amount'),'100');
+  await page.locator('#pharynx-assemble').click();
+  assert.equal(await page.locator('#pharynx-stage').getAttribute('data-explosion-amount'),'0');
+  assert.equal(await page.locator('#pharynx-explode').getAttribute('aria-pressed'),'false');
+  assert.match(await page.locator('#pharynx-explode-status').textContent(),/original relative positions/);
+  await page.locator('#pharynx-explode').click();
+  await page.locator('#pharynx-reset').click();
+  assert.equal(await page.locator('#pharynx-stage').getAttribute('data-explosion-amount'),'0');
+ }else{
+  assert.equal(await page.locator('#pharynx-explode').isDisabled(),true);
+  assert.match(await page.locator('#pharynx-explode-status').textContent(),/unavailable/);
+ }
+
  if(fallback){
   assert.match(await page.locator('#pharynx-status').textContent(),/WebGL not supported|WebGL context lost/i,
    'A bad source download or GLB parse must fail the test, not count as a working fallback');
