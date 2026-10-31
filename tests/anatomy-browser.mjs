@@ -68,6 +68,21 @@ try {
   }));
   assert.equal(response.ok,true);
   assert.equal(response.selected,'left-vocal-fold');
+  for(const requestId of ['isolate-once','isolate-twice']) {
+    const answer=await parent.evaluate(requestId=>new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>{window.removeEventListener('message',onMessage);reject(Error('No isolate response'));},5000);
+      function onMessage(e) {
+        if(e.data?.source!=='3d-vision-anatomy'||e.data.requestId!==requestId)return;
+        clearTimeout(timer);window.removeEventListener('message',onMessage);resolve(e.data);
+      }
+      window.addEventListener('message',onMessage);
+      document.querySelector('iframe').contentWindow.postMessage(
+        {source:'herbie',version:1,action:'isolate',structureId:'left-vocal-fold',requestId},location.origin
+      );
+    }),requestId);
+    assert.equal(answer.ok,true);
+    assert.equal(answer.isolated,'left-vocal-fold','Repeated host isolate must not toggle off');
+  }
   console.log('PASS: '+name+' same-origin H.E.R.B.I.E. command contract');
   // A different parent origin cannot control the viewer without explicit embedOrigin opt-in.
   const outsider=await desktop.newPage();
