@@ -106,13 +106,19 @@ export function applyJoints(root) {
   return list.length;
 }
 
-export function setJointValue(root, id, value) {
+// Pure validation: reject invalid input without checkpointing, rebuilding
+// scene objects or disturbing the currently valid pose/undo history.
+export function validateJointTravel(root, id, value) {
   const joint = (root.userData.joints || []).find(j => j.id === id);
   if (!joint) throw Error('Select a joint first');
   const child = componentMap(root).get(joint.childId);
   if (!child || isLocked(child)) throw Error('Unlock the driven component before changing joint travel');
   if (!Number.isFinite(value) || value < joint.min || value > joint.max) throw Error(`Joint travel must be between ${joint.min} and ${joint.max}`);
   if (joint.type === 'fixed' && value !== 0) throw Error('Fixed joints have no travel');
+  return joint;
+}
+export function setJointValue(root, id, value) {
+  const joint = validateJointTravel(root, id, value);
   const previous = joint.value;
   joint.value = value;
   try { applyJoints(root); } catch (e) { joint.value = previous; throw e; }
