@@ -213,6 +213,24 @@ test('concept map defaults to evidence-aware functional groups instead of mislea
   for(const id of covered)assert.ok(viewer.includes("'"+id+"'"));
   assert.ok(!viewer.includes("function animate(){\n  frameScheduled=false;\n  if(!renderer"));
 });
+test('mobile-first study navigation links map selections to accessible cited learning',()=>{
+  for(const id of ['panel-structures','panel-details','panel-practice'])
+    assert.ok(html.includes('id="'+id+'"'));
+  assert.ok(html.includes('id="mobile-tabs"'));
+  assert.ok(html.includes('id="selection-ribbon" hidden'));
+  assert.ok(html.includes('id="open-details"'));
+  assert.ok(html.includes('id="practice-from-detail"'));
+  assert.ok(html.includes('data-mobile-target="panel-details"'));
+  assert.ok(html.includes('data-mobile-target="panel-practice"'));
+  assert.ok(html.includes('#stage.mode-map #concept-map{position:relative;inset:auto;overflow:visible'));
+  assert.ok(html.includes('.mobile-panel[data-mobile-active="false"]{display:none}'));
+  assert.ok(viewer.includes("function openMobilePanel(id,scroll=false)"));
+  assert.ok(viewer.includes("openMobilePanel('panel-details',true)"));
+  assert.ok(viewer.includes("openMobilePanel('panel-practice',true)"));
+  assert.ok(viewer.includes("$('selection-ribbon').hidden=!info"));
+  assert.ok(viewer.includes("$('practice-from-detail').disabled=related.length===0"));
+  assert.ok(!viewer.includes('localStorage'));
+});
 test('valid known structure command accepted',()=>assert.deepEqual(parseCommand(message('select',{structureId:'left-vocal-fold'}),ids),
  {ok:true,action:'select',structureId:'left-vocal-fold',enabled:undefined,requestId:undefined}));
 test('unknown structure refused',()=>assert.equal(parseCommand(message('isolate',{structureId:'made-up'}),ids).reason,'unknown_structure'));
