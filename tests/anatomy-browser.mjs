@@ -88,24 +88,33 @@ try {
   assert.equal(await page.locator('#study-again').isDisabled(),true);
   console.log('PASS: '+name+' desktop anatomy controls');
 
-  // A mid-session graphics interruption must not disable text-based study.
+  // WebKit can independently refuse a GPU context for a new tab; both paths
+  // must retain the learning interface, and only a canvas can lose context.
   const lostGpu=await desktop.newPage();
   lostGpu.on('pageerror',e=>errors.push(e.message));
   await lostGpu.goto(origin+'/ANATOMY/SLP/index.html');
-  await lostGpu.waitForFunction(()=>document.getElementById('status')?.textContent?.includes('ready.'));
-  await lostGpu.evaluate(()=>document.querySelector('#stage canvas')
-    .dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
-  assert.match(await lostGpu.locator('#status').textContent(),/temporarily unavailable/);
+  await lostGpu.waitForFunction(()=>/ready\.|unavailable/.test(document.getElementById('status')?.textContent||''));
+  const hasCanvas=await lostGpu.locator('#stage canvas').count()===1;
+  if(hasCanvas){
+    await lostGpu.evaluate(()=>document.querySelector('#stage canvas')
+      .dispatchEvent(new Event('webglcontextlost',{cancelable:true})));
+    assert.match(await lostGpu.locator('#status').textContent(),/temporarily unavailable/);
+  }else{
+    assert.equal(await lostGpu.locator('#webgl-fallback').isVisible(),true);
+    assert.match(await lostGpu.locator('#status').textContent(),/text-based anatomy study is ready/);
+  }
   await lostGpu.locator('button[data-id="cricoid-cartilage"]').click();
   assert.match(await lostGpu.locator('#detail').textContent(),/complete ring/);
   await lostGpu.locator('#study-next').click();
   await lostGpu.locator('#study-reveal').click();
   assert.equal(await lostGpu.locator('#study-sources a').count(),2);
-  await lostGpu.evaluate(()=>document.querySelector('#stage canvas')
-    .dispatchEvent(new Event('webglcontextrestored')));
-  assert.match(await lostGpu.locator('#status').textContent(),/Referenced text; unvalidated geometry/);
+  if(hasCanvas){
+    await lostGpu.evaluate(()=>document.querySelector('#stage canvas')
+      .dispatchEvent(new Event('webglcontextrestored')));
+    assert.match(await lostGpu.locator('#status').textContent(),/Referenced text; unvalidated geometry/);
+  }
   await lostGpu.close();
-  console.log('PASS: '+name+' mid-session GPU interruption preserves study');
+  console.log('PASS: '+name+' GPU loss or unavailable context preserves text-based study');
 
   // Force WebGL initialization failure: text references and recall must remain usable.
   const noGpu=await desktop.newPage();
