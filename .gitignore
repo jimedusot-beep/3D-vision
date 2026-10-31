@@ -3,3 +3,7 @@ dist/
 .openai/
 test-results/
 *.log
+
+# Pinned open anatomical model is downloaded, SHA-256 verified at build time.
+public/models/slp/larynx.glb
+public/models/slp/*.tmp
