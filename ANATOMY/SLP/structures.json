@@ -19,7 +19,14 @@
       "source_ids": [
         "openstax-ap22-1",
         "ncbi-larynx"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA55099",
+        "representation_id": "BP7901",
+        "source_label": "thyroid cartilage"
+      }
     },
     {
       "id": "cricoid-cartilage",
@@ -29,7 +36,14 @@
       "source_ids": [
         "openstax-ap22-1",
         "ncbi-larynx"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA9615",
+        "representation_id": "BP9117",
+        "source_label": "cricoid cartilage"
+      }
     },
     {
       "id": "left-arytenoid",
@@ -39,7 +53,14 @@
       "source_ids": [
         "ncbi-larynx",
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA55114",
+        "representation_id": "BP8314",
+        "source_label": "left arytenoid cartilage"
+      }
     },
     {
       "id": "right-arytenoid",
@@ -49,7 +70,14 @@
       "source_ids": [
         "ncbi-larynx",
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA55113",
+        "representation_id": "BP9249",
+        "source_label": "right arytenoid cartilage"
+      }
     },
     {
       "id": "left-vocal-fold",
@@ -59,7 +87,12 @@
       "source_ids": [
         "openstax-ap22-1",
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "exact_structure_not_identified",
+        "note": "The official ISA index lists a left vocal ligament, but a vocal ligament is NOT equivalent to the whole true vocal fold; no verified exact fold mesh is mapped."
+      }
     },
     {
       "id": "right-vocal-fold",
@@ -69,7 +102,12 @@
       "source_ids": [
         "openstax-ap22-1",
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "exact_structure_not_identified",
+        "note": "The official ISA index lists a right vocal ligament, but a vocal ligament is NOT equivalent to the whole true vocal fold; no verified exact fold mesh is mapped."
+      }
     },
     {
       "id": "left-posterior-cricoarytenoid",
@@ -78,7 +116,14 @@
       "description": "The posterior cricoarytenoid is the sole muscle that abducts the true vocal folds, opening the glottis during breathing.",
       "source_ids": [
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA46578",
+        "representation_id": "BP7822",
+        "source_label": "left posterior crico-arytenoid"
+      }
     },
     {
       "id": "right-posterior-cricoarytenoid",
@@ -87,7 +132,14 @@
       "description": "The posterior cricoarytenoid is the sole muscle that abducts the true vocal folds, opening the glottis during breathing.",
       "source_ids": [
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA46577",
+        "representation_id": "BP8360",
+        "source_label": "right posterior crico-arytenoid"
+      }
     },
     {
       "id": "left-lateral-cricoarytenoid",
@@ -96,7 +148,14 @@
       "description": "The lateral cricoarytenoid adducts the true vocal folds through medial arytenoid rotation, helping close the glottis.",
       "source_ids": [
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA46581",
+        "representation_id": "BP8828",
+        "source_label": "left lateral crico-arytenoid"
+      }
     },
     {
       "id": "right-lateral-cricoarytenoid",
@@ -105,7 +164,14 @@
       "description": "The lateral cricoarytenoid adducts the true vocal folds through medial arytenoid rotation, helping close the glottis.",
       "source_ids": [
         "ncbi-muscles"
-      ]
+      ],
+      "candidate_model": {
+        "catalog_id": "bodyparts3d-isa-4.0",
+        "status": "indexed_not_imported_unvalidated",
+        "concept_id": "FMA46580",
+        "representation_id": "BP8618",
+        "source_label": "right lateral crico-arytenoid"
+      }
     }
   ],
   "references": [
@@ -344,5 +410,15 @@
         "ncbi-muscles"
       ]
     }
-  ]
+  ],
+  "mesh_candidate_catalog": {
+    "id": "bodyparts3d-isa-4.0",
+    "dataset": "BodyParts3D Release 4.0, IS-A parts listing",
+    "index_url": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/isa_parts_list_e.txt",
+    "download_url": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html",
+    "license_url": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/README_e.html",
+    "license": "CC BY 4.0 (official archive); exact downloaded asset, modification and attribution must be recorded",
+    "status": "index_entries_checked_no_mesh_files_imported",
+    "interpretation": "Representation IDs are official catalog listings, NOT evidence that any particular model file has been downloaded, verified, rendered or anatomically approved."
+  }
 }
