@@ -30,7 +30,7 @@ try{
   await page.waitForFunction(()=>document.querySelectorAll('.module-card').length===10,null,{timeout:25000});
   assert.equal(await page.locator('.module-card').count(),10);
   const launchLinks=[
-    './index.html','./lungs.html','./diaphragm.html','./oral.html',
+    './index.html?view=three','./lungs.html','./diaphragm.html','./oral.html',
     './pharynx.html','./ear.html','./neural.html'
   ];
   assert.equal(await page.locator('#anatomy-launcher .anatomy-launch').count(),7);
