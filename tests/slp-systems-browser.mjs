@@ -73,9 +73,9 @@ try{
   const has3d=await page.locator('#systems-network').getAttribute('data-available')==='true';
   if(has3d){
     await page.locator('#systems-network canvas').evaluate(canvas=>{
-      canvas.dispatchEvent(new MouseEvent('pointerdown',{clientX:80,clientY:80,bubbles:true}));
+      // Do not synthesize a pointerdown: WebKit rejects pointer capture for untrusted
+      // events, unrelated to this application's WebGL-loss recovery.
       canvas.dispatchEvent(new Event('webglcontextlost',{cancelable:true}));
-      canvas.dispatchEvent(new MouseEvent('pointerup',{clientX:80,clientY:80,bubbles:true}));
     });
     assert.equal(await page.locator('#systems-network').getAttribute('data-available'),'false');
     assert.equal(await page.locator('#systems-network').getAttribute('tabindex'),null);
