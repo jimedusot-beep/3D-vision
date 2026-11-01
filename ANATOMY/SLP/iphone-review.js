@@ -84,7 +84,7 @@ function taskCard(task,parent,lab){
   radio.addEventListener('change',()=>{
    if(!radio.checked)return;
    state.checks[task.id]=value;
-   if(lab)issueDetail.hidden=value!=='issue';
+   if(lab)section.querySelector('.issue-detail').hidden=value!=='issue';
    save();updateProgress();
   });
   label.append(radio,document.createTextNode(labelText));options.append(label);
@@ -193,7 +193,7 @@ function buildReport(){
   if(result==='issue'){
    const kind=issueKinds.find(([key])=>key===details.kind);
    if(kind&&kind[0])lines.push('  Problem: '+kind[1]);
-   if(details.note?.trim())lines.push('  Observation: '+details.note.trim().replaceAll('\\n',' '));
+   if(details.note?.trim())lines.push('  Observation: '+details.note.trim().replace(/\\s+/g,' '));
   }
  }
  lines.push('','Usability and accessibility tests:');
