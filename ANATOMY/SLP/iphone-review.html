@@ -31,7 +31,9 @@ fieldset{border:0;padding:0;margin:.55rem 0 0;min-width:0}legend{font-weight:700
 .summary{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}.summary strong{font-variant-numeric:tabular-nums}
 dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:.4rem .7rem;margin:.8rem 0}
 dt{font-weight:700}dd{margin:0;min-width:0}
-input[type=text],input[type=number],textarea{width:100%;background:#112c38;color:#fff;border:1px solid #8aa8b1;border-radius:8px;min-height:44px;padding:.55rem .7rem}
+input[type=text],input[type=number],textarea,select{width:100%;background:#112c38;color:#fff;border:1px solid #8aa8b1;border-radius:8px;min-height:44px;padding:.55rem .7rem}
+.issue-detail{margin-top:.8rem;border-top:1px solid #527d85;padding:.55rem .15rem 0}
+.issue-detail[hidden]{display:none!important}
 textarea{resize:vertical;min-height:7rem}label.field{display:block;font-weight:650;margin:.6rem 0}
 label.field input,label.field textarea{display:block;margin-top:.3rem;font-weight:400}
 .actions{display:flex;flex-wrap:wrap;gap:.6rem;margin:.7rem 0}
@@ -61,7 +63,7 @@ footer{border-top:1px solid #507381;padding:1rem;max-width:900px;margin:auto;col
 </section>
 <section aria-labelledby="labs-title">
 <h2 id="labs-title">2. Test each 3D lab</h2>
-<p>Open a lab, verify that a genuine canvas model appears, rotate and pinch, select a named source structure, use Explode at 100%, then Reassemble to 0%. Return here using Safari Back. A written text fallback alone is <strong>not</strong> a successful 3D test.</p>
+<p>Open a lab, verify that a genuine canvas model appears, rotate and pinch, select a named source structure, use Explode at 100%, then Reassemble to 0%. Return here using Safari Back. A written text fallback alone is <strong>not</strong> a successful 3D test. When you mark <strong>Issue</strong>, choose the problem type and add a short description so the failure can be reproduced.</p>
 <div id="lab-tasks"></div>
 </section>
 <section aria-labelledby="usability-title">
