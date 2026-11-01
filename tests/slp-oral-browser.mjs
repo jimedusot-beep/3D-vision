@@ -49,6 +49,7 @@ try{
   assert.equal(await page.locator('#oral-stage').getAttribute('data-explosion-amount'),'65');
   assert.equal(await page.locator('#oral-explode').getAttribute('aria-pressed'),'true');
   assert.match(await page.locator('#oral-explode-status').textContent(),/3D source meshes separated/);
+  assert.match(await page.locator('#oral-explode-status').textContent(),/Related glands and ducts move in study clusters/);
   await page.locator('#oral-explode-amount').evaluate(input=>{
    input.value='100';input.dispatchEvent(new Event('input',{bubbles:true}));
   });
@@ -80,6 +81,13 @@ try{
  await page.locator('#oral-select').selectOption('tongue');
  assert.match(await page.locator('#oral-note-text').textContent(),/speech sounds/i);
  assert.match(await page.locator('#oral-note-id').textContent(),/Tongue/);
+ assert.equal(await page.locator('#oral-stage').getAttribute('data-highlighted-group'),'tongue');
+ assert.equal(await page.locator('[data-oral-study]').count(),5);
+ await page.locator('[data-oral-study="right-parotid-duct"]').click();
+ assert.equal(await page.locator('#oral-stage').getAttribute('data-highlighted-group'),'right-parotid-duct');
+ assert.match(await page.locator('#oral-note-name').textContent(),/Right parotid duct/);
+ await page.locator('[data-oral-study="tongue"]').click();
+ assert.equal(await page.locator('#oral-stage').getAttribute('data-highlighted-group'),'tongue');
  if(!fallback){
   await page.locator('#oral-focus').click();
   assert.equal(await page.locator('#oral-stage').getAttribute('data-focused-group'),'tongue');
@@ -92,6 +100,7 @@ try{
  await page.locator('#oral-all').click();
  assert.equal(await page.locator('#oral-filters input:checked').count(),4);
  assert.equal(await page.locator('#oral-focus').isDisabled(),true);
+ assert.equal(await page.locator('#oral-stage').getAttribute('data-highlighted-group'),'');
  for(const part of oralParts){
   await page.locator('#oral-select').selectOption(part.id);
   assert.equal(await page.locator('#oral-note-name').textContent(),part.name);
