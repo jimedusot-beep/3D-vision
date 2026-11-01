@@ -44,6 +44,14 @@ try{
  assert.equal(await page.locator('#diagnostics dt').count(),5);
  await page.locator('[data-task="larynx"] input[value="pass"]').check();
  await page.locator('[data-task="neural"] input[value="issue"]').check();
+ assert.equal(await page.locator('[data-issue-detail="neural"]').isVisible(),true);
+ assert.equal(await page.locator('[data-issue-detail="larynx"]').isHidden(),true);
+ await page.locator('[data-issue-kind="neural"]').selectOption('explode');
+ await page.locator('[data-issue-note="neural"]').fill('Explode does not separate the model in 3D.');
+ await page.locator('[data-task="oral"] input[value="issue"]').check();
+ assert.equal(await page.locator('[data-issue-kind="oral"]').inputValue(),'');
+ await page.locator('[data-task="oral"] input[value="not-tested"]').check();
+ assert.equal(await page.locator('[data-issue-detail="oral"]').isHidden(),true);
  await page.locator('[data-task="voiceover"] input[value="issue"]').check();
  await page.locator('#device-note').fill('iPhone 13, manually entered');
  await page.locator('#load-time').fill('12.5');
@@ -56,13 +64,16 @@ try{
  assert.equal(await page.locator('[data-task="larynx"] input[value="pass"]').isChecked(),true);
  assert.equal(await page.locator('[data-task="voiceover"] input[value="issue"]').isChecked(),true);
  assert.equal(await page.locator('#load-time').inputValue(),'12.5');
+ assert.equal(await page.locator('[data-issue-kind="neural"]').inputValue(),'explode');
+ assert.equal(await page.locator('[data-issue-note="neural"]').inputValue(),'Explode does not separate the model in 3D.');
  await page.reload();
  assert.equal(await page.locator('[data-task="neural"] input[value="issue"]').isChecked(),true);
  await page.locator('#make-report').click();
  const report=await page.locator('#report').inputValue();
  for(const required of ['manual','iPhone 13, manually entered','Larynx / phonation: pass',
   'Cranial nerves / brainstem: issue','VoiceOver screen reader: issue','12.5 seconds',
-  'Neural rotation worked']){
+  'Neural rotation worked','Problem: Explode / Reassemble is wrong',
+  'Observation: Explode does not separate the model in 3D.']){
   assert.ok(report.toLowerCase().includes(required.toLowerCase()),'Missing report section '+required);
  }
  assert.doesNotMatch(report,/navigator\.userAgent|hardware identifier\s*:/);
@@ -76,6 +87,9 @@ try{
  assert.equal(await page.locator('#observations').inputValue(),'');
  assert.equal(await page.locator('#report').inputValue(),'');
  assert.equal(await page.locator('[data-task="neural"] input[value="not-tested"]').isChecked(),true);
+ assert.equal(await page.locator('[data-issue-detail="neural"]').isHidden(),true);
+ assert.equal(await page.locator('[data-issue-kind="neural"]').inputValue(),'');
+ assert.equal(await page.locator('[data-issue-note="neural"]').inputValue(),'');
  assert.equal(await page.evaluate(()=>localStorage.getItem('herbie:slp:iphone-review:v1')),null);
  assert.deepEqual(errors,[]);
  console.log('PASS '+engineName+' on-device-review protocol, all seven lab links, local persistence, diagnostics, 200% text and safe report clearing');

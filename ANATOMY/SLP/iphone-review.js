@@ -20,7 +20,17 @@ const usability=[
  {id:'stability',label:'Five-minute session and battery/heat',detail:'Study normally for five minutes. Look for crashes, surprise reloads, freezing or unusual heat. No temperature sensor reading is claimed.'}
 ];
 const allowed=['not-tested','pass','issue'];
-const initial=()=>({version:1,checks:{},device:'',seconds:'',notes:'',diagnostics:null});
+const issueKinds=[
+ ['','Choose the main problem (optional)'],
+ ['loading','Model never loads / loading spinner'],
+ ['no-3d','Text or placeholder instead of 3D'],
+ ['explode','Explode / Reassemble is wrong'],
+ ['selection','Tap, isolate, or select does not work'],
+ ['appearance','Anatomy looks inaccurate / missing parts'],
+ ['controls','Camera, zoom, or layout problem'],
+ ['other','Other problem']
+];
+const initial=()=>({version:1,checks:{},issueDetails:{},device:'',seconds:'',notes:'',diagnostics:null});
 let state=initial();
 let canSave=true;
 try{
@@ -28,6 +38,15 @@ try{
  if(prior&&prior.version===1&&typeof prior.checks==='object'){
   for(const {id} of [...labs,...usability]){
    if(allowed.includes(prior.checks[id]))state.checks[id]=prior.checks[id];
+  }
+  if(prior.issueDetails&&typeof prior.issueDetails==='object'){
+   for(const {id} of labs){
+    const detail=prior.issueDetails[id];
+    if(!detail||typeof detail!=='object')continue;
+    const kind=issueKinds.some(([key])=>key&&key===detail.kind)?detail.kind:'';
+    const note=typeof detail.note==='string'?detail.note.slice(0,240):'';
+    if(kind||note)state.issueDetails[id]={kind,note};
+   }
   }
   state.device=typeof prior.device==='string'?prior.device.slice(0,100):'';
   state.seconds=typeof prior.seconds==='string'?prior.seconds.slice(0,20):'';
@@ -64,11 +83,41 @@ function taskCard(task,parent,lab){
   radio.checked=(state.checks[task.id]||'not-tested')===value;
   radio.addEventListener('change',()=>{
    if(!radio.checked)return;
-   state.checks[task.id]=value;save();updateProgress();
+   state.checks[task.id]=value;
+   if(lab)section.querySelector('.issue-detail').hidden=value!=='issue';
+   save();updateProgress();
   });
   label.append(radio,document.createTextNode(labelText));options.append(label);
  }
- field.append(options);section.append(field);parent.append(section);
+ field.append(options);section.append(field);
+ if(lab){
+  const issueDetail=elem('div','issue-detail');
+  issueDetail.dataset.issueDetail=task.id;
+  issueDetail.hidden=(state.checks[task.id]||'not-tested')!=='issue';
+  const selectLabel=elem('label','field','What went wrong in '+task.label+'?');
+  const select=document.createElement('select');select.name='issue-kind-'+task.id;
+  select.dataset.issueKind=task.id;
+  for(const [key,label] of issueKinds){
+   const option=document.createElement('option');option.value=key;option.textContent=label;select.append(option);
+  }
+  select.value=state.issueDetails[task.id]?.kind||'';
+  select.addEventListener('change',()=>{
+   const detail=state.issueDetails[task.id]||{kind:'',note:''};
+   state.issueDetails[task.id]={...detail,kind:select.value};save();
+  });
+  selectLabel.append(select);issueDetail.append(selectLabel);
+  const noteLabel=elem('label','field','What did you see? (optional, maximum 240 characters)');
+  const note=document.createElement('textarea');note.dataset.issueNote=task.id;
+  note.rows=2;note.maxLength=240;
+  note.placeholder='Example: Explode shows no movement, but 3D rotation works.';
+  note.value=state.issueDetails[task.id]?.note||'';
+  note.addEventListener('input',()=>{
+   const detail=state.issueDetails[task.id]||{kind:'',note:''};
+   state.issueDetails[task.id]={...detail,note:note.value};save();
+  });
+  noteLabel.append(note);issueDetail.append(noteLabel);section.append(issueDetail);
+ }
+ parent.append(section);
 }
 for(const item of labs)taskCard(item,$('lab-tasks'),true);
 for(const item of usability)taskCard(item,$('device-tasks'),false);
@@ -137,7 +186,16 @@ function buildReport(){
   '',
   '3D model tests:'
  ];
- for(const x of labs)lines.push('- '+x.label+': '+(state.checks[x.id]||'not-tested'));
+ for(const x of labs){
+  const result=state.checks[x.id]||'not-tested';
+  const details=state.issueDetails[x.id]||{};
+  lines.push('- '+x.label+': '+result);
+  if(result==='issue'){
+   const kind=issueKinds.find(([key])=>key===details.kind);
+   if(kind&&kind[0])lines.push('  Problem: '+kind[1]);
+   if(details.note?.trim())lines.push('  Observation: '+details.note.trim().replace(/\s+/g,' '));
+  }
+ }
  lines.push('','Usability and accessibility tests:');
  for(const x of usability)lines.push('- '+x.label+': '+(state.checks[x.id]||'not-tested'));
  lines.push('','Observations: '+(state.notes.trim()||'None provided'),
@@ -166,6 +224,14 @@ $('clear-review').addEventListener('click',()=>{
  for(const task of [...labs,...usability]){
   const choice=document.querySelector('[name="review-'+task.id+'"][value="not-tested"]');
   if(choice)choice.checked=true;
+ }
+ for(const task of labs){
+  const detail=document.querySelector('[data-issue-detail="'+task.id+'"]');
+  if(detail)detail.hidden=true;
+  const kind=document.querySelector('[data-issue-kind="'+task.id+'"]');
+  if(kind)kind.value='';
+  const note=document.querySelector('[data-issue-note="'+task.id+'"]');
+  if(note)note.value='';
  }
  for(const id of ['device-note','load-time','observations','report'])$(id).value='';
  try{localStorage.removeItem(KEY);canSave=true;}catch{canSave=false;}

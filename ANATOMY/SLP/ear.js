@@ -122,7 +122,7 @@ function fallback(reason){
  $('ear-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['ear-focus','ear-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-ear-view]'))button.disabled=true;
- message('3D graphics unavailable: '+reason+'. Read and select all 16 right-ear source groups below. Reload to retry graphics.');
+ message('3D graphics unavailable: '+reason+'. Read and select all 16 right-ear source groups below. Choose Retry 3D to attempt loading again.');
 }
 function initScene(){
  try{
