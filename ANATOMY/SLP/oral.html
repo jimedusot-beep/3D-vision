@@ -87,6 +87,7 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <button type="button" id="oral-assemble" disabled>Reassemble</button>
 </div>
 <p id="oral-explode-status" class="explode-status" role="status" aria-live="polite">3D separation is available after the licensed source model loads.</p>
+<p class="explode-status">Study layout: matching salivary glands and ducts move together in small groups. The turquoise-highlighted structure is the one you selected. Explosion offsets are <strong>not physical movement or anatomical positions</strong>.</p>
 
 <p class="warning"><strong>Source limitation:</strong> The 15 objects are derived from Z-Anatomy FBX scene data and were transformed by OrganUI into a GLB. Illustrative color and source shape are not clinical measurements. The salivary duct surfaces do not model fluid motion, and the static tongue cannot show speech movements.</p>
 </div>
@@ -111,7 +112,14 @@ footer{padding:1rem;border-top:1px solid #3e6270;color:#c0d9df}
 <li><strong>Oral preparation:</strong> Saliva moistens food, supporting chewing and the oral stage of swallowing. Saliva travels through ducts that open into the mouth.</li>
 <li><strong>Upper neck:</strong> The hyoid helps anchor muscles involved in tongue, jaw, and laryngeal movement. Do not infer actual muscle trajectories from this simplified surface model.</li>
 </ol>
-<p>Study activity: Find both parotid glands and ducts, both submandibular glands and ducts, both sublingual glands, then identify the tongue, mandible and hyoid. Switch to <strong>Isolate selected</strong> to compare them.</p>
+<p>Study activity: Find both parotid glands and ducts, both submandibular glands and ducts, both sublingual glands, then identify the tongue, mandible and hyoid. Switch to <strong>Isolate selected</strong> to compare them. The selected 3D mesh highlights in bright turquoise.</p>
+<div class="controls" role="group" aria-label="Highlight a structure mentioned in the lesson">
+<button type="button" data-oral-study="tongue">Highlight tongue</button>
+<button type="button" data-oral-study="mandible">Highlight mandible</button>
+<button type="button" data-oral-study="hyoid-bone">Highlight hyoid</button>
+<button type="button" data-oral-study="right-parotid-gland">Highlight right parotid gland</button>
+<button type="button" data-oral-study="right-parotid-duct">Highlight right parotid duct</button>
+</div>
 <p><a href="./systems.html?system=articulation">Return to articulation</a> · <a href="./systems.html?system=swallowing">Return to swallowing</a></p>
 </section>
 </main><footer>H.E.R.B.I.E. SLP Atlas · Personal study only · 15 licensed Z-Anatomy mesh groups · no patient data · no anatomical movement or clinical diagnostics.</footer>
