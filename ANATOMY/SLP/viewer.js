@@ -628,7 +628,7 @@ revealReview.onclick=()=>{
   answer.hidden=false;
   // Reveal only AFTER the learner requests the answer: avoid giving away a quiz.
   const sourceId=modelIdForLesson(prompt.structure_id);
-  if(sourceId)selectSourcePart(sourceId);
+  if(sourceId&&renderer&&!graphicsLost)selectSourcePart(sourceId);
   explanation.textContent='Why: '+prompt.explanation;
   explanation.hidden=false;
   sources.replaceChildren();
