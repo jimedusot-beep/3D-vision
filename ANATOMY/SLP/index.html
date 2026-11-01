@@ -12,7 +12,8 @@ header{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;align
 header h1{font-size:1.25rem;margin:0}header p{margin:0;color:#b6c9d4;font-size:.85rem}
 .workspace-nav{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}.workspace-nav>*{padding:.45rem .7rem;border:1px solid #64839a;border-radius:7px}.workspace-nav [aria-current=page]{background:#17615b;color:#fff}
 main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height:calc(100dvh - 102px);min-height:450px}
-#stage{position:relative;min-height:360px;overflow:hidden;background:radial-gradient(circle,#263e4c,#0e1a26)}
+#viewer-column{display:flex;flex-direction:column;min-width:0;min-height:0}
+#stage{position:relative;flex:1 1 auto;min-height:360px;overflow:hidden;background:radial-gradient(circle,#263e4c,#0e1a26)}
 /* The drawing buffer uses device pixels, but the visible canvas must remain
    exactly stage-sized in CSS pixels. Without this, Retina/iOS WebKit can
    display a giant clipped lower-right fragment of the 3D scene. */
@@ -23,12 +24,12 @@ main{display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,330px);height
 #stage button{min-height:40px}
 #view-switch{position:absolute;z-index:5;top:.75rem;left:.75rem;display:flex;gap:.3rem;padding:.25rem;border-radius:12px;background:#0d1a27e8;border:1px solid #526d7c}
 #view-switch button{padding:.45rem .8rem;text-align:center}
-#explode-controls{position:absolute;z-index:6;top:3.9rem;left:.6rem;width:min(385px,calc(100% - 1.2rem));border:1px solid #80b4bb;border-radius:12px;background:#112d3df2;padding:.6rem .75rem;box-shadow:0 4px 18px #0005}
+#explode-controls{position:relative;z-index:1;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.5rem;align-items:center;width:100%;border:1px solid #80b4bb;background:#112d3d;padding:.55rem .75rem}
 #explode-controls[hidden]{display:none}
-#explode-controls label{display:flex;align-items:center;justify-content:space-between;font-weight:650;gap:.5rem}
-#explode-controls input{width:100%;height:38px;accent-color:#70d5bd;touch-action:pan-y}
+#explode-controls label{display:flex;align-items:center;justify-content:space-between;font-weight:650;gap:.5rem;margin:0}
+#explode-controls input{width:100%;min-width:0;height:44px;accent-color:#70d5bd;touch-action:pan-y}
 #explode-controls button{padding:.4rem .75rem}
-#explode-warning{font-size:.77rem;line-height:1.32;margin:.3rem 0 0;color:#dfecf0}
+#explode-warning{grid-column:1/-1;font-size:.77rem;line-height:1.32;margin:0;color:#dfecf0}
 #view-switch [aria-pressed="true"]{background:#17615b;color:#fff}
 #three-view-controls{position:absolute;z-index:4;top:.85rem;right:.7rem;display:flex;gap:.3rem}
 #three-view-controls[hidden]{display:none}
@@ -105,17 +106,19 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 #status{color:#c5dfe6;font-size:.84rem}small{color:#b7cad5}#webgl-fallback{position:relative;z-index:1;max-width:34rem;margin:1.5rem;padding:1rem;border:1px solid #a6bdd0;border-radius:8px;background:#243745;color:#fff}.study-panel{margin-top:1rem;padding:.8rem;border:1px solid #405568;border-radius:8px;background:#1b3040}.study-panel h2{margin-top:0}.practice-rating{border:1px solid #64839a;border-radius:7px;margin-top:.65rem;padding:.5rem}.practice-rating legend{padding:0 .35rem;font-size:.88rem}.study-panel ol{margin:.5rem 0;padding-left:1.4rem}.study-panel li{margin:.6rem 0}.study-panel li p{margin:.2rem 0;font-size:.9rem}.study-panel li a{display:inline-block;margin-right:.5rem;font-size:.85rem}.study-panel p{margin:.5rem 0}.study-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin:.55rem 0}.study-actions button{flex:1 1 130px}.study-sources a{display:block;overflow-wrap:anywhere;margin:.3rem 0}.coverage-note{margin-top:1rem}
 @media(max-width:760px){
  main{height:auto;display:flex;flex-direction:column;min-height:0}
- #stage.mode-map{height:auto;min-height:0;overflow:visible;display:flex;flex-direction:column}
+ #stage.mode-map{flex:none;height:auto;min-height:0;overflow:visible;display:flex;flex-direction:column}
  #stage.mode-map #view-switch{position:relative;top:auto;left:auto;align-self:flex-start;margin:.8rem .8rem 0}
  #stage.mode-map #concept-map{position:relative;inset:auto;overflow:visible;padding:1.1rem .8rem 1rem;width:100%}
  #stage.mode-map #selection-ribbon{position:sticky;top:.5rem;inset-inline:auto;margin:0 .8rem .6rem;z-index:9;box-shadow:0 5px 18px #0006}
  #stage.mode-map #notice{position:relative;inset:auto;margin:.3rem .8rem .8rem}
- #stage.mode-three{height:clamp(340px,53dvh,520px);min-height:340px;overflow:hidden}
+ #viewer-column{height:auto}
+ #stage.mode-three{flex:none;height:clamp(340px,53dvh,520px);min-height:340px;overflow:hidden}
  #stage.mode-three #view-switch{top:.6rem;left:.6rem}
  #stage.mode-three #three-view-controls{top:3.8rem;right:.6rem}
- #stage.mode-three #explode-controls{top:6.65rem;left:.55rem;width:calc(100% - 1.1rem);padding:.45rem .6rem}
- #stage.mode-three:has(#explode-controls:not([hidden])){height:clamp(430px,72dvh,590px);min-height:430px}
- #stage.mode-three:has(#explode-controls:not([hidden])) #notice{bottom:.5rem}
+ #explode-controls{grid-template-columns:1fr auto;padding:.6rem .75rem}
+ #explode-controls input{grid-column:1/-1;grid-row:2}
+ #explode-controls button{grid-column:2;grid-row:1}
+ #explode-warning{grid-column:1/-1;grid-row:3}
  #stage.mode-three #selection-ribbon{left:.5rem;right:.5rem;bottom:3.8rem}
  #stage.mode-three #selection-ribbon button{padding:.4rem .55rem}
  aside{overflow:visible;border-left:0;border-top:1px solid #405568;padding:.8rem;min-height:15rem}
@@ -143,6 +146,7 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <header><div><h1>H.E.R.B.I.E. · Larynx Anatomy Lab</h1><p>Source-derived surface geometry; not clinically validated. <a href="./systems.html">Explore all SLP systems</a>.</p></div>
 <nav class="workspace-nav" aria-label="Project workspaces"><a href="./systems.html">All SLP systems</a><a href="../../index.html">Robot parts &amp; printing — Back to mechanical workshop</a><strong aria-current="page">Larynx 3D lab</strong></nav></header>
 <main>
+<div id="viewer-column">
 <section id="stage" class="mode-map" aria-label="Functional study map; select any structure to read about it">
 <div id="view-switch" role="group" aria-label="Choose anatomy presentation">
 <button type="button" id="mode-map" aria-pressed="true">Study map</button>
@@ -161,12 +165,6 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 </div>
 <div id="concept-groups" class="map-grid"></div>
 </section>
-<div id="explode-controls" role="group" aria-label="Separate anatomical groups for study" hidden>
-<label for="explode-amount">Separation <output for="explode-amount" id="explode-value">65%</output></label>
-<input id="explode-amount" type="range" min="0" max="100" step="5" value="65" aria-describedby="explode-warning">
-<button id="explode-assemble" type="button">Reassemble</button>
-<p id="explode-warning">Study layout only. Parts retain their shapes but are <strong>not in anatomical positions</strong>.</p>
-</div>
 <div id="three-view-controls" role="group" aria-label="3D camera presets" hidden>
 <button id="camera-front" type="button">Front</button><button id="camera-back" type="button">Back</button>
 <button id="camera-left" type="button">Left</button><button id="camera-right" type="button">Right</button>
@@ -176,6 +174,13 @@ label{display:flex;gap:.5rem;align-items:center;margin:.65rem 0}
 <div id="overlay" aria-hidden="true"></div>
 <div id="notice">Learning map only: groups represent functions, not physical position. No anatomy measurements or clinical claims.</div>
 </section>
+<div id="explode-controls" role="group" aria-label="Separate anatomical groups for study" hidden>
+<label for="explode-amount">Separation <output for="explode-amount" id="explode-value">65%</output></label>
+<input id="explode-amount" type="range" min="0" max="100" step="5" value="65" aria-describedby="explode-warning">
+<button id="explode-assemble" type="button">Reassemble</button>
+<p id="explode-warning">Study layout only. Parts retain their shapes but are <strong>not in anatomical positions</strong>.</p>
+</div>
+</div>
 <aside id="study-sidebar" aria-label="Anatomy study and controls">
 <nav id="mobile-tabs" aria-label="Anatomy learning sections">
 <button type="button" data-mobile-target="panel-structures" aria-controls="panel-structures" aria-pressed="true">1 · Parts</button>
