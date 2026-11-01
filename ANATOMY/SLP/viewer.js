@@ -4,6 +4,7 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {modelIdForLesson,lessonForModelId,modelStructureNames,modelSelectionNote} from './reference-mapping.js';
 import {explosionOffset,assertExplosionCoverage} from './exploded-study.js';
+import {visibleSourceBounds} from './visible-source-bounds.js';
 import {sourceStudy,sourceCategories,getSourceStudy} from './source-study.js';
 import {guidedLarynxTour} from './guided-tour.js';
 import {buildIdentificationDeck,checkIdentification} from './identification-challenge.js';
@@ -348,12 +349,15 @@ function applyReferenceState(){
 }
 function frameRealModel(direction='front'){
   if(!referenceRoot)return;
-  const bounds=new THREE.Box3().setFromObject(referenceRoot);
+  const bounds=visibleSourceBounds(THREE,referenceRoot);
+   if(bounds.isEmpty())return;
   const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
   const aspect=Math.max(.4,stage.clientWidth/Math.max(1,stage.clientHeight));
   const tan=Math.tan(THREE.MathUtils.degToRad(camera.fov)*.5);
   const distance=Math.max(size.y/(2*tan*.72),size.x/(2*tan*aspect*.72),size.z*1.8,2.5);
-  const d=Math.min(60,distance);
+  const d=Math.max(2.5,distance);
+   camera.far=Math.max(200,d+size.length()*3);
+   camera.updateProjectionMatrix();
   const viewVector=direction==='current'&&orbit
     ?camera.position.clone().sub(orbit.target).normalize()
     :direction==='left'?new THREE.Vector3(1,0,0)

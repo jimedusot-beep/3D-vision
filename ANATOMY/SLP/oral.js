@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {attachSourceExplosion} from './source-explode.js';
+import {visibleSourceBounds} from './visible-source-bounds.js';
 import {oralParts,oralById,oralRegions,verifyOralNodes} from './oral-manifest.js';
 const $=id=>document.getElementById(id);
 const stage=$('oral-stage');
@@ -78,7 +79,7 @@ $('oral-all').addEventListener('click',showAll);
 function frame(object,orientation='front'){
  if(!renderer||!camera||!controls||!object)return;
  object.updateMatrixWorld(true);
- const bounds=new THREE.Box3().setFromObject(object);
+ const bounds=visibleSourceBounds(THREE,object);
  if(bounds.isEmpty())return;
  const center=bounds.getCenter(new THREE.Vector3());
  const size=bounds.getSize(new THREE.Vector3());
@@ -87,7 +88,10 @@ function frame(object,orientation='front'){
  const fov=THREE.MathUtils.degToRad(camera.fov);
  const fitHeight=largest/(2*Math.tan(fov/2));
  const fitWidth=fitHeight/(width/height);
- const distance=Math.min(45,Math.max(2,Math.max(fitHeight,fitWidth)*1.6));
+ const distance=Math.max(2,Math.max(fitHeight,fitWidth)*1.6);
+ camera.far=Math.max(200,distance+largest*3);
+ camera.updateProjectionMatrix();
+ controls.maxDistance=Math.max(70,distance*2);
  const prior=camera.position.clone().sub(controls.target);
  const keepView=orientation==='current'&&prior.lengthSq()>1e-9;
  const vector=keepView?prior.normalize():orientation==='back'?new THREE.Vector3(0,0,-1):
