@@ -1,7 +1,7 @@
 // Licensed source-mesh exploded-study layout. No procedural anatomy, cloning,
 // resampling, mesh deformation or cross-model registration.
 // Offsets are intentionally diagrammatic and NOT anatomical positions/forces.
-export function createSourceExplosion({THREE,model,groups}){
+export function createSourceExplosion({THREE,model,groups,layout=null}){
  if(!model||!Array.isArray(groups)||groups.length<2)throw Error('Explosion needs multiple verified source groups');
  model.updateMatrixWorld(true);
  // Only verified study meshes determine the explosion scale and center.
@@ -32,6 +32,8 @@ export function createSourceExplosion({THREE,model,groups}){
  const center=studyBounds.getCenter(new THREE.Vector3());
  const size=studyBounds.getSize(new THREE.Vector3());
  const span=Math.max(size.x,size.y,size.z,0.0001);
+ const custom=layout?layout({THREE,parts,center,span}):null;
+ if(custom!==null&&!(custom instanceof Map))throw Error('Source explosion layout must return a group offset Map');
  const records=[];
  for(let i=0;i<parts.length;i++){
   const {id,meshes,partBounds}=parts[i];
@@ -44,10 +46,15 @@ export function createSourceExplosion({THREE,model,groups}){
   const direction=radial.length()>span*.035
    ?radial.normalize().multiplyScalar(.75).addScaledVector(seed,.55).normalize():seed;
   const centerDistance=partBounds.getSize(new THREE.Vector3()).length();
-  const displacement=span*(.43+Math.min(.27,centerDistance/span*.16));
+  const distance=span*(.43+Math.min(.27,centerDistance/span*.16));
+  const customVector=custom?.get(id);
+  if(custom&&(customVector?.isVector3!==true||![
+    customVector.x,customVector.y,customVector.z].every(Number.isFinite)))
+    throw Error('Invalid source offset for '+id);
+  const displacement=customVector?customVector.clone():direction.multiplyScalar(distance);
   for(const mesh of meshes)records.push({
    mesh,id,original:mesh.position.clone(),
-   displacement:direction.clone().multiplyScalar(displacement)
+   displacement:displacement.clone()
   });
  }
  function setAmount(value){
@@ -71,13 +78,13 @@ export function createSourceExplosion({THREE,model,groups}){
  }
  return Object.freeze({setAmount,groupCount:groups.length,meshCount:records.length});
 }
-export function attachSourceExplosion({THREE,prefix,stage,model,groups,render,frame}){
+export function attachSourceExplosion({THREE,prefix,stage,model,groups,render,frame,layout=null,layoutDescription=''}){
  const $=name=>document.getElementById(prefix+'-'+name);
  const toggle=$('explode'),assemble=$('assemble'),slider=$('explode-amount');
  const output=$('explode-value'),status=$('explode-status');
  if(!toggle||!assemble||!slider||!output||!status)
   throw Error('Source explosion controls missing: '+prefix);
- const explosion=createSourceExplosion({THREE,model,groups});
+ const explosion=createSourceExplosion({THREE,model,groups,layout});
  let amount=0;
  function update(value){
   amount=Math.max(0,Math.min(100,Math.round(Number(value)/5)*5));
@@ -89,7 +96,7 @@ export function attachSourceExplosion({THREE,prefix,stage,model,groups,render,fr
   slider.value=String(amount);
   output.textContent=amount+'%';
   status.textContent=amount>0?
-   '3D source meshes separated by '+amount+'% for study. These are NOT anatomical positions.':
+   '3D source meshes separated by '+amount+'% for study. '+(layoutDescription||'These are NOT anatomical positions.'):
    '3D source meshes assembled in their original relative positions.';
   // Keep the learner's chosen view while refitting separated mesh bounds.
   // Explicit camera presets and Reset remain the only controls that change angle.
