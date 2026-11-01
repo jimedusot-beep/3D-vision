@@ -122,7 +122,7 @@ function fallback(reason){
  $('oral-explode-status').textContent='3D separation unavailable: use the source structure list and written notes.';
  for(const id of ['oral-focus','oral-isolate'])$(id).disabled=true;
  for(const button of document.querySelectorAll('[data-oral-view]'))button.disabled=true;
- message('3D graphics unavailable: '+reason+'. Read and select all 13 written source groups below. Reload to retry graphics.');
+ message('3D graphics unavailable: '+reason+'. Read and select all 15 written source groups below. Choose Retry 3D to attempt loading again.');
 }
 function initScene(){
  try{
