@@ -55,8 +55,12 @@ try {
     assert.match(await page.locator('#source-note-name').textContent(),/posterior cricoarytenoid/i);
     assert.match(await page.locator('#source-note-function').textContent(),/abduct/i);
     assert.equal(await page.locator('#source-note-links a').count(),1);
+    assert.equal(await page.locator('#stage').getAttribute('data-highlighted-group'),'posterior-crico-arytenoid');
     await page.locator('#layer-options input[value="muscle"]').uncheck();
     assert.match(await page.locator('#layer-count').textContent(),/of 20 source groups enabled/);
+    await page.locator('#source-select').selectOption('cricothyroid-muscle');
+    assert.equal(await page.locator('#layer-options input[value="muscle"]').isChecked(),true,
+      'The actively highlighted structure cannot remain hidden by a category filter');
     await page.locator('#source-show-all').click();
     assert.equal(await page.locator('#layer-options input:checked').count(),5);
     await page.locator('#camera-left').click();
@@ -70,6 +74,13 @@ try {
     await page.locator('#mode-explode').click();
     assert.equal(await page.locator('#mode-explode').getAttribute('aria-pressed'),'true');
     assert.equal(await page.locator('#explode-controls').isVisible(),true);
+    assert.equal(await page.locator('#explode-controls').evaluate(el=>el.parentElement.id),'viewer-column');
+    const noObstruction=await page.evaluate(()=>{
+      const canvas=document.querySelector('#stage').getBoundingClientRect();
+      const slider=document.querySelector('#explode-controls').getBoundingClientRect();
+      return slider.top>=canvas.bottom-1;
+    });
+    assert.equal(noObstruction,true,'The explosion percentage panel must not obscure the 3D model');
     assert.match(await page.locator('#explode-warning').textContent(),/not in anatomical positions/);
     assert.equal(await page.locator('#stage').getAttribute('data-explosion-amount'),'65');
     await page.locator('#explode-amount').evaluate(input=>{
@@ -359,6 +370,11 @@ try {
     await touch.locator('#camera-front').click();
     await touch.locator('#mode-explode').click();
     assert.equal(await touch.locator('#explode-controls').isVisible(),true);
+    assert.equal(await touch.evaluate(()=>{
+      const stage=document.querySelector('#stage').getBoundingClientRect();
+      const bar=document.querySelector('#explode-controls').getBoundingClientRect();
+      return bar.top>=stage.bottom-1&&bar.width<=innerWidth+1;
+    }),true,'On Retina iPhone the separation panel must be below (not over) the model');
     assert.equal(await touch.locator('#stage').getAttribute('data-explosion-amount'),'65');
     await touch.locator('#explode-amount').evaluate(input=>{
       input.value='85';input.dispatchEvent(new Event('input',{bubbles:true}));
@@ -401,6 +417,8 @@ try {
   await touch.locator('#tour-reveal').click();
   assert.match(await touch.locator('#tour-answer').textContent(),/endocrine gland/);
   await touch.locator('#tour-next').click();
+  assert.equal(await touch.locator('#stage').getAttribute('data-highlighted-group'),'arytenoid-cartilages',
+    'Guided anatomy tour should select the part it describes automatically');
   assert.match(await touch.locator('#tour-progress').textContent(),/Step 2 of 6/);
   assert.equal(await touch.locator('#tour-answer').isHidden(),true);
   await touch.locator('#tour-view').click();
