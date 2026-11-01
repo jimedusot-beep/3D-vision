@@ -193,7 +193,7 @@ function buildReport(){
   if(result==='issue'){
    const kind=issueKinds.find(([key])=>key===details.kind);
    if(kind&&kind[0])lines.push('  Problem: '+kind[1]);
-   if(details.note?.trim())lines.push('  Observation: '+details.note.trim().replace(/\\s+/g,' '));
+   if(details.note?.trim())lines.push('  Observation: '+details.note.trim().replace(/\s+/g,' '));
   }
  }
  lines.push('','Usability and accessibility tests:');
