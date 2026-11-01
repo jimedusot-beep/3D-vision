@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {attachSourceExplosion} from './source-explode.js';
+import {createOralClusterLayout} from './oral-explode-layout.js';
 import {visibleSourceBounds} from './visible-source-bounds.js';
 import {oralParts,oralById,oralRegions,verifyOralNodes} from './oral-manifest.js';
 const $=id=>document.getElementById(id);
@@ -35,8 +36,13 @@ function show(){
  for(const mesh of nodes){
   const part=oralById.get(mesh.name);
   mesh.visible=activeRegions.has(part.region)&&(!isolate||mesh.name===selected);
-  mesh.material.emissive?.setHex(mesh.name===selected?0x286f5f:0x000000);
+  const active=mesh.name===selected;
+  if(mesh.material.emissive){
+   mesh.material.emissive.setHex(active?0x1be2bf:0x000000);
+   mesh.material.emissiveIntensity=active?1.1:0;
+  }
  }
+ stage.dataset.highlightedGroup=selected||'';
  draw();
 }
 function select(id){
@@ -58,6 +64,13 @@ function select(id){
  show();
 }
 $('oral-select').addEventListener('change',e=>select(e.target.value||null));
+for(const button of document.querySelectorAll('[data-oral-study]')){
+ button.addEventListener('click',()=>{
+  select(button.dataset.oralStudy);
+  if(renderer&&model)frame(nodes.find(mesh=>mesh.name===selected)||model,'current');
+  stage.scrollIntoView({block:'start',behavior:'auto'});
+ });
+}
 $('oral-isolate').addEventListener('click',()=>{
  if(!selected||!renderer||!model)return;
  isolate=!isolate;$('oral-isolate').setAttribute('aria-pressed',String(isolate));show();
@@ -199,6 +212,8 @@ async function load(){
   explosion=attachSourceExplosion({
    THREE,prefix:'oral',stage,model,
    groups:nodes.map(mesh=>({id:mesh.name,meshes:[mesh]})),
+   layout:createOralClusterLayout,
+   layoutDescription:'Related glands and ducts move in study clusters; tongue, jaw and hyoid shift slightly. NOT anatomical positions.',
    render:draw,frame
   });
   stage.dataset.modelStatus='ready';retry3D.hide();

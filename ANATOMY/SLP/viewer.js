@@ -19,7 +19,15 @@ const byId=new Map(catalog.structures.map(s=>[s.id,s]));
 const references=new Map(catalog.references.map(s=>[s.id,s]));
 const shownCategories=new Set(Object.keys(sourceCategories));
 function selectSourcePart(id){
-  if(!getSourceStudy(id))return;
+  const part=getSourceStudy(id);
+  if(!part)return;
+  // A previously hidden category must not hide the exact part being studied.
+  if(!shownCategories.has(part.category)){
+    shownCategories.add(part.category);
+    const box=[...$('layer-options').querySelectorAll('input')].find(e=>e.value===part.category);
+    if(box)box.checked=true;
+    updateLayerCount();
+  }
   view.selected=null;view.isolated=null;
   updateReferenceSelection(id);
   renderState();
@@ -73,7 +81,7 @@ $('source-show-all').addEventListener('click',()=>{
   applyReferenceState();updateLayerCount();
 });
 updateLayerCount();
-let tourStep=0;
+let tourStep=0, tourActivated=false;
 function showTourStep(){
   const t=guidedLarynxTour[tourStep];
   $('tour-progress').textContent='Step '+(tourStep+1)+' of '+guidedLarynxTour.length;
@@ -84,10 +92,12 @@ function showTourStep(){
   $('tour-answer').hidden=true;
   $('tour-previous').disabled=tourStep===0;
   $('tour-next').disabled=tourStep===guidedLarynxTour.length-1;
+  // Advance the same anatomy highlight as the spoken/written lesson.
+  if(tourActivated)selectSourcePart(t.id);
 }
-$('tour-previous').addEventListener('click',()=>{tourStep=Math.max(0,tourStep-1);showTourStep();});
-$('tour-next').addEventListener('click',()=>{tourStep=Math.min(guidedLarynxTour.length-1,tourStep+1);showTourStep();});
-$('tour-reveal').addEventListener('click',()=>{$('tour-answer').hidden=false;});
+$('tour-previous').addEventListener('click',()=>{tourActivated=true;tourStep=Math.max(0,tourStep-1);showTourStep();});
+$('tour-next').addEventListener('click',()=>{tourActivated=true;tourStep=Math.min(guidedLarynxTour.length-1,tourStep+1);showTourStep();});
+$('tour-reveal').addEventListener('click',()=>{tourActivated=true;selectSourcePart(guidedLarynxTour[tourStep].id);$('tour-answer').hidden=false;});
 $('tour-view').addEventListener('click',()=>{
   const id=guidedLarynxTour[tourStep].id;
   if(!renderer||graphicsLost){
@@ -329,8 +339,9 @@ function updateReferenceSelection(id) {
   $('model-structure').hidden=!id;
 }
 function applyReferenceState(){
-  if(!referenceRoot)return;
   const selected=referenceSelected||modelIdForLesson(view.selected);
+  stage.dataset.highlightedGroup=selected||'';
+  if(!referenceRoot)return;
   const isolated=modelIdForLesson(view.isolated);
   for(const mesh of referenceMeshes){
     const id=mesh.userData.structureId||mesh.name;
@@ -342,7 +353,12 @@ function applyReferenceState(){
       m.transparent=!!faded;
       m.opacity=faded ? 0.18 : 1;
       m.depthWrite=!faded;
-      if(m.emissive)m.emissive.setHex(id===selected?0x203c32:0x000000);
+      // Bright emissive aqua is a low-cost static highlight (not an anatomical glow).
+      // Do not recolor or change the topology of original source meshes.
+      if(m.emissive){
+        m.emissive.setHex(id===selected?0x1be2bf:0x000000);
+        m.emissiveIntensity=id===selected?1.1:0;
+      }
       m.needsUpdate=true;
     }
   }
@@ -610,6 +626,9 @@ revealReview.onclick=()=>{
   const prompt=prompts.get(practice.currentId);
   answer.textContent=prompt.answer;
   answer.hidden=false;
+  // Reveal only AFTER the learner requests the answer: avoid giving away a quiz.
+  const sourceId=modelIdForLesson(prompt.structure_id);
+  if(sourceId&&renderer&&!graphicsLost)selectSourcePart(sourceId);
   explanation.textContent='Why: '+prompt.explanation;
   explanation.hidden=false;
   sources.replaceChildren();
