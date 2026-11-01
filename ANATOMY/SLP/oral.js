@@ -64,6 +64,13 @@ function select(id){
  show();
 }
 $('oral-select').addEventListener('change',e=>select(e.target.value||null));
+for(const button of document.querySelectorAll('[data-oral-study]')){
+ button.addEventListener('click',()=>{
+  select(button.dataset.oralStudy);
+  if(renderer&&model)frame(nodes.find(mesh=>mesh.name===selected)||model,'current');
+  stage.scrollIntoView({block:'start',behavior:'auto'});
+ });
+}
 $('oral-isolate').addEventListener('click',()=>{
  if(!selected||!renderer||!model)return;
  isolate=!isolate;$('oral-isolate').setAttribute('aria-pressed',String(isolate));show();
