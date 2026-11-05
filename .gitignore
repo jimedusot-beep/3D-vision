@@ -4,6 +4,25 @@ dist/
 test-results/
 *.log
 
+# Local/private operator material: never publish exports or credentials.
+# This prevents normal accidental adds; it does NOT remove previously committed files.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+private/
+private-data/
+local-evidence/
+bench-evidence/
+.local/
+*.3dv
+*.sqlite
+*.sqlite3
+
 # Pinned open anatomical model is downloaded, SHA-256 verified at build time.
 public/models/slp/*.glb
 public/models/slp/*.tmp
