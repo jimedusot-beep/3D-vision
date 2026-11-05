@@ -16,7 +16,7 @@ Full runtime dependency license texts are distributed in `public/licenses/` and 
 
 ## Third-party anatomy data (separate from software licenses)
 
-**Important:** The educational 3D anatomy models are not MIT-licensed merely because Three.js and this workshop's own code are. Each GLB retains its own copyright, attribution, share-alike license and modifications. The published anatomical viewers provide the more detailed individual mesh identifiers, pinned source commits, transformation notices, and limitations in [SLP evidence and license notes](ANATOMY/SLP/about.html).
+**Important:** The educational 3D anatomy models are not covered by this workshop's Apache-2.0 software license or by Three.js's MIT license. Each GLB retains its own copyright, attribution, share-alike license and modifications. The published anatomical viewers provide the more detailed individual mesh identifiers, pinned source commits, transformation notices, and limitations in [SLP evidence and license notes](ANATOMY/SLP/about.html).
 
 | Anatomy model | Original / adapted source | Source data license | In Atlas |
 | --- | --- | --- | --- |
