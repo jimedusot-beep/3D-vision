@@ -69,3 +69,8 @@ Review issue: https://github.com/jimedusot-beep/3D-vision/issues/15
 ### Current automated evidence
 
 The project has [public runtime audit tests](../../tests/slp-runtime-audit.mjs) and [synthetic slower-network profiling](../../tests/slp-slow-mobile.mjs). Neither is a substitute for the physical-telephone and expert reviews above.
+
+
+## Repeat the Oral view measurement for issue 31
+
+Record iPhone model, iOS, Safari or Home Screen launch, orientation, network and commit or release. Start a screen recording. Open Oral from the study hub and note the elapsed time from tap to the first usable model or fallback. Select Tongue and time the visible confirmation in the structure panel. Rotate the phone once and record any blank canvas, fallback, reload or lost selection. Repeat three times and report the individual times, distinguishing first and repeat opens. Keep the original observations in the browser while testing. The headless fixture logs time through automation and uses local model bytes, so compare like runs.
