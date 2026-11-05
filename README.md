@@ -122,3 +122,7 @@ Original project software and its accompanying software documentation are licens
 See [third-party notices](THIRD_PARTY_NOTICES.md), [anatomy evidence and attribution](ANATOMY/SLP/about.html), and `public/licenses/`. Anatomy datasets and meshes retain their source-specific terms, including the documented CC BY-SA licenses.
 
 CAD files, models, datasets, images, audio, fonts and other non-software assets are not granted a new license by this software notice. Use their existing asset-specific terms. Where provenance or permission is unresolved, this notice does not supply redistribution permission; record the source, author, exact license and modifications before redistributing that material.
+
+## Related repos
+
+[Herbie hardware](https://github.com/jimedusot-beep/Herbie-cyborg-hardware) maintains electronics and component mappings. [Project McGruber](https://github.com/jimedusot-beep/project-mcgruber) maintains the salvage electronics guides and engineering hub.
