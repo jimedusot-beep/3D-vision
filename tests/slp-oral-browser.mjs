@@ -31,8 +31,12 @@ try{
  });
  const page=await ctx.newPage();
  page.on('pageerror',e=>errors.push(e.message));
+ let documentLoads=0;
+ page.on('domcontentloaded',()=>{documentLoads++;});
+ const navigationStarted=performance.now();
  await page.goto(origin+'/ANATOMY/SLP/oral.html');
  await page.waitForFunction(()=>['ready','unavailable'].includes(document.querySelector('#oral-stage')?.dataset.modelStatus),null,{timeout:45000});
+ const modelStatusMs=Math.round(performance.now()-navigationStarted);
  assert.equal(await page.locator('#oral-select option').count(),16);
  assert.equal(await page.locator('#oral-filters input').count(),4);
  assert.equal(await page.locator('[data-oral-view]').count(),5);
@@ -78,10 +82,12 @@ try{
   assert.ok(Math.abs(dims.w-dims.expectedW)<2&&Math.abs(dims.h-dims.expectedH)<2,
    'iPhone retina canvas sizing mismatch: '+JSON.stringify(dims));
  }
+ const interactionStarted=performance.now();
  await page.locator('#oral-select').selectOption('tongue');
  assert.match(await page.locator('#oral-note-text').textContent(),/speech sounds/i);
  assert.match(await page.locator('#oral-note-id').textContent(),/Tongue/);
  assert.equal(await page.locator('#oral-stage').getAttribute('data-highlighted-group'),'tongue');
+ const selectionConfirmedMs=Math.round(performance.now()-interactionStarted);
  assert.equal(await page.locator('[data-oral-study]').count(),5);
  await page.locator('[data-oral-study="right-parotid-duct"]').click();
  assert.equal(await page.locator('#oral-stage').getAttribute('data-highlighted-group'),'right-parotid-duct');
@@ -119,6 +125,7 @@ try{
   await page.locator('#oral-select').selectOption('hyoid-bone');
   assert.match(await page.locator('#oral-note-name').textContent(),/Hyoid/);
  }
+ console.log(JSON.stringify({engine:name,fixture:'local routed assets',fallback,modelStatusMs,selectionConfirmedMs,extraDocumentLoads:documentLoads-1}));
  assert.deepEqual(errors,[]);
  console.log('PASS: '+name+' Z-Anatomy CC BY-SA 4.0 oral study 15 meshes, mobile text/3D/fallback');
 }catch(e){
