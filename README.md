@@ -114,3 +114,11 @@ Internal coordinates use millimeters with Z up. Standard GLTF import/export conv
 Parametric sketches/joints, exact solid collision detection, wall-thickness analysis, hole filling, STEP/IGES and automatic browser-to-GitHub syncing are **not implemented**. Print quality, joint fit, fasteners, thermal/electrical requirements and structural loads remain unverified.
 
 Open-source dependencies and distributed license texts: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Existing CAD/artifact provenance is preserved.
+
+## License and third-party content
+
+Original project software and its accompanying software documentation are licensed under **Apache-2.0**; see [LICENSE](LICENSE). Copyright 2026 jimedusot-beep. This notice covers only material the project authors have authority to license. Existing file-specific notices, third-party terms and prior license grants remain in effect.
+
+See [third-party notices](THIRD_PARTY_NOTICES.md), [anatomy evidence and attribution](ANATOMY/SLP/about.html), and `public/licenses/`. Anatomy datasets and meshes retain their source-specific terms, including the documented CC BY-SA licenses.
+
+CAD files, models, datasets, images, audio, fonts and other non-software assets are not granted a new license by this software notice. Use their existing asset-specific terms. Where provenance or permission is unresolved, this notice does not supply redistribution permission; record the source, author, exact license and modifications before redistributing that material.
