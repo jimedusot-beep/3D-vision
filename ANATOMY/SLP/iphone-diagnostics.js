@@ -164,9 +164,17 @@ function mount(lab) {
  copy.addEventListener('click',async () => {
   const text = report();
   output.textContent = text;
+  copyStatus.textContent = 'Copying report…';
+  let deadline;
   try {
    if (!navigator.clipboard?.writeText) throw Error('Clipboard API unavailable');
-   await navigator.clipboard.writeText(text);
+   // Safari may stall on permission: always leave a manual-copy route.
+   await Promise.race([
+    navigator.clipboard.writeText(text),
+    new Promise((_,reject)=>{
+     deadline = setTimeout(()=>reject(Error('Clipboard permission timed out')),3500);
+    })
+   ]);
    manual.hidden = true;
    copyStatus.textContent = 'Copied. Review before pasting into Issue #31.';
   } catch {
@@ -175,6 +183,8 @@ function mount(lab) {
    manual.focus();
    manual.select();
    copyStatus.textContent = 'Clipboard blocked. Select the text and use Copy.';
+  } finally {
+   clearTimeout(deadline);
   }
  });
 
