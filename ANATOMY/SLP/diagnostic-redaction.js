@@ -4,7 +4,7 @@ export function redactDiagnosticText(value) {
  let text = String(value ?? '');
  // URLs may contain credentials in query/fragment; retain only the address
  // before ? or #. Covers http(s), ws(s), file and www-style links.
- text = text.replace(/\b(?:https?|wss?|file):\/\/[^\s<>"'\x60]+|\bwww\.[^\s<>"'\x60]+/gi, url => {
+ text = text.replace(/\b(?:https?|wss?|file):\/\/[^\s<>]+|\bwww\.[^\s<>]+/gi, url => {
   const q=url.indexOf('?'), h=url.indexOf('#');
   const cut=Math.min(q<0?url.length:q,h<0?url.length:h);
   return cut===url.length?url:url.slice(0,cut)+'[REDACTED_URL_PARAMS]';
