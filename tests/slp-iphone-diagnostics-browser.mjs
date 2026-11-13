@@ -98,8 +98,15 @@ try{
    assert.match(after,/unhandledrejection: none/);
    assert.match(after,/Model load error: none/);
    await page.locator('#slp-debug-copy').click();
+   await page.waitForFunction(()=>
+    /Copied|Clipboard blocked/.test(
+     document.querySelector('#slp-debug-copy-status')?.textContent||''),null,{timeout:7500});
    const copyStatus=await page.locator('#slp-debug-copy-status').textContent();
    assert.match(copyStatus,/Copied|Clipboard blocked/);
+   if(copyStatus.includes('Clipboard blocked')){
+    assert.equal(await page.locator('#slp-debug-manual-copy').isVisible(),true,
+     item.name+' did not show the manual-copy fallback');
+   }
    assert.deepEqual(errors,[],item.name+' introduced JavaScript errors');
    // The flag must not be sticky in localStorage or leaked into a regular page.
    await page.goto(origin+item.url.replace(/[?&]debug=1/g,''),{waitUntil:'domcontentloaded'});
