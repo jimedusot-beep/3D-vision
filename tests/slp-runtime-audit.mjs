@@ -48,7 +48,9 @@ try{
  const context=await browser.newContext({...devices['iPhone 13']});
  if(localDist){
   const root=path.resolve('dist');
-  await context.route('https://3dvision.test/**',async route=>{
+  await context.route('**/*',async route=>{
+   if(new URL(route.request().url()).origin!==new URL(base).origin)
+    return route.fulfill({status:403});
    let file;
    try{
     const requested=decodeURIComponent(new URL(route.request().url()).pathname);
@@ -179,8 +181,7 @@ try{
  await context.close();
 }finally{await browser.close();}
 await mkdir('test-results',{recursive:true});
-const file='test-results/slp-runtime-audit-'+
- (localDist?'pr-':'public-')+engineName+'.json';
+const file='test-results/slp-runtime-audit-'+(localDist?'pr-':'')+engineName+'.json';
 await writeFile(file,JSON.stringify(report,null,2)+'\n');
 const table='| Anatomy lab | Ready (ms) | Visible 3D | Notes |\n|---|---:|:---:|---|\n'+
  report.models.map(m=>'| '+m.id+' | '+(m.readyMs??'—')+' | '+(m.error?'No':'Yes')+
