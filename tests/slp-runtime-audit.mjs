@@ -1,12 +1,16 @@
-// Audit the *published* Atlas, beyond the existing HTTP-only GLB smoke test.
-// This measures model-ready times under GitHub runner conditions, not phone FPS.
+// Audit the published Atlas or an isolated, locally built dist/ preview.
+// Measures model-ready times under browser-runner conditions, not physical phone FPS.
 // Run: BASE_URL=https://jimedusot-beep.github.io/3D-vision/ node tests/slp-runtime-audit.mjs
 //      BROWSER_ENGINE=webkit BASE_URL=... node tests/slp-runtime-audit.mjs
+//      AUDIT_LOCAL_DIST=1 AUDIT_LABS=larynx,oral,pharynx,ear node tests/slp-runtime-audit.mjs
 import {chromium,webkit,devices} from 'playwright';
 import assert from 'node:assert/strict';
-import {mkdir,writeFile,appendFile} from 'node:fs/promises';
-const base=process.env.BASE_URL||'https://jimedusot-beep.github.io/3D-vision/';
-if(!/^https:\/\//.test(base))throw Error('Published HTTPS URL required');
+import {mkdir,writeFile,appendFile,readFile} from 'node:fs/promises';
+import path from 'node:path';
+const localDist=process.env.AUDIT_LOCAL_DIST==='1';
+const base=localDist?'https://3dvision.test/':
+  process.env.BASE_URL||'https://jimedusot-beep.github.io/3D-vision/';
+if(!/^https:\/\//.test(base))throw Error('HTTPS site URL required');
 const engineName=process.env.BROWSER_ENGINE==='webkit'?'webkit':'chromium';
 const engine=engineName==='webkit'?webkit:chromium;
 const definitions=[
@@ -18,6 +22,14 @@ const definitions=[
   {id:'ear',file:'ear.html',stage:'#ear-stage',source:'ear.glb'},
   {id:'neural',file:'neural.html',stage:'#neural-stage',source:'neural-study.glb'}
 ];
+const requestedLabs=process.env.AUDIT_LABS?.split(',').map(id=>id.trim()).filter(Boolean);
+if(requestedLabs && (!requestedLabs.length ||
+   requestedLabs.some(id=>!definitions.some(entry=>entry.id===id)) ||
+   new Set(requestedLabs).size!==requestedLabs.length)){
+ throw Error('AUDIT_LABS must contain distinct known anatomy lab IDs');
+}
+const selectedDefinitions=requestedLabs?
+  definitions.filter(item=>requestedLabs.includes(item.id)):definitions;
 const browser=await engine.launch(engineName==='webkit'?{}:{
  args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']
 });
@@ -26,13 +38,32 @@ const report={
  pageBase:base,
  browser:engineName,
  device:'Playwright iPhone 13 emulation on a GitHub runner (NOT actual iPhone hardware)',
- conditions:'Internet-dependent production load; no throttling; browser cache shared between routes',
+ conditions:localDist?'Isolated built dist/ routed under fake HTTPS origin; no external model host; no throttling':
+  'Internet-dependent production load; no throttling; browser cache shared between routes',
+ source:localDist?'reviewed PR build (dist/)':'published website',
  models:[],
  failures:[]
 };
 try{
  const context=await browser.newContext({...devices['iPhone 13']});
- for(const item of definitions){
+ if(localDist){
+  const root=path.resolve('dist');
+  await context.route('https://3dvision.test/**',async route=>{
+   let file;
+   try{
+    const requested=decodeURIComponent(new URL(route.request().url()).pathname);
+    file=path.resolve(root,'.'+requested);
+    if(!file.startsWith(root+path.sep))return route.fulfill({status:403});
+    const bytes=await readFile(file);
+    const mime={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript',
+      '.css':'text/css','.json':'application/json','.glb':'model/gltf-binary',
+      '.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2'}[path.extname(file)]||
+      'application/octet-stream';
+    return route.fulfill({body:bytes,contentType:mime});
+   }catch{return route.fulfill({status:404});}
+  });
+ }
+ for(const item of selectedDefinitions){
   const page=await context.newPage(),errors=[],requests=[];
   page.on('pageerror',error=>errors.push(error.message));
   page.on('requestfailed',request=>requests.push({url:request.url(),reason:request.failure()?.errorText}));
@@ -106,6 +137,33 @@ try{
    data.explode3D={
      button:explodeButton,canvasPixelsChanged:true,reassembledAtZero:true
    };
+   // Reproduce the four reported physical-iPhone symptoms in touch-enabled
+   // Chromium/WebKit. This proves event delivery, not accurate 3D ray hit-testing.
+   const selection={
+     larynx:['#source-select','posterior-crico-arytenoid'],
+     oral:['#oral-select','tongue'],
+     pharynx:['#pharynx-select','levator-veli-palatini'],
+     ear:['#ear-select','cochlea']
+   }[item.id];
+   if(selection){
+    // Simulate an actual canvas touch, not a synthetic DOM click.
+    await canvas.evaluate(el=>{
+     el.dataset.auditTouch='pending';
+     el.addEventListener('pointerup',()=>{el.dataset.auditTouch='received';},{once:true});
+    });
+    await canvas.tap({timeout:15000,position:{
+      x:Math.max(10,Math.floor(dimensions.width/2)),
+      y:Math.max(10,Math.floor(dimensions.height/2))
+    }});
+    assert.equal(await canvas.getAttribute('data-audit-touch'),'received',
+      item.id+' touch pointerup did not reach the 3D canvas');
+    if(item.id==='larynx')await page.locator('#source-tools summary').click();
+    await page.locator(selection[0]).selectOption(selection[1]);
+    assert.equal(await page.locator(item.stage).getAttribute('data-highlighted-group'),
+      selection[1],item.id+' native structure picker failed to update the 3D selection');
+    data.touch={canvasPointerUpReceived:true,structurePicker:selection[1],
+      selectionReflectedInStage:true};
+   }
    if(data.telemetry.glbRequests<1)throw Error('No real source GLB requested');
    if(errors.length)throw Error('Uncaught JavaScript errors: '+errors.slice(0,3).join(' | '));
    if(requests.length)throw Error('Failed network requests: '+JSON.stringify(requests.slice(0,3)));
@@ -121,13 +179,14 @@ try{
  await context.close();
 }finally{await browser.close();}
 await mkdir('test-results',{recursive:true});
-const file='test-results/slp-runtime-audit-'+engineName+'.json';
+const file='test-results/slp-runtime-audit-'+
+ (localDist?'pr-':'public-')+engineName+'.json';
 await writeFile(file,JSON.stringify(report,null,2)+'\n');
 const table='| Anatomy lab | Ready (ms) | Visible 3D | Notes |\n|---|---:|:---:|---|\n'+
  report.models.map(m=>'| '+m.id+' | '+(m.readyMs??'—')+' | '+(m.error?'No':'Yes')+
  ' | '+(m.error?'Error: '+m.error.replaceAll('|','/').slice(0,140):(m.warning||'Source GLB rendered'))+' |').join('\n');
 if(process.env.GITHUB_STEP_SUMMARY)await appendFile(process.env.GITHUB_STEP_SUMMARY,
- '\n### SLP Atlas live 3D load audit — '+engineName+'\n\n'+
+ '\n### SLP Atlas '+(localDist?'PR-build':'live')+' 3D load audit — '+engineName+'\n\n'+
  '**Emulated iPhone 13, not physical-device performance.**\n\n'+table+'\n');
 console.log('\n'+table);
 if(report.failures.length){console.error('Live 3D rendering failed for: '+report.failures.map(x=>x.id).join(', '));process.exitCode=1;}
