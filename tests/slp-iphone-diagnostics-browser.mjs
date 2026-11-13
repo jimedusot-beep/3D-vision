@@ -45,7 +45,9 @@ try{
  for(const item of cases){
   const page=await ctx.newPage();
   const errors=[];
+  const requests=[];
   page.on('pageerror',err=>errors.push(err.message));
+  page.on('request',req=>requests.push(req.url()));
   try{
    await page.goto(origin+item.url,{waitUntil:'domcontentloaded'});
    const panel=page.locator('#slp-debug-panel');
@@ -60,6 +62,9 @@ try{
    },{stage:item.stage,name:item.name},{timeout:45000});
    const canvas=page.locator(item.stage+' canvas').first();
    assert.equal(await canvas.isVisible(),true,item.name+' missing real 3D canvas');
+   assert.ok(requests.some(url=>/\/iphone-diagnostics-[^/]+\.js(?:\?|$)/.test(url) &&
+      !url.includes('iphone-diagnostics-loader-')),
+     item.name+' did not lazy-load the debug module on debug=1');
    await panel.locator('summary').click();
    // HTML <details> toggle dispatch may be queued after the click on Chromium.
    await page.waitForFunction(name=>
@@ -97,21 +102,51 @@ try{
    assert.match(after,/window.onerror: none/);
    assert.match(after,/unhandledrejection: none/);
    assert.match(after,/Model load error: none/);
+   // Inject synthetic sensitive errors; do not use real identifiers or records.
+   const fake='Error https://example.org/medical?api_key=hiddenQuery#hiddenFragment '+
+     'patient.sample@example.org Bearer neverShareThisToken '+
+     'aabbccddeeff00112233445566778899';
+   await page.evaluate(value=>{
+    window.dispatchEvent(new ErrorEvent('error',{message:value}));
+    const event=new Event('unhandledrejection',{cancelable:true});
+    Object.defineProperty(event,'reason',{value:new Error(value)});
+    window.dispatchEvent(event);
+   },fake);
+   // Deliberately deny clipboard writes in both engines; do not rely on
+   // whatever permissions a GitHub-hosted runner happens to grant.
+   const forced=await page.evaluate(()=>{
+    const reject=()=>Promise.reject(new DOMException('Clipboard denied','NotAllowedError'));
+    Object.defineProperty(navigator,'clipboard',{
+     configurable:true,value:{writeText:reject}
+    });
+    return navigator.clipboard.writeText===reject;
+   });
+   assert.equal(forced,true,item.name+' could not simulate denied clipboard access');
    await page.locator('#slp-debug-copy').click();
    await page.waitForFunction(()=>
-    /Copied|Clipboard blocked/.test(
+    /Clipboard blocked/.test(
      document.querySelector('#slp-debug-copy-status')?.textContent||''),null,{timeout:7500});
-   const copyStatus=await page.locator('#slp-debug-copy-status').textContent();
-   assert.match(copyStatus,/Copied|Clipboard blocked/);
-   if(copyStatus.includes('Clipboard blocked')){
-    assert.equal(await page.locator('#slp-debug-manual-copy').isVisible(),true,
-     item.name+' did not show the manual-copy fallback');
+   const manual=page.locator('#slp-debug-manual-copy');
+   assert.equal(await manual.isVisible(),true,item.name+' missing forced-denial fallback');
+   const copied=await manual.inputValue();
+   assert.equal(copied,await page.locator('#slp-debug-output').textContent(),
+     item.name+' fallback differs from displayed report');
+   assert.match(copied,/window.onerror: .*REDACTED/);
+   assert.match(copied,/unhandledrejection: .*REDACTED/);
+   for(const secret of ['hiddenQuery','hiddenFragment','patient.sample@example.org',
+      'neverShareThisToken','aabbccddeeff00112233445566778899']){
+    assert.ok(!copied.includes(secret),item.name+' leaked '+secret);
    }
    assert.deepEqual(errors,[],item.name+' introduced JavaScript errors');
-   // The flag must not be sticky in localStorage or leaked into a regular page.
-   await page.goto(origin+item.url.replace(/[?&]debug=1/g,''),{waitUntil:'domcontentloaded'});
+   // A normal page must not even request the dynamically imported module.
+   const previous=requests.length;
+   await page.goto(origin+item.url.replace(/[?&]debug=1/g,''),{waitUntil:'load'});
    assert.equal(await page.locator('#slp-debug-panel').count(),0,
     item.name+' displayed diagnostics without opt-in');
+   const normal=requests.slice(previous);
+   assert.ok(!normal.some(url=>/\/iphone-diagnostics-[^/]+\.js(?:\?|$)/.test(url) &&
+      !url.includes('iphone-diagnostics-loader-')),
+    item.name+' requested the debug instrumentation module without flag');
    assert.deepEqual(errors,[],item.name+' non-debug page emitted JavaScript errors');
    console.log('PASS '+browserName+' '+item.name+' debug=1 report, canvas touch, select, explode/reassemble and no-flag absence');
   }finally{await page.close();}
