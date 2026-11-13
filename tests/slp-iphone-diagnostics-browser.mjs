@@ -61,6 +61,10 @@ try{
    const canvas=page.locator(item.stage+' canvas').first();
    assert.equal(await canvas.isVisible(),true,item.name+' missing real 3D canvas');
    await panel.locator('summary').click();
+   // HTML <details> toggle dispatch may be queued after the click on Chromium.
+   await page.waitForFunction(name=>
+    document.querySelector('#slp-debug-output')?.textContent.includes('Lab: '+name),
+    item.name,{timeout:6000});
    const text=await page.locator('#slp-debug-output').textContent();
    for(const expected of [
     'Lab: '+item.name,'Model load start (observed): 20',
@@ -85,6 +89,9 @@ try{
    await page.locator(item.explode).click();
    await page.locator(item.assemble).click();
    await panel.locator('summary').click();
+   await page.waitForFunction(()=>
+    /Last user action: .*reassemble/.test(
+     document.querySelector('#slp-debug-output')?.textContent||''),null,{timeout:6000});
    const after=await page.locator('#slp-debug-output').textContent();
    assert.match(after,/Last user action: .*reassemble/);
    assert.match(after,/window.onerror: none/);
