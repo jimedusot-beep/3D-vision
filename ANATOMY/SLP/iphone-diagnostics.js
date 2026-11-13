@@ -1,4 +1,5 @@
 // Opt-in, on-device-only diagnostics for Issue #31. No telemetry, storage or uploads.
+import {redactDiagnosticText} from './diagnostic-redaction.js';
 // This script is inert unless the *exact* URL parameter ?debug=1 is present.
 if (new URLSearchParams(location.search).get('debug') === '1') {
  const labs = {
@@ -26,7 +27,7 @@ function mount(lab) {
  let lastAction = 'none';
  const now = () => new Date().toISOString();
  const stamp = () => new Date(performance.timeOrigin + performance.now()).toISOString();
- const limited = value => String(value ?? 'unknown').replace(/\s+/g,' ').slice(0,240);
+ const limited = value => redactDiagnosticText(value ?? 'unknown').replace(/\s+/g,' ').slice(0,240);
  const keep = (list, item, max=15) => {list.push(item);if(list.length>max)list.shift();};
  function beginLoad() {
   if (model.start) return;
@@ -121,7 +122,8 @@ function mount(lab) {
     'WebGL renderer is a privacy-masked browser value; no hardware memory telemetry.',
    'Review this report for private details before sharing it in Issue #31.'
   ];
-  return lines.join('\n');
+  // Defense in depth: apply redaction to every field before display and copy.
+  return redactDiagnosticText(lines.join('\n'));
  }
 
  const panel = document.createElement('details');
