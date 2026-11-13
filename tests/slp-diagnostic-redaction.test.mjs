@@ -83,3 +83,21 @@ test('redaction is idempotent and does not re-expand redaction labels',()=>{
  const original='Error: https://example.com/foo?password=abc#id user@mail.com Bearer XYZ123123123';
  assert.equal(redact(redact(original)),redact(original));
 });
+
+
+test('redacts URL query values even when enclosed in quotes',()=>{
+ const source='window.onerror: failed https://example.org/api?code="shortSecret" '+ 
+  'and https://example.org/ear.glb?case=\'privateCase\' plus '+
+  'https://example.org/anatomy#fragment="sensitiveFragment"';
+ const result=redact(source);
+ for(const secret of ['shortSecret','privateCase','sensitiveFragment'])
+  assert.equal(result.includes(secret),false,'leaked quoted URL value '+secret);
+ assert.match(result,/https:\/\/example\.org\/api\[REDACTED_URL_PARAMS\]/);
+});
+
+test('redacts a URL containing quoted parameters inside a simulated rejection message',()=>{
+ const rejection='Unhandled promise: https://example.org/load?authorization="inlineToken123"';
+ const text=redact(rejection);
+ assert.equal(text.includes('inlineToken123'),false);
+ assert.match(text,/REDACTED_URL_PARAMS/);
+});
