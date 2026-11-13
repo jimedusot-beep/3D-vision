@@ -161,10 +161,24 @@ try{
       item.id+' touch pointerup did not reach the 3D canvas');
     if(item.id==='larynx')await page.locator('#source-tools summary').click();
     await page.locator(selection[0]).selectOption(selection[1]);
-    assert.equal(await page.locator(item.stage).getAttribute('data-highlighted-group'),
-      selection[1],item.id+' native structure picker failed to update the 3D selection');
+    assert.equal(await page.locator(selection[0]).inputValue(),selection[1],
+      item.id+' native structure picker did not keep the selected structure');
+    // Larynx/oral publish the highlighted ID. Pharynx/ear instead expose
+    // explicit focus state; do not invent a shared diagnostic attribute.
+    if(item.id==='larynx'||item.id==='oral'){
+     assert.equal(await page.locator(item.stage).getAttribute('data-highlighted-group'),
+       selection[1],item.id+' highlighted structure did not match picker');
+    }else{
+     assert.equal(await page.locator('#'+item.id+'-focus').isEnabled(),true,
+       item.id+' native picker did not enable 3D focus');
+     await page.locator('#'+item.id+'-focus').click();
+     assert.equal(await page.locator(item.stage).getAttribute('data-focused-group'),
+       selection[1],item.id+' focus did not match native picker');
+     assert.notEqual((await page.locator('#'+item.id+'-note-name').textContent()).trim(),
+       'Select a structure',item.id+' notes did not update');
+    }
     data.touch={canvasPointerUpReceived:true,structurePicker:selection[1],
-      selectionReflectedInStage:true};
+      selectionReflectedInViewer:true};
    }
    if(data.telemetry.glbRequests<1)throw Error('No real source GLB requested');
    if(errors.length)throw Error('Uncaught JavaScript errors: '+errors.slice(0,3).join(' | '));
