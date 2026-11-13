@@ -68,6 +68,8 @@ jobs:
         run: npm run test:cloud
       - name: Reproduce four reported iPhone anatomy labs on PR-built Chromium
         run: AUDIT_LOCAL_DIST=1 AUDIT_LABS=larynx,oral,pharynx,ear node tests/slp-runtime-audit.mjs
+      - name: Check debug-only iPhone diagnostics in Chromium
+        run: node tests/slp-iphone-diagnostics-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -110,6 +112,8 @@ jobs:
         run: BROWSER_ENGINE=webkit node tests/slp-neural-browser.mjs
       - name: Reproduce four reported iPhone anatomy labs on PR-built WebKit
         run: AUDIT_LOCAL_DIST=1 AUDIT_LABS=larynx,oral,pharynx,ear BROWSER_ENGINE=webkit node tests/slp-runtime-audit.mjs
+      - name: Check debug-only iPhone diagnostics in emulated Safari/WebKit
+        run: BROWSER_ENGINE=webkit node tests/slp-iphone-diagnostics-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
